@@ -23,9 +23,9 @@ const yinyangIcon = (yy: string) => {
 
 export default function PillarDisplay({ pillar, label }: PillarDisplayProps) {
   return (
-    <div className="flex flex-col items-center rounded-lg border border-red-900/40 bg-black/60 px-2 py-2 shadow-lg shadow-red-900/10 backdrop-blur-sm sm:px-4 sm:py-3">
+    <div className="flex flex-col items-center rounded-lg border border-element/30 bg-[#0a0710]/60 px-2 py-2 shadow-lg shadow-glow-sm backdrop-blur-sm sm:px-4 sm:py-3">
       {/* Label */}
-      <span className="mb-1.5 text-[10px] font-medium text-gray-500 uppercase tracking-widest sm:text-xs sm:mb-2">
+      <span className="mb-1.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest sm:text-xs sm:mb-2">
         {label}
       </span>
 
@@ -57,7 +57,7 @@ export default function PillarDisplay({ pillar, label }: PillarDisplayProps) {
           {pillar.canggan.map((cg, i) => (
             <span
               key={i}
-              className="rounded bg-gray-800/60 px-1.5 py-0.5 text-[10px] text-gray-400"
+              className="rounded bg-card/50 px-1.5 py-0.5 text-[10px] text-muted-foreground"
             >
               {cg}
             </span>
@@ -67,7 +67,7 @@ export default function PillarDisplay({ pillar, label }: PillarDisplayProps) {
 
       {/* 纳音 */}
       {pillar.nayin && (
-        <span className="mt-2 text-[11px] italic text-gray-500">
+        <span className="mt-2 text-[11px] italic text-muted-foreground">
           {pillar.nayin}
         </span>
       )}

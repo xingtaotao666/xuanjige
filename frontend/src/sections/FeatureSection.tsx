@@ -31,15 +31,15 @@ export default function FeatureSection() {
   return (
     <section className="relative py-24">
       {/* Section background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0d0505] to-black" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710] via-[#0d0814] to-[#0a0710]" />
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mb-14 text-center">
-          <h2 className="text-3xl font-bold text-red-400 sm:text-4xl">
+          <h2 className="font-kai text-3xl font-bold text-gold title-glow sm:text-4xl">
             核心功能
           </h2>
-          <p className="mt-3 text-sm text-gray-500">
-            传统命理与现代AI的完美融合
+          <p className="mt-3 text-sm text-muted-foreground">
+            传统命理与现代 AI 的完美融合
           </p>
         </div>
 
@@ -47,19 +47,19 @@ export default function FeatureSection() {
           {features.map((feature, i) => (
             <Card
               key={i}
-              className="group border-red-900/30 bg-black/50 shadow-lg shadow-red-900/5 backdrop-blur-sm transition-all duration-300 hover:border-red-700/50 hover:shadow-red-900/20"
+              className="group border-element/25 bg-card/60 shadow-lg shadow-black/20 backdrop-blur-sm transition-all duration-300 hover:border-element/50 hover:shadow-glow-md"
             >
               <CardHeader>
-                <span className="mb-2 text-3xl">{feature.icon}</span>
-                <CardTitle className="text-lg text-red-300 group-hover:text-red-200 transition-colors">
+                <span className="mb-2 text-3xl drop-shadow-[0_0_10px_rgb(var(--glow-rgb)/0.4)]">{feature.icon}</span>
+                <CardTitle className="text-lg text-element transition-colors">
                   {feature.title}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="mb-2 text-sm font-medium text-amber-500/80">
+                <p className="mb-2 text-sm font-medium text-gold/90">
                   {feature.description}
                 </p>
-                <p className="text-xs leading-relaxed text-gray-500">
+                <p className="text-xs leading-relaxed text-muted-foreground">
                   {feature.detail}
                 </p>
               </CardContent>

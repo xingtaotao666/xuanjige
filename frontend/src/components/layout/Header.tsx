@@ -28,14 +28,14 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-red-900/30 bg-black/80 backdrop-blur-md pt-[env(safe-area-inset-top)]">
+    <header className="sticky top-0 z-50 w-full border-b border-element/25 bg-[#0a0710]/80 backdrop-blur-md pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl font-bold tracking-wider text-red-500">
+          <span className="font-kai text-2xl font-bold tracking-[0.25em] text-gold title-glow">
             玄机阁
           </span>
-          <span className="hidden text-sm text-gray-400 sm:inline-block">
-            | AI 智能算命
+          <span className="hidden text-sm text-muted-foreground sm:inline-block">
+            | AI 智能命理
           </span>
         </Link>
 
@@ -47,8 +47,8 @@ export default function Header() {
                 variant="ghost"
                 className={
                   isActive(link.path)
-                    ? 'text-red-400 hover:text-red-300'
-                    : 'text-gray-300 hover:text-white'
+                    ? 'text-element hover:text-element'
+                    : 'text-muted-foreground hover:text-foreground'
                 }
               >
                 {link.label}
@@ -64,13 +64,13 @@ export default function Header() {
         <div className="md:hidden">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-300">
+              <Button variant="ghost" size="icon" className="text-muted-foreground">
                 <MenuIcon className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="border-red-900/30 bg-black/95">
+            <SheetContent side="right" className="border-element/30 bg-[#0a0710]/95">
               <SheetHeader>
-                <SheetTitle className="text-xl text-red-500">玄机阁</SheetTitle>
+                <SheetTitle className="font-kai text-xl text-gold">玄机阁</SheetTitle>
               </SheetHeader>
               <nav className="mt-8 flex flex-col gap-2">
                 {navLinks.map((link) => (
@@ -83,8 +83,8 @@ export default function Header() {
                       variant="ghost"
                       className={
                         isActive(link.path)
-                          ? 'w-full justify-start text-red-400'
-                          : 'w-full justify-start text-gray-300'
+                          ? 'w-full justify-start text-element'
+                          : 'w-full justify-start text-muted-foreground'
                       }
                     >
                       {link.label}

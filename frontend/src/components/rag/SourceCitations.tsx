@@ -17,7 +17,7 @@ export default function SourceCitations({ sources }: SourceCitationsProps) {
 
   return (
     <div>
-      <h4 className="mb-3 text-sm font-semibold text-gray-400">
+      <h4 className="mb-3 text-sm font-semibold text-muted-foreground">
         典籍参考来源
       </h4>
       <Accordion type="single" collapsible className="space-y-2">
@@ -25,32 +25,32 @@ export default function SourceCitations({ sources }: SourceCitationsProps) {
           <AccordionItem
             key={i}
             value={`source-${i}`}
-            className="rounded-lg border border-red-900/30 bg-black/40 px-4"
+            className="rounded-lg border border-element/30 bg-card/50 px-4"
           >
-            <AccordionTrigger className="text-sm text-gray-300 hover:text-red-300 hover:no-underline">
+            <AccordionTrigger className="text-sm text-muted-foreground hover:text-element hover:no-underline">
               <div className="flex items-center gap-2">
                 <Badge
                   variant="outline"
-                  className="border-red-800/50 text-red-400 text-[10px]"
+                  className="border-element/40 text-element text-[10px]"
                 >
                   {source.book}
                 </Badge>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground/70">
                   相关度 {Math.round(source.score * 100)}%
                 </span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
-              <p className="mb-2 text-sm italic leading-relaxed text-gray-400">
+              <p className="mb-2 text-sm italic leading-relaxed text-muted-foreground">
                 &ldquo;{source.text}&rdquo;
               </p>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-gray-600">相关度</span>
+                <span className="text-[10px] text-muted-foreground/70">相关度</span>
                 <Progress
                   value={source.score * 100}
                   className="h-1.5 flex-1"
                 />
-                <span className="text-[10px] text-gray-500">
+                <span className="text-[10px] text-muted-foreground">
                   {Math.round(source.score * 100)}%
                 </span>
               </div>

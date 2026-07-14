@@ -157,7 +157,7 @@ export default function CoinToss({
   return (
     <div className="relative flex flex-col items-center gap-5">
       {/* 状态文字 */}
-      <p className="text-sm text-amber-300/90">
+      <p className="text-sm text-gold/90">
         {done
           ? '六爻已成，正在解卦…'
           : `正在卜第「${currentLineName}」爻`
@@ -202,7 +202,7 @@ export default function CoinToss({
       </div>
 
       {/* 法则说明 */}
-      <p className="text-center text-xs text-gray-500/80">
+      <p className="text-center text-xs text-muted-foreground/80">
         古法金钱课 · 三枚铜钱一爻 · 字阴背阳
       </p>
 

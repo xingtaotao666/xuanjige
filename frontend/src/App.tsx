@@ -19,17 +19,21 @@ function HomePage() {
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
-      <Header />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/bazi" element={<BaziSection />} />
-          <Route path="/yijing" element={<YijingSection />} />
-          <Route path="/about" element={<AboutSection />} />
-        </Routes>
-      </main>
-      <Footer />
+    <div className="relative flex min-h-screen flex-col text-foreground">
+      {/* 宇宙星空 + 宣纸纹理 + 柔和光效背景层 */}
+      <div className="app-bg" aria-hidden="true" />
+      <div className="relative z-0 flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/bazi" element={<BaziSection />} />
+            <Route path="/yijing" element={<YijingSection />} />
+            <Route path="/about" element={<AboutSection />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </div>
   )
 }

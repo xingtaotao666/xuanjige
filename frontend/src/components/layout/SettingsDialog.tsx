@@ -48,23 +48,23 @@ export default function SettingsDialog() {
         <Button
           variant="ghost"
           size="icon"
-          className="text-gray-300 hover:text-white"
+          className="text-muted-foreground hover:text-foreground"
           title="设置"
         >
           <SettingsIcon className="h-5 w-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-red-900/30 bg-[#0d0505] text-gray-200">
+      <DialogContent className="border-element/30 bg-[#0a0710] text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-lg text-red-400">设置</DialogTitle>
-          <DialogDescription className="text-gray-500">
+          <DialogTitle className="font-kai text-lg text-gold">设置</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
             AI 解读需要 DeepSeek API Key；未配置时自动使用规则式降级解读。
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3 py-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-400">当前状态</span>
+            <span className="text-muted-foreground">当前状态</span>
             {configured ? (
               <span className="rounded bg-green-900/30 px-2 py-0.5 text-xs text-green-400">
                 已配置
@@ -77,7 +77,7 @@ export default function SettingsDialog() {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="apikey" className="text-gray-300">
+            <Label htmlFor="apikey" className="text-foreground/90">
               DeepSeek API Key
             </Label>
             <Input
@@ -87,13 +87,13 @@ export default function SettingsDialog() {
               placeholder="sk-..."
               value={key}
               onChange={(e) => setKey(e.target.value)}
-              className="border-red-900/40 bg-black/60 text-gray-200 placeholder:text-gray-600 focus:border-red-500"
+              className="border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
             />
           </div>
 
-          <p className="text-xs leading-relaxed text-gray-600">
+          <p className="text-xs leading-relaxed text-muted-foreground/70">
             Key 仅保存在本机浏览器（localStorage），不会上传到任何服务器。也可在部署时通过
-            <code className="mx-1 text-gray-400">VITE_DEEPSEEK_API_KEY</code>
+            <code className="mx-1 text-gold">VITE_DEEPSEEK_API_KEY</code>
             注入默认值。
           </p>
         </div>
@@ -102,13 +102,13 @@ export default function SettingsDialog() {
           <Button
             variant="ghost"
             onClick={handleClear}
-            className="text-gray-400 hover:text-red-300"
+            className="text-muted-foreground hover:text-element"
           >
             清除
           </Button>
           <Button
             onClick={handleSave}
-            className="bg-red-700 text-white hover:bg-red-600"
+            className="bg-element font-kai text-void hover:bg-element/80"
           >
             保存
           </Button>

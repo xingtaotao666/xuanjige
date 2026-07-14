@@ -48,6 +48,32 @@ module.exports = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // ===== 玄机阁古典配色 =====
+        // 动态五行强调色：由 documentElement[data-element] 控制，贯穿全站
+        element: "rgb(var(--accent-rgb) / <alpha-value>)",
+        glow: "rgb(var(--glow-rgb) / <alpha-value>)",
+        gold: "#d4a843",
+        "gold-soft": "#b8923a",
+        void: "#0a0710",
+        ink: "#120a1c",
+        amethyst: "#2a1a44",
+        paper: "#e8dfd0",
+      },
+      fontFamily: {
+        // 宋体/仿宋 类衬线（正文）
+        serif: [
+          "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
+          "SimSun", "宋体", "serif",
+        ],
+        // 楷体（标题/书法感）
+        kai: [
+          "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Noto Serif SC",
+          "Source Han Serif SC", "serif",
+        ],
+        // 仿宋（古籍引文/题款）
+        fang: [
+          "FangSong", "STFangsong", "仿宋", "Noto Serif SC", "serif",
+        ],
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
@@ -58,6 +84,11 @@ module.exports = {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        // 柔和光效（暗金/元素色）
+        "glow-sm": "0 0 12px rgb(var(--glow-rgb) / 0.25)",
+        "glow-md": "0 0 28px rgb(var(--glow-rgb) / 0.30)",
+        "glow-lg": "0 0 60px rgb(var(--glow-rgb) / 0.35)",
+        "gold-glow": "0 0 24px rgba(212,168,67,0.35)",
       },
       keyframes: {
         "accordion-down": {
@@ -72,11 +103,84 @@ module.exports = {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
+        // ===== 玄机阁仪式感动效 =====
+        // 星轨旋转
+        "orbit": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+        "orbit-rev": {
+          from: { transform: "rotate(360deg)" },
+          to: { transform: "rotate(0deg)" },
+        },
+        // 水墨扩散
+        "ink-diffuse": {
+          "0%": { transform: "scale(0.35)", opacity: "0.55" },
+          "70%": { opacity: "0.18" },
+          "100%": { transform: "scale(1.7)", opacity: "0" },
+        },
+        // 旋转符卡（3D 翻转）
+        "card-spin": {
+          "0%": { transform: "rotateY(0deg) rotateX(0deg)" },
+          "50%": { transform: "rotateY(180deg) rotateX(8deg)" },
+          "100%": { transform: "rotateY(360deg) rotateX(0deg)" },
+        },
+        // 太极自转
+        "taiji-spin": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
+        // 星光闪烁
+        "twinkle": {
+          "0%, 100%": { opacity: "0.15" },
+          "50%": { opacity: "0.9" },
+        },
+        // 呼吸（文案）
+        "breathe": {
+          "0%, 100%": { opacity: "0.55" },
+          "50%": { opacity: "1" },
+        },
+        // 流光（标题/文案渐变流动）
+        "shimmer": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "200% 50%" },
+        },
+        // 上浮
+        "float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        // 渐入上移
+        "rise": {
+          "0%": { opacity: "0", transform: "translateY(18px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        // 渐显
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { boxShadow: "0 0 5px rgba(212, 168, 67, 0.5)" },
+          "50%": { boxShadow: "0 0 20px rgba(212, 168, 67, 0.8), 0 0 40px rgba(212, 168, 67, 0.4)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "orbit": "orbit 16s linear infinite",
+        "orbit-rev": "orbit-rev 22s linear infinite",
+        "ink-diffuse": "ink-diffuse 2.6s ease-out infinite",
+        "card-spin": "card-spin 6s ease-in-out infinite",
+        "taiji-spin": "taiji-spin 9s linear infinite",
+        "twinkle": "twinkle 3.4s ease-in-out infinite",
+        "breathe": "breathe 2.8s ease-in-out infinite",
+        "shimmer": "shimmer 4s linear infinite",
+        "float": "float 3s ease-in-out infinite",
+        "rise": "rise 0.7s ease-out both",
+        "fade-in": "fade-in 0.8s ease-out both",
+        "pulse-glow": "pulse-glow 1.5s ease-in-out infinite",
       },
     },
   },

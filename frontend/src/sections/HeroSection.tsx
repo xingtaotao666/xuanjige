@@ -12,30 +12,26 @@ export default function HeroSection() {
         style={{ backgroundImage: "url('/xuanji-bg.png')" }}
       />
       {/* 渐变遮罩 —— 让文字可读，底部过渡到页面 */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-[#0a0a0f]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710]/75 via-[#0a0710]/55 to-[#0a0710]" />
 
       {/* 两侧暗边 */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0a0710]/60 via-transparent to-[#0a0710]/60" />
+
+      {/* 标题后柔光晕（神秘氛围） */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gold/10 blur-3xl" />
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-3xl px-4 text-center">
         {/* 品牌名 */}
-        <h1
-          className="mb-3 text-5xl font-bold tracking-[0.3em] sm:text-6xl md:text-7xl lg:text-8xl"
-          style={{
-            fontFamily: "'Noto Serif SC', 'SimSun', 'STSong', serif",
-            color: '#d4a843',
-            textShadow: '0 2px 40px rgba(212,168,67,0.4), 0 0 80px rgba(180,100,20,0.2)',
-          }}
-        >
+        <h1 className="mb-3 font-kai text-5xl font-bold tracking-[0.3em] text-gold title-glow sm:text-6xl md:text-7xl lg:text-8xl">
           玄机阁
         </h1>
 
-        <p className="mb-2 text-base font-medium tracking-widest text-amber-400/70 sm:text-lg">
+        <p className="mb-2 text-base font-medium tracking-[0.4em] text-gold/70 sm:text-lg">
           ─── AI 智能命理 ───
         </p>
 
-        <p className="mb-10 text-sm leading-relaxed text-gray-300/90 sm:text-base">
+        <p className="mb-10 text-sm leading-relaxed text-foreground/80 sm:text-base">
           融合千年典籍 · 易经六十四卦 · 四柱八字排盘
           <br className="hidden sm:block" />
           古籍 RAG 检索 · 大模型智能解读
@@ -45,7 +41,7 @@ export default function HeroSection() {
           <Button
             size="lg"
             onClick={() => navigate('/bazi')}
-            className="w-full border border-amber-700/50 bg-amber-900/50 text-amber-200 shadow-lg shadow-amber-950/40 hover:bg-amber-800/60 hover:text-amber-100 backdrop-blur-sm sm:w-44"
+            className="w-full border border-element/50 bg-element/90 font-kai text-void shadow-glow-md backdrop-blur-sm transition hover:bg-element sm:w-44"
           >
             八字排盘
           </Button>
@@ -53,7 +49,7 @@ export default function HeroSection() {
             size="lg"
             variant="outline"
             onClick={() => navigate('/yijing')}
-            className="w-full border-red-700/50 text-red-400 hover:bg-red-950/30 hover:text-red-300 backdrop-blur-sm sm:w-44"
+            className="w-full border border-element/50 font-kai text-element backdrop-blur-sm transition hover:bg-element/10 sm:w-44"
           >
             易经占卜
           </Button>
@@ -62,8 +58,8 @@ export default function HeroSection() {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="flex h-8 w-5 items-start justify-center rounded-full border border-amber-700/40 p-1">
-          <div className="h-2 w-1 rounded-full bg-amber-600/60" />
+        <div className="flex h-8 w-5 items-start justify-center rounded-full border border-gold/40 p-1">
+          <div className="h-2 w-1 animate-breathe rounded-full bg-gold/60" />
         </div>
       </div>
     </section>
