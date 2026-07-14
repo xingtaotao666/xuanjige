@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build output
+dist/
+build/
+out/
+
+# Local env / secrets
+.env
+.env.local
+.env.*.local
+*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+
+# Python (backend, not deployed)
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# WorkBuddy project memory (local only, do not commit)
+.workbuddy/
+
+# Legacy backend launcher contains a hardcoded API key — never commit
+start.bat
+
+# Python backend (reference only) — exclude heavy/binary artifacts
+backend/models/
+backend/data/
+*.log
+backend/analyze_live.json
+backend/analyze_resp.json
+backend/model_info.json
+backend/preload_model.py
+backend/test_llm.py
+backend/test_prompt.py
+
+# IDE
+.idea/

@@ -1,0 +1,8 @@
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.5.2
+python-dateutil==2.8.2
+chromadb==0.4.22
+sentence-transformers==2.2.2
+httpx==0.25.2
+lunardate==0.2.0
