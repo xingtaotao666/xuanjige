@@ -15,10 +15,16 @@
 | AI 解读 | `src/lib/llm/deepseek.ts` | 浏览器直连 DeepSeek（已验证支持 CORS） |
 | 知识库 | `src/lib/knowledge.ts` | 13 个 JSON 随站分发（`public/data`） |
 
-**关于 AI 解读的 API Key：**
-- 优先级：用户在前端「设置」中填写的 `localStorage` 值 > 部署时注入的 `VITE_DEEPSEEK_API_KEY`。
-- 未配置 Key 时，解读自动降级为规则式文本（排盘/起卦核心功能不受影响）。
-- Key **不会**硬编码进仓库，也不会上传到任何服务器（仅存于访问者本机浏览器）。
+**关于 AI 解读的 API Key（当前已全站注入）：**
+- 本项目采用「构建期注入」：在 `frontend/.env` 写入 `VITE_DEEPSEEK_API_KEY=<你的Key>`（该文件已被
+  `.gitignore` 忽略，不会进 `main` 源码仓库），构建后 Key 随前端包分发，**所有访客打开即用 AI 解读**，
+  无需各自填 Key。
+- 优先级：用户在前端「设置」中填写的 `localStorage` 值 > 构建期注入的 `VITE_DEEPSEEK_API_KEY`。
+- ⚠️ Key 注入后，构建产物（gh-pages 上的 JS）会以**明文**包含该 Key（任何访客查看页面源码都可读取）。
+  这是纯前端方案的固有取舍：**好处是全员免配置即用 AI；风险是 Key 暴露、可能被他人盗用刷额度扣费**。
+- 安全建议：若 Key 出现异常扣费或被盗用，请到 DeepSeek 平台重新生成 Key，更新 `frontend/.env`
+  后重新构建部署即可。
+- 未注入 Key（或访客自行清除）时，解读自动降级为规则式文本（排盘/起卦核心功能不受影响）。
 
 ---
 
@@ -46,6 +52,7 @@ git push -u origin main
 ```bash
 cd frontend
 rm -rf dist                 # 本机沙箱会拦截 vite 自动清空 dist，故手动删
+# 如需全站 AI 解读：确保 frontend/.env 含 VITE_DEEPSEEK_API_KEY（构建时由 Vite 自动注入）
 npm install
 npm run build               # 产物在 frontend/dist
 # 将产物连同 404.html 推到 gh-pages 分支
@@ -128,5 +135,8 @@ npm run preview         # 本地预览（默认 http://localhost:4173）
 
 - **刷新子页面 404？** 已通过 `cp index.html 404.html` 处理（SPA 深链回退）。
 - **资源 404 / 白屏？** 确认 `base` 为 `'./'`（已配置），且 `public/data`、`public/corpus` 已随构建分发。
-- **AI 解读没有内容？** 多半是未配置 API Key；点击右上角「设置」填入 DeepSeek Key 即可。
+- **AI 解读没有内容 / 仍是规则式降级？** 站点已构建期注入 Key，正常应为真实模型解读。若仍降级：
+  ① 检查网络能否访问 `api.deepseek.com`（CORS 已验证可用）；② Key 可能已失效/被平台停用，
+  需到 DeepSeek 平台重新生成并更新 `frontend/.env` 后重新部署；③ 访客若在「设置」中清空了 Key，
+  也会退回规则式（属正常）。
 - **国内访问慢/打不开？** 优先选 Gitee Pages（见第四节）或绑定国内可访问的自定义域名。
