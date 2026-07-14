@@ -185,3 +185,22 @@
     border-radius: 2px;
   }
 }
+
+/* 无障碍：尊重系统的「减少动效」偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-orbit,
+  .animate-orbit-rev,
+  .animate-ink-diffuse,
+  .animate-card-spin,
+  .animate-taiji-spin,
+  .animate-twinkle,
+  .animate-breathe,
+  .animate-shimmer,
+  .animate-float,
+  .animate-rise,
+  .animate-fade-in,
+  .animate-pulse-glow,
+  .app-bg::before {
+    animation: none !important;
+  }
+}
