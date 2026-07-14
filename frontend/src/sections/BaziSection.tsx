@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -13,15 +12,17 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useBazi } from '@/hooks/useBazi';
 import { useTheme, dominantElement } from '@/components/ThemeProvider';
-import PillarDisplay from '@/components/bazi/PillarDisplay';
-import WuXingChart from '@/components/bazi/WuXingChart';
-import ShiShenTable from '@/components/bazi/ShiShenTable';
-import SourceCitations from '@/components/rag/SourceCitations';
 import RitualLoader from '@/components/RitualLoader';
-import type { DaYunPeriod, ShenSha } from '@/types/bazi';
+import BaziResultView from '@/components/bazi/BaziResultView';
+import { useHistory } from '@/hooks/useHistory';
+import {
+  buildShareUrl,
+  genId,
+  makeRecordKey,
+  type BaziInputSnapshot,
+} from '@/lib/historyStore';
 
 const DIZHI_OPTIONS = [
   { value: '0', label: '子时 23:00-00:59' },
@@ -38,66 +39,10 @@ const DIZHI_OPTIONS = [
   { value: '11', label: '亥时 21:00-22:59' },
 ];
 
-function ShenShaBadges({ shensha }: { shensha: ShenSha[] }) {
-  if (!shensha || shensha.length === 0) return null;
-  return (
-    <div className="space-y-2">
-      <h4 className="text-sm font-semibold text-muted-foreground">神煞</h4>
-      <div className="flex flex-wrap gap-2">
-        {shensha.map((ss, i) => (
-          <div key={i} className="group relative">
-            <Badge
-              variant="secondary"
-              className="cursor-help border border-element/30 bg-element/10 text-element hover:bg-element/20"
-            >
-              {ss.name}
-              {ss.tags && ss.tags.length > 0 && (
-                <span className="ml-1 text-[10px] text-muted-foreground">
-                  {ss.tags.join('/')}
-                </span>
-              )}
-            </Badge>
-            {ss.description && (
-              <div className="absolute bottom-full left-1/2 z-20 mb-2 hidden w-48 -translate-x-1/2 rounded border border-element/30 bg-[#0a0710]/95 p-2 text-xs text-muted-foreground shadow-lg group-hover:block">
-                {ss.description}
-                <div className="mt-1 text-[10px] text-muted-foreground/70">位置: {ss.position}</div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function DaYunTimeline({ dayun }: { dayun: DaYunPeriod[] }) {
-  if (!dayun || dayun.length === 0) return null;
-  return (
-    <div>
-      <h4 className="mb-3 text-sm font-semibold text-muted-foreground">大运流年</h4>
-      <div className="overflow-x-auto">
-        <div className="flex gap-2 min-w-max">
-          {dayun.map((period, i) => (
-            <div
-              key={i}
-              className="flex w-28 flex-col items-center rounded-lg border border-element/25 bg-[#0a0710]/50 p-3"
-            >
-              <span className="text-[10px] text-muted-foreground">
-                {period.age_start}-{period.age_end}岁
-              </span>
-              <span className="mt-1 text-lg font-bold text-gold">{period.gan}{period.zhi}</span>
-              <span className="mt-1 text-[10px] text-muted-foreground">{period.shishen}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function BaziSection() {
   const { loading, error, result, analyze, reset } = useBazi();
   const { setElement } = useTheme();
+  const { records, add } = useHistory();
 
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
@@ -106,14 +51,25 @@ export default function BaziSection() {
   const [gender, setGender] = useState<'male' | 'female'>('male');
   const [question, setQuestion] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [feedback, setFeedback] = useState('');
 
   // 结果返回时，根据五行主导元素切换全站强调色
   useEffect(() => {
     if (result) setElement(dominantElement(result.bazi.wuxing));
   }, [result, setElement]);
 
+  const buildInput = (): BaziInputSnapshot => ({
+    birth_year: parseInt(year, 10),
+    birth_month: parseInt(month, 10),
+    birth_day: parseInt(day, 10),
+    birth_hour: parseInt(hour, 10),
+    gender,
+    question: question || undefined,
+  });
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setFeedback('');
     setSubmitted(true);
     analyze({
       birth_year: parseInt(year, 10),
@@ -131,12 +87,49 @@ export default function BaziSection() {
     reset();
     setElement('neutral');
     setSubmitted(false);
+    setFeedback('');
     setYear('');
     setMonth('');
     setDay('');
     setHour('');
     setGender('male');
     setQuestion('');
+  };
+
+  const handleSave = () => {
+    if (!result) return;
+    const input = buildInput();
+    const key = makeRecordKey('bazi', input);
+    const existed = records.some((r) => r.key === key);
+    add({
+      id: genId(),
+      key,
+      type: 'bazi',
+      createdAt: Date.now(),
+      title: `${year}年${month}月${day}日 · ${gender === 'male' ? '男' : '女'}${
+        question ? ` · ${question.slice(0, 12)}` : ''
+      }`,
+      input,
+      result,
+    });
+    setFeedback(existed ? '该命盘已在您的记忆中' : '已存入本地记忆 ✦');
+  };
+
+  const handleShare = async () => {
+    if (!result) return;
+    const url = buildShareUrl({
+      v: 1,
+      type: 'bazi',
+      createdAt: Date.now(),
+      input: buildInput(),
+      result,
+    });
+    try {
+      await navigator.clipboard.writeText(url);
+      setFeedback('分享链接已复制到剪贴板 🔗');
+    } catch {
+      setFeedback('复制失败，可手动复制当前页面地址分享');
+    }
   };
 
   return (
@@ -278,172 +271,27 @@ export default function BaziSection() {
 
         {/* Results section */}
         {result && !loading && (
-          <div className="space-y-8 animate-rise">
-            <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="font-kai text-lg text-gold">四柱八字</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-4 gap-2 sm:gap-3">
-                  <PillarDisplay pillar={result.bazi.year_pillar} label="年柱" />
-                  <PillarDisplay pillar={result.bazi.month_pillar} label="月柱" />
-                  <PillarDisplay pillar={result.bazi.day_pillar} label="日柱" />
-                  <PillarDisplay pillar={result.bazi.hour_pillar} label="时柱" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Tabs defaultValue="wuxing" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 gap-1 border-element/25 bg-card/60 p-1 sm:grid-cols-4">
-                <TabsTrigger value="wuxing" className="text-xs text-muted-foreground data-[state=active]:text-element sm:text-sm">
-                  五行分析
-                </TabsTrigger>
-                <TabsTrigger value="shishen" className="text-xs text-muted-foreground data-[state=active]:text-element sm:text-sm">
-                  十神
-                </TabsTrigger>
-                <TabsTrigger value="shensha" className="text-xs text-muted-foreground data-[state=active]:text-element sm:text-sm">
-                  神煞
-                </TabsTrigger>
-                <TabsTrigger value="dayun" className="text-xs text-muted-foreground data-[state=active]:text-element sm:text-sm">
-                  大运
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="wuxing">
-                <Card className="border-element/25 bg-card/60">
-                  <CardHeader>
-                    <CardTitle className="font-kai text-sm text-gold">五行平衡</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <WuXingChart wuxing={result.bazi.wuxing} />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="shishen">
-                <Card className="border-element/25 bg-card/60">
-                  <CardHeader>
-                    <CardTitle className="font-kai text-sm text-gold">十神列表</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <ShiShenTable items={result.bazi.shishen} />
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="shensha">
-                <Card className="border-element/25 bg-card/60">
-                  <CardHeader>
-                    <CardTitle className="font-kai text-sm text-gold">神煞</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ShenShaBadges shensha={result.bazi.shensha} />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="dayun">
-                <Card className="border-element/25 bg-card/60">
-                  <CardHeader>
-                    <CardTitle className="font-kai text-sm text-gold">大运流年</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <DaYunTimeline dayun={result.bazi.dayun || []} />
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-
-            {/* AI Interpretation */}
-            {result.llm_interpretation && (
-              <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 font-kai text-lg text-gold">
-                    <span>🤖</span> AI 解读
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    大模型基于命理知识生成的个性化分析
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose prose-invert prose-sm max-w-none prose-headings:text-gold prose-p:text-foreground/90 prose-strong:text-element prose-li:text-foreground/90">
-                    {result.llm_interpretation.split('\n').map((line, i) => {
-                      const trimmed = line.trim();
-                      if (/^[一二三四五六七八九十]+、/.test(trimmed) || /^（[一二三四五六七八九十]+）/.test(trimmed)) {
-                        return (
-                          <h3 key={i} className="mt-5 mb-2 flex items-center gap-2 text-base font-bold text-gold">
-                            <span className="inline-block h-4 w-1 rounded bg-element" />
-                            {trimmed}
-                          </h3>
-                        );
-                      }
-                      if (/^\d+[\.、]/.test(trimmed)) {
-                        return (
-                          <h4 key={i} className="mt-4 mb-1 text-sm font-semibold text-gold/90">
-                            {trimmed}
-                          </h4>
-                        );
-                      }
-                      if (line.startsWith('## ')) {
-                        return (
-                          <h2 key={i} className="mt-4 mb-2 text-base font-bold text-gold">
-                            {line.replace('## ', '')}
-                          </h2>
-                        );
-                      }
-                      if (line.startsWith('# ')) {
-                        return (
-                          <h1 key={i} className="mt-5 mb-3 text-lg font-bold text-element">
-                            {line.replace('# ', '')}
-                          </h1>
-                        );
-                      }
-                      if (line.startsWith('### ')) {
-                        return (
-                          <h3 key={i} className="mt-3 mb-1 text-sm font-semibold text-gold/80">
-                            {line.replace('### ', '')}
-                          </h3>
-                        );
-                      }
-                      if (line.startsWith('- ') || line.startsWith('* ')) {
-                        return (
-                          <li key={i} className="ml-4 text-sm text-foreground/90 list-disc">
-                            {line.replace(/^[-*]\s+/, '')}
-                          </li>
-                        );
-                      }
-                      if (trimmed === '') return <br key={i} />;
-                      return (
-                        <p key={i} className="text-sm leading-relaxed text-foreground/90">
-                          {line}
-                        </p>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* RAG Sources */}
-            {result.rag_sources && result.rag_sources.length > 0 && (
-              <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
-                <CardContent className="pt-6">
-                  <SourceCitations sources={result.rag_sources} />
-                </CardContent>
-              </Card>
-            )}
-
-            <div className="text-center">
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <Button
                 variant="outline"
-                onClick={handleReset}
+                onClick={handleSave}
                 className="border-element/50 text-element hover:bg-element/10"
               >
-                重新排盘
+                💾 存入记忆
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleShare}
+                className="border-element/50 text-element hover:bg-element/10"
+              >
+                🔗 复制分享链接
               </Button>
             </div>
+            {feedback && (
+              <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>
+            )}
+            <BaziResultView result={result} onReset={handleReset} />
           </div>
         )}
       </div>

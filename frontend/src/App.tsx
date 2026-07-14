@@ -6,6 +6,8 @@ import FeatureSection from '@/sections/FeatureSection'
 import BaziSection from '@/sections/BaziSection'
 import YijingSection from '@/sections/YijingSection'
 import AboutSection from '@/sections/AboutSection'
+import ShareView from '@/components/share/ShareView'
+import HistoryPage from '@/components/history/HistoryPage'
 import './App.css'
 
 function HomePage() {
@@ -29,6 +31,8 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/bazi" element={<BaziSection />} />
             <Route path="/yijing" element={<YijingSection />} />
+            <Route path="/share" element={<ShareView />} />
+            <Route path="/history" element={<HistoryPage />} />
             <Route path="/about" element={<AboutSection />} />
           </Routes>
         </main>

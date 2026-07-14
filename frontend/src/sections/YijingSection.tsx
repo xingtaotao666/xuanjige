@@ -5,10 +5,16 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useYijing } from '@/hooks/useYijing';
-import GuaDisplay from '@/components/yijing/GuaDisplay';
 import CoinToss from '@/components/yijing/CoinToss';
-import SourceCitations from '@/components/rag/SourceCitations';
 import RitualLoader from '@/components/RitualLoader';
+import YijingResultView from '@/components/yijing/YijingResultView';
+import { useHistory } from '@/hooks/useHistory';
+import {
+  buildShareUrl,
+  genId,
+  makeRecordKey,
+  type YijingInputSnapshot,
+} from '@/lib/historyStore';
 import type { CoinFace } from '@/types/yijing';
 
 const YAO_NAMES = ['初', '二', '三', '四', '五', '上'];
@@ -62,6 +68,7 @@ function YaoPreview({ yaoValues }: { yaoValues: number[] }) {
 
 export default function YijingSection() {
   const { loading, error, result, divinate, reset } = useYijing();
+  const { records, add } = useHistory();
 
   const [question, setQuestion] = useState('');
   const [method, setMethod] = useState<'coins' | 'numbers'>('coins');
@@ -69,6 +76,7 @@ export default function YijingSection() {
   const [num2, setNum2] = useState('');
   const [num3, setNum3] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [feedback, setFeedback] = useState('');
 
   const [yaoValues, setYaoValues] = useState<number[]>([]);
   const [coins, setCoins] = useState<CoinFace[]>([null, null, null]);
@@ -114,6 +122,7 @@ export default function YijingSection() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!question.trim()) return;
+    setFeedback('');
     setSubmitted(true);
     if (method === 'numbers') {
       doNumbers();
@@ -168,6 +177,7 @@ export default function YijingSection() {
     clearTimers();
     reset();
     setSubmitted(false);
+    setFeedback('');
     setQuestion('');
     setMethod('coins');
     setNum1('');
@@ -179,6 +189,49 @@ export default function YijingSection() {
   };
 
   const currentLineName = YAO_NAMES[yaoValues.length] ?? '上';
+
+  const buildInput = (): YijingInputSnapshot => ({
+    question,
+    method,
+    num1: method === 'numbers' ? parseInt(num1, 10) : undefined,
+    num2: method === 'numbers' ? parseInt(num2, 10) : undefined,
+    num3: method === 'numbers' ? parseInt(num3, 10) : undefined,
+    yao_values: method === 'coins' ? yaoValues : undefined,
+  });
+
+  const handleSave = () => {
+    if (!result) return;
+    const input = buildInput();
+    const key = makeRecordKey('yijing', input);
+    const existed = records.some((r) => r.key === key);
+    add({
+      id: genId(),
+      key,
+      type: 'yijing',
+      createdAt: Date.now(),
+      title: question.trim().slice(0, 20) || '易经占卜',
+      input,
+      result,
+    });
+    setFeedback(existed ? '该卦象已在您的记忆中' : '已存入本地记忆 ✦');
+  };
+
+  const handleShare = async () => {
+    if (!result) return;
+    const url = buildShareUrl({
+      v: 1,
+      type: 'yijing',
+      createdAt: Date.now(),
+      input: buildInput(),
+      result,
+    });
+    try {
+      await navigator.clipboard.writeText(url);
+      setFeedback('分享链接已复制到剪贴板 🔗');
+    } catch {
+      setFeedback('复制失败，可手动复制当前页面地址分享');
+    }
+  };
 
   return (
     <section className="relative min-h-screen py-24">
@@ -329,87 +382,27 @@ export default function YijingSection() {
 
         {/* ===== 结果展示 ===== */}
         {result && !loading && (
-          <div className="space-y-8 animate-rise">
-            <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="font-kai text-lg text-gold">卦象</CardTitle>
-                <CardDescription className="text-muted-foreground">问题: {result.gua.question}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <GuaDisplay gua={result.gua} />
-              </CardContent>
-            </Card>
-
-            {result.llm_interpretation && (
-              <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 font-kai text-lg text-gold">
-                    <span>🤖</span> AI 解卦
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    结合卦象爻辞与您的问题生成的个性化解读
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="prose prose-invert prose-sm max-w-none prose-headings:text-gold prose-p:text-foreground/90 prose-strong:text-element prose-li:text-foreground/90">
-                    {result.llm_interpretation.split('\n').map((line, i) => {
-                      if (line.startsWith('## ')) {
-                        return (
-                          <h2 key={i} className="mt-4 mb-2 text-base font-bold text-gold">
-                            {line.replace('## ', '')}
-                          </h2>
-                        );
-                      }
-                      if (line.startsWith('# ')) {
-                        return (
-                          <h1 key={i} className="mt-5 mb-3 text-lg font-bold text-element">
-                            {line.replace('# ', '')}
-                          </h1>
-                        );
-                      }
-                      if (line.startsWith('### ')) {
-                        return (
-                          <h3 key={i} className="mt-3 mb-1 text-sm font-semibold text-gold/80">
-                            {line.replace('### ', '')}
-                          </h3>
-                        );
-                      }
-                      if (line.startsWith('- ')) {
-                        return (
-                          <li key={i} className="ml-4 text-sm text-foreground/90 list-disc">
-                            {line.replace('- ', '')}
-                          </li>
-                        );
-                      }
-                      if (line.trim() === '') return <br key={i} />;
-                      return (
-                        <p key={i} className="text-sm leading-relaxed text-foreground/90">
-                          {line}
-                        </p>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {result.rag_sources && result.rag_sources.length > 0 && (
-              <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
-                <CardContent className="pt-6">
-                  <SourceCitations sources={result.rag_sources} />
-                </CardContent>
-              </Card>
-            )}
-
-            <div className="text-center">
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <Button
                 variant="outline"
-                onClick={handleReset}
+                onClick={handleSave}
                 className="border-element/50 text-element hover:bg-element/10"
               >
-                重新占卜
+                💾 存入记忆
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleShare}
+                className="border-element/50 text-element hover:bg-element/10"
+              >
+                🔗 复制分享链接
               </Button>
             </div>
+            {feedback && (
+              <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>
+            )}
+            <YijingResultView result={result} onReset={handleReset} />
           </div>
         )}
       </div>

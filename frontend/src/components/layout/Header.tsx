@@ -10,11 +10,13 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import SettingsDialog from './SettingsDialog';
+import { getHistory } from '@/lib/historyStore';
 
 const navLinks = [
   { path: '/', label: '首页' },
   { path: '/bazi', label: '八字排盘' },
   { path: '/yijing', label: '易经占卜' },
+  { path: '/history', label: '记忆' },
   { path: '/about', label: '关于' },
 ];
 
@@ -26,6 +28,8 @@ export default function Header() {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
   };
+
+  const historyCount = getHistory().length;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-element/25 bg-[#0a0710]/80 backdrop-blur-md pt-[env(safe-area-inset-top)]">
@@ -52,6 +56,11 @@ export default function Header() {
                 }
               >
                 {link.label}
+                {link.path === '/history' && historyCount > 0 && (
+                  <span className="ml-1 rounded-full bg-element/20 px-1.5 text-[10px] text-element">
+                    {historyCount}
+                  </span>
+                )}
               </Button>
             </Link>
           ))}
@@ -88,6 +97,11 @@ export default function Header() {
                       }
                     >
                       {link.label}
+                      {link.path === '/history' && historyCount > 0 && (
+                        <span className="ml-1 rounded-full bg-element/20 px-1.5 text-[10px] text-element">
+                          {historyCount}
+                        </span>
+                      )}
                     </Button>
                   </Link>
                 ))}
