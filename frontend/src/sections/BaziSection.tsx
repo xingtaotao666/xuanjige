@@ -291,7 +291,7 @@ export default function BaziSection() {
             {feedback && (
               <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>
             )}
-            <BaziResultView result={result} onReset={handleReset} />
+            <BaziResultView result={result} onReset={handleReset} unlockKey={makeRecordKey('bazi', buildInput())} />
           </div>
         )}
       </div>

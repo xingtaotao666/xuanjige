@@ -2,14 +2,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import GuaDisplay from '@/components/yijing/GuaDisplay';
 import SourceCitations from '@/components/rag/SourceCitations';
+import PayWall from '@/components/payment/PayWall';
 import type { DivinateResponse } from '@/types';
 
 export default function YijingResultView({
   result,
   onReset,
+  unlockKey,
 }: {
   result: DivinateResponse;
   onReset?: () => void;
+  unlockKey?: string;
 }) {
   return (
     <div className="space-y-8 animate-rise">
@@ -24,7 +27,8 @@ export default function YijingResultView({
       </Card>
 
       {result.llm_interpretation && (
-        <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
+        <PayWall unlockKey={unlockKey}>
+          <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-kai text-lg text-gold">
               <span>🤖</span> AI 解卦
@@ -73,7 +77,8 @@ export default function YijingResultView({
               })}
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </PayWall>
       )}
 
       {result.rag_sources && result.rag_sources.length > 0 && (

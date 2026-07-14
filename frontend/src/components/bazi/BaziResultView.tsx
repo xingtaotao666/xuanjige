@@ -6,6 +6,7 @@ import PillarDisplay from '@/components/bazi/PillarDisplay';
 import WuXingChart from '@/components/bazi/WuXingChart';
 import ShiShenTable from '@/components/bazi/ShiShenTable';
 import SourceCitations from '@/components/rag/SourceCitations';
+import PayWall from '@/components/payment/PayWall';
 import type { BaziAnalyzeResponse, ShenSha, DaYunPeriod } from '@/types';
 
 function ShenShaBadges({ shensha }: { shensha: ShenSha[] }) {
@@ -68,9 +69,11 @@ function DaYunTimeline({ dayun }: { dayun: DaYunPeriod[] }) {
 export default function BaziResultView({
   result,
   onReset,
+  unlockKey,
 }: {
   result: BaziAnalyzeResponse;
   onReset?: () => void;
+  unlockKey?: string;
 }) {
   return (
     <div className="space-y-8 animate-rise">
@@ -151,74 +154,76 @@ export default function BaziResultView({
         </TabsContent>
       </Tabs>
 
-      {/* AI 解读 */}
+      {/* AI 解读 — 付费解锁 */}
       {result.llm_interpretation && (
-        <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-kai text-lg text-gold">
-              <span>🤖</span> AI 解读
-            </CardTitle>
-            <CardDescription className="text-muted-foreground">
-              大模型基于命理知识生成的个性化分析
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-invert prose-sm max-w-none prose-headings:text-gold prose-p:text-foreground/90 prose-strong:text-element prose-li:text-foreground/90">
-              {result.llm_interpretation.split('\n').map((line, i) => {
-                const trimmed = line.trim();
-                if (/^[一二三四五六七八九十]+、/.test(trimmed) || /^（[一二三四五六七八九十]+）/.test(trimmed)) {
+        <PayWall unlockKey={unlockKey}>
+          <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 font-kai text-lg text-gold">
+                <span>🤖</span> AI 解读
+              </CardTitle>
+              <CardDescription className="text-muted-foreground">
+                大模型基于命理知识生成的个性化分析
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-invert prose-sm max-w-none prose-headings:text-gold prose-p:text-foreground/90 prose-strong:text-element prose-li:text-foreground/90">
+                {result.llm_interpretation.split('\n').map((line, i) => {
+                  const trimmed = line.trim();
+                  if (/^[一二三四五六七八九十]+、/.test(trimmed) || /^（[一二三四五六七八九十]+）/.test(trimmed)) {
+                    return (
+                      <h3 key={i} className="mt-5 mb-2 flex items-center gap-2 text-base font-bold text-gold">
+                        <span className="inline-block h-4 w-1 rounded bg-element" />
+                        {trimmed}
+                      </h3>
+                    );
+                  }
+                  if (/^\d+[\.、]/.test(trimmed)) {
+                    return (
+                      <h4 key={i} className="mt-4 mb-1 text-sm font-semibold text-gold/90">
+                        {trimmed}
+                      </h4>
+                    );
+                  }
+                  if (line.startsWith('## ')) {
+                    return (
+                      <h2 key={i} className="mt-4 mb-2 text-base font-bold text-gold">
+                        {line.replace('## ', '')}
+                      </h2>
+                    );
+                  }
+                  if (line.startsWith('# ')) {
+                    return (
+                      <h1 key={i} className="mt-5 mb-3 text-lg font-bold text-element">
+                        {line.replace('# ', '')}
+                      </h1>
+                    );
+                  }
+                  if (line.startsWith('### ')) {
+                    return (
+                      <h3 key={i} className="mt-3 mb-1 text-sm font-semibold text-gold/80">
+                        {line.replace('### ', '')}
+                      </h3>
+                    );
+                  }
+                  if (line.startsWith('- ') || line.startsWith('* ')) {
+                    return (
+                      <li key={i} className="ml-4 text-sm text-foreground/90 list-disc">
+                        {line.replace(/^[-*]\s+/, '')}
+                      </li>
+                    );
+                  }
+                  if (trimmed === '') return <br key={i} />;
                   return (
-                    <h3 key={i} className="mt-5 mb-2 flex items-center gap-2 text-base font-bold text-gold">
-                      <span className="inline-block h-4 w-1 rounded bg-element" />
-                      {trimmed}
-                    </h3>
+                    <p key={i} className="text-sm leading-relaxed text-foreground/90">
+                      {line}
+                    </p>
                   );
-                }
-                if (/^\d+[\.、]/.test(trimmed)) {
-                  return (
-                    <h4 key={i} className="mt-4 mb-1 text-sm font-semibold text-gold/90">
-                      {trimmed}
-                    </h4>
-                  );
-                }
-                if (line.startsWith('## ')) {
-                  return (
-                    <h2 key={i} className="mt-4 mb-2 text-base font-bold text-gold">
-                      {line.replace('## ', '')}
-                    </h2>
-                  );
-                }
-                if (line.startsWith('# ')) {
-                  return (
-                    <h1 key={i} className="mt-5 mb-3 text-lg font-bold text-element">
-                      {line.replace('# ', '')}
-                    </h1>
-                  );
-                }
-                if (line.startsWith('### ')) {
-                  return (
-                    <h3 key={i} className="mt-3 mb-1 text-sm font-semibold text-gold/80">
-                      {line.replace('### ', '')}
-                    </h3>
-                  );
-                }
-                if (line.startsWith('- ') || line.startsWith('* ')) {
-                  return (
-                    <li key={i} className="ml-4 text-sm text-foreground/90 list-disc">
-                      {line.replace(/^[-*]\s+/, '')}
-                    </li>
-                  );
-                }
-                if (trimmed === '') return <br key={i} />;
-                return (
-                  <p key={i} className="text-sm leading-relaxed text-foreground/90">
-                    {line}
-                  </p>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </PayWall>
       )}
 
       {/* 引用古籍 */}

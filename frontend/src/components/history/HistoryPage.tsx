@@ -177,9 +177,9 @@ export default function HistoryPage() {
                   {isOpen && (
                     <div className="animate-rise">
                       {rec.type === 'bazi' ? (
-                        <BaziResultView result={rec.result as BaziAnalyzeResponse} />
+                        <BaziResultView result={rec.result as BaziAnalyzeResponse} unlockKey={rec.key} />
                       ) : (
-                        <YijingResultView result={rec.result as DivinateResponse} />
+                        <YijingResultView result={rec.result as DivinateResponse} unlockKey={rec.key} />
                       )}
                     </div>
                   )}

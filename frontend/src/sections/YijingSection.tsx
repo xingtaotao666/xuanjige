@@ -402,7 +402,7 @@ export default function YijingSection() {
             {feedback && (
               <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>
             )}
-            <YijingResultView result={result} onReset={handleReset} />
+            <YijingResultView result={result} onReset={handleReset} unlockKey={makeRecordKey('yijing', buildInput())} />
           </div>
         )}
       </div>
