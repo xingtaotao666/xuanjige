@@ -392,9 +392,9 @@ export default function YijingSection() {
                 💾 存入记忆
               </Button>
               <Button
-                variant="outline"
+                variant="default"
                 onClick={handleShare}
-                className="border-element/50 text-element hover:bg-element/10"
+                className="bg-element text-void shadow-glow-md transition hover:bg-element/80"
               >
                 🔗 复制分享链接
               </Button>

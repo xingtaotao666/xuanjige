@@ -7,6 +7,7 @@ import YijingResultView from '@/components/yijing/YijingResultView';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { buildShareUrl, type SharePayload, type HistoryRecord } from '@/lib/historyStore';
 import type { BaziAnalyzeResponse, DivinateResponse } from '@/types';
 
 function formatDate(ts: number): string {
@@ -26,7 +27,26 @@ function formatDate(ts: number): string {
 export default function HistoryPage() {
   const { records, remove, clear } = useHistory();
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [shareFeedback, setShareFeedback] = useState('');
   const { setElement } = useTheme();
+
+  const handleShareRecord = async (rec: HistoryRecord) => {
+    const payload: SharePayload = {
+      v: 1,
+      type: rec.type,
+      createdAt: rec.createdAt,
+      input: rec.input,
+      result: rec.result,
+    };
+    const url = buildShareUrl(payload);
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareFeedback(`${rec.type === 'bazi' ? '八字命盘' : '易经卦象'}分享链接已复制 ✦`);
+    } catch {
+      setShareFeedback('复制失败，可手动复制当前页地址分享');
+    }
+    setTimeout(() => setShareFeedback(''), 3000);
+  };
 
   // 展开某条八字记录时，联动全站五行主题
   useEffect(() => {
@@ -95,6 +115,9 @@ export default function HistoryPage() {
           </Card>
         ) : (
           <div className="space-y-4">
+            {shareFeedback && (
+              <p className="text-center text-sm text-gold/90 animate-rise">{shareFeedback}</p>
+            )}
             {records.map((rec) => {
               const isOpen = expanded === rec.id;
               return (
@@ -125,6 +148,14 @@ export default function HistoryPage() {
                           className="text-element hover:bg-element/10"
                         >
                           {isOpen ? '收起' : '查看'}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleShareRecord(rec)}
+                          className="text-element hover:bg-element/10"
+                        >
+                          分享
                         </Button>
                         <Button
                           variant="ghost"
