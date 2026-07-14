@@ -1,0 +1,20 @@
+name = "xuanjige-payment"
+main = "payment-worker.js"
+compatibility_date = "2025-01-01"
+
+# KV Namespace 用于存储订单状态
+# 1. 在 Cloudflare Dashboard 中创建 KV namespace（如 xuanjige-payment-kv）
+# 2. 在此配置绑定
+# kv_namespaces = [
+#   { binding = "PAYMENT_KV", id = "你的-kv-namespace-id" }
+# ]
+
+# 环境变量（实际值在 Cloudflare Dashboard → Settings → Variables 中设置，不要在这里提交敏感信息）
+# [vars]
+# WECHAT_APPID = ""
+# WECHAT_MCHID = ""
+# WECHAT_API_V3_KEY = ""
+# WECHAT_SERIAL_NO = ""
+# WECHAT_PRIVATE_KEY = ""  # PEM 格式多行密钥，在 Dashboard 的 Secrets 中设置
+# NOTIFY_URL = ""
+# PAY_PRICE = "50"
