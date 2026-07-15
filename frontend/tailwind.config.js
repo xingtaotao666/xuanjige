@@ -164,6 +164,31 @@ module.exports = {
           "0%, 100%": { boxShadow: "0 0 5px rgba(212, 168, 67, 0.5)" },
           "50%": { boxShadow: "0 0 20px rgba(212, 168, 67, 0.8), 0 0 40px rgba(212, 168, 67, 0.4)" },
         },
+        // 塔罗仪式动画
+        "shuffle-card": {
+          "0%": { transform: "translateX(0) rotate(0deg)" },
+          "15%": { transform: "translateX(-6px) rotate(-3deg)" },
+          "30%": { transform: "translateX(8px) rotate(4deg)" },
+          "45%": { transform: "translateX(-4px) rotate(-2deg)" },
+          "60%": { transform: "translateX(6px) rotate(2deg)" },
+          "75%": { transform: "translateX(-2px) rotate(-1deg)" },
+          "90%": { transform: "translateX(2px) rotate(1deg)" },
+          "100%": { transform: "translateX(0) rotate(0deg)" },
+        },
+        "deck-float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+        },
+        "card-flip": {
+          "0%": { transform: "rotateY(0deg) scale(1)" },
+          "50%": { transform: "rotateY(90deg) scale(1.05)" },
+          "100%": { transform: "rotateY(180deg) scale(1)" },
+        },
+        "card-fly": {
+          "0%": { transform: "translate(0, 0) scale(0.6)", opacity: "0" },
+          "50%": { opacity: "1" },
+          "100%": { transform: "translate(var(--fly-x, 0), var(--fly-y, 0)) scale(1)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -181,6 +206,10 @@ module.exports = {
         "rise": "rise 0.7s ease-out both",
         "fade-in": "fade-in 0.8s ease-out both",
         "pulse-glow": "pulse-glow 1.5s ease-in-out infinite",
+        "shuffle-card": "shuffle-card 0.6s linear infinite",
+        "deck-float": "deck-float 2s ease-in-out infinite",
+        "card-flip": "card-flip 0.8s ease-in-out forwards",
+        "card-fly": "card-fly 0.5s ease-out forwards",
       },
     },
   },

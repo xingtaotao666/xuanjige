@@ -186,6 +186,51 @@
   }
 }
 
+/* 塔罗卡牌 3D 翻转 */
+.card-perspective {
+  perspective: 1200px;
+}
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s ease-in-out;
+}
+.card-front,
+.card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+.card-front {
+  transform: rotateY(180deg);
+}
+.card-flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+/* 塔罗牌背图案 */
+.tarot-back {
+  background: linear-gradient(135deg, #1a0f2e 0%, #2a1844 50%, #1a0f2e 100%);
+  border: 2px solid rgba(212, 168, 67, 0.4);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tarot-back::after {
+  content: '✦';
+  font-size: 2rem;
+  color: rgba(212, 168, 67, 0.3);
+}
+
+/* 牌叠层叠 */
+.card-stack-layer {
+  position: absolute;
+  border-radius: 0.75rem;
+}
+
 /* 无障碍：尊重系统的「减少动效」偏好 */
 @media (prefers-reduced-motion: reduce) {
   .animate-orbit,
@@ -200,6 +245,10 @@
   .animate-rise,
   .animate-fade-in,
   .animate-pulse-glow,
+  .animate-shuffle-card,
+  .animate-deck-float,
+  .animate-card-flip,
+  .animate-card-fly,
   .app-bg::before {
     animation: none !important;
   }
