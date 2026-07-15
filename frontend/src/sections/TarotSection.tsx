@@ -63,6 +63,8 @@ export default function TarotSection() {
 
   // — 3×3 抽牌矩阵 —
   const [gridCards, setGridCards] = useState<TarotCardPlacement[]>([]);
+  /** 当前正在"显示内容"的位置集合（点击后短暂保留，约 800ms 后随牌一起移除） */
+  const [flippingPositions, setFlippingPositions] = useState<Set<number>>(new Set());
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [selectionStep, setSelectionStep] = useState(0);
   const remainingDeckRef = useRef<TarotCardPlacement[]>([]);
@@ -107,6 +109,7 @@ export default function TarotSection() {
     setCutting(false);
     setCutDone(false);
     setGridCards([]);
+    setFlippingPositions(new Set());
     setSelectedIndices([]);
     setSelectionStep(0);
     remainingDeckRef.current = [];
@@ -162,66 +165,82 @@ export default function TarotSection() {
       orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
     }));
     setGridCards(grid);
+    setFlippingPositions(new Set());
     setSelectedIndices([]);
     setSelectionStep(0);
     setRevealed(new Set());
     setStep('draw');
   };
 
-  /** 选中一张牌 → 翻转动画 → 移除格子 + 替换新牌 */
+  /** 选中一张牌：
+   *  1) 立即翻转显示牌面内容（300ms 内）
+   *  2) 800ms 后从格子里"跳走"，格子补充一张新牌
+   */
   const selectGridCard = (gridIdx: number) => {
     const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
-    if (selectedIndices.includes(gridIdx)) return;
+    if (flippingPositions.has(gridIdx) || selectedIndices.includes(gridIdx)) return;
     if (selectionStep >= positions.length) return;
 
     const nextStep = selectionStep + 1;
+    // 阶段 1：标记为正在翻转（显示牌面）
+    setFlippingPositions((prev) => {
+      const n = new Set(prev);
+      n.add(gridIdx);
+      return n;
+    });
     setSelectedIndices((prev) => [...prev, gridIdx]);
     setSelectionStep(nextStep);
 
-    // 延迟后把该格子替换为一张新牌（"跳走"效果）
-    if (nextStep < positions.length) {
-      setTimeout(() => {
-        setGridCards((prev) => {
-          const next = [...prev];
-          const remain = remainingDeckRef.current;
-          if (remain.length > 0) {
-            next[gridIdx] = remain.splice(0, 1)[0];
-            remainingDeckRef.current = remain;
-          } else {
-            // 剩余牌堆空了，从整副牌中排除已选牌重新补充
-            const used = new Set(selectedIndices.map((idx) => gridCards[idx]?.card?.number).filter(Boolean));
-            const pool = ALL_TAROT_CARDS.filter((c) => !used.has(c.number));
-            const fresh = shuffle(pool).map((card) => ({
-              position: '',
-              card,
-              orientation: Math.random() < 0.5 ? ('upright' as const) : ('reversed' as const),
-            }));
-            remainingDeckRef.current = fresh.slice(1);
-            next[gridIdx] = fresh[0];
-          }
-          return next;
-        });
-      }, 500);
-    }
+    // 阶段 2：800ms 后跳走 + 补新牌
+    setTimeout(() => {
+      setFlippingPositions((prev) => {
+        const n = new Set(prev);
+        n.delete(gridIdx);
+        return n;
+      });
+      setGridCards((prev) => {
+        const next = [...prev];
+        const remain = remainingDeckRef.current;
+        if (remain.length > 0) {
+          next[gridIdx] = remain.splice(0, 1)[0];
+          remainingDeckRef.current = remain;
+        } else {
+          // 剩余牌堆空了，从整副牌中排除已选牌重新补充
+          const used = new Set(
+            selectedIndices.map((idx) => gridCards[idx]?.card?.number).filter(Boolean),
+          );
+          const pool = ALL_TAROT_CARDS.filter((c) => !used.has(c.number));
+          const fresh = shuffle(pool).map((card) => ({
+            position: '',
+            card,
+            orientation: Math.random() < 0.5 ? ('upright' as const) : ('reversed' as const),
+          }));
+          remainingDeckRef.current = fresh.slice(1);
+          next[gridIdx] = fresh[0];
+        }
+        return next;
+      });
+    }, 800);
 
     // 选满后进入翻牌
     if (nextStep >= positions.length) {
-      setTimeout(() => setStep('reveal'), 800);
+      setTimeout(() => setStep('reveal'), 1200);
     }
   };
 
-  /** 换一批 */
+  /** 换一批：未选中的牌格从剩余牌堆中重新填充 */
   const reshuffleGrid = () => {
     if (selectionStep >= (SPREAD_POSITIONS[spread] || []).length) return;
 
-    // 先触发动画
     setReshuffling(true);
     setTimeout(() => {
       setReshuffling(false);
 
       const remain = remainingDeckRef.current;
       if (remain.length === 0) {
-        const used = new Set(selectedIndices.map((idx) => gridCards[idx]?.card?.number).filter(Boolean));
+        const used = new Set(
+          selectedIndices.map((idx) => gridCards[idx]?.card?.number).filter(Boolean),
+        );
         const pool = ALL_TAROT_CARDS.filter((c) => !used.has(c.number));
         const fresh = shuffle(pool).map((card) => ({
           position: '',
@@ -235,7 +254,10 @@ export default function TarotSection() {
         const next = [...prev];
         const toReplace: number[] = [];
         for (let i = 0; i < next.length; i++) {
-          if (!selectedIndices.includes(i)) toReplace.push(i);
+          // 只替换未在 flipping 状态的格子
+          if (!flippingPositions.has(i) && !selectedIndices.includes(i)) {
+            toReplace.push(i);
+          }
         }
         const r = remainingDeckRef.current;
         const takeCount = Math.min(toReplace.length, r.length);
@@ -532,10 +554,10 @@ export default function TarotSection() {
         )}
 
         {/* ================================================================
-            STEP 6: 抽牌 — 3×3 矩阵 + 选后跳转到已选区
+            STEP 6: 抽牌 — 3×3 矩阵 + 选牌后翻转显示内容再跳转
             ================================================================ */}
         {step === 'draw' && gridCards.length > 0 && (
-          <div className="flex flex-col items-center gap-6">
+          <div className="flex flex-col items-center gap-5">
             <div className="text-center">
               <p className="font-kai text-lg text-gold/90">凭直觉选牌</p>
               <p className="text-xs text-muted-foreground/70">
@@ -546,27 +568,34 @@ export default function TarotSection() {
             {/* 3×3 矩阵 */}
             <div className="grid grid-cols-3 gap-3 sm:gap-4">
               {gridCards.map((card, gridIdx) => {
-                const isSelected = selectedIndices.includes(gridIdx);
-                const isFresh = !isSelected && selectionStep < needTotal;
+                const isFlipping = flippingPositions.has(gridIdx);
+                const isFresh = !isFlipping && !selectedIndices.includes(gridIdx) && selectionStep < needTotal;
 
                 return (
-                  <div key={gridIdx} className={`flex flex-col items-center gap-1 transition-all duration-500 ${
-                    isSelected ? 'animate-rise opacity-0 scale-75 pointer-events-none' : ''
-                  }`}>
+                  <div
+                    key={gridIdx}
+                    className={`flex flex-col items-center gap-1 transition-all duration-500 ${
+                      isFlipping ? 'scale-110 z-10' : 'scale-100'
+                    }`}
+                  >
                     <button
                       onClick={() => selectGridCard(gridIdx)}
                       disabled={!isFresh}
                       className={`card-perspective h-32 w-22 sm:h-40 sm:w-28 transition-all duration-300 ${
                         isFresh
                           ? 'cursor-pointer hover:scale-105 hover:shadow-glow-lg'
-                          : 'cursor-default'
-                      } ${reshuffling && isFresh ? 'animate-pulse-glow scale-105' : ''}`}
+                          : isFlipping
+                            ? 'cursor-default shadow-glow-lg'
+                            : 'cursor-default'
+                      } ${reshuffling && isFresh ? 'animate-pulse-glow' : ''}`}
                     >
-                      <div className="card-inner h-full w-full">
+                      <div className={`card-inner h-full w-full ${isFlipping ? 'card-flipped' : ''}`}>
+                        {/* 背面 */}
                         <div className="card-back tarot-back flex items-center justify-center rounded-xl border border-element/20">
                           <span className="font-kai text-xs text-gold/50">?</span>
                         </div>
-                        <div className="card-front flex items-center justify-center rounded-xl border border-element/30 bg-card p-1 sm:p-2">
+                        {/* 正面（翻转时显示） */}
+                        <div className="card-front flex items-center justify-center rounded-xl border border-element/40 bg-card p-1 sm:p-2 shadow-glow-md">
                           <div className="text-center">
                             <div className="text-[10px] sm:text-sm font-kai font-bold text-gold leading-tight">
                               {card.card.nameCn}
@@ -583,28 +612,7 @@ export default function TarotSection() {
               })}
             </div>
 
-            {/* 已选区 — 选中的牌跳转到这里 */}
-            {selectedIndices.length > 0 && (
-              <div className="flex flex-wrap justify-center gap-3 animate-rise w-full">
-                {selectedIndices.map((gridIdx, i) => {
-                  const c = gridCards[gridIdx];
-                  if (!c) return null;
-                  return (
-                    <div key={gridIdx} className="flex flex-col items-center gap-1">
-                      <div className="flex h-24 w-16 sm:h-28 sm:w-20 items-center justify-center rounded-lg border border-element/30 bg-card/80 p-1 text-center shadow-glow-sm">
-                        <div>
-                          <p className="text-[10px] sm:text-xs font-bold text-gold leading-tight">{c.card.nameCn}</p>
-                          <p className="text-[7px] sm:text-[9px] text-muted-foreground">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
-                        </div>
-                      </div>
-                      <span className="text-[9px] text-element">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* 换一批 */}
+            {/* 换一批按钮（移到网格下方、已选区上方，常驻可见） */}
             {selectionStep < needTotal && (
               <Button
                 variant="outline"
@@ -612,15 +620,41 @@ export default function TarotSection() {
                 disabled={reshuffling}
                 className="border-element/50 text-element hover:bg-element/10 font-kai"
               >
-                {reshuffling ? '🔄 重新洗牌中…' : '🔄 换一批'}
+                {reshuffling ? '🔄 正在重新洗牌…' : '🔄 换一批'}
               </Button>
             )}
 
-            {/* 进度 */}
+            {/* 已选区 — 选中的牌跳转到这里 */}
+            {selectedIndices.length > 0 && (
+              <div className="w-full rounded-xl border border-element/20 bg-card/30 p-4 backdrop-blur-sm">
+                <p className="mb-2 text-center text-[11px] text-element/70 font-kai">✦ 已选 {selectedIndices.length}/{needTotal} 张 ✦</p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {selectedIndices.map((gridIdx, i) => {
+                    const c = gridCards[gridIdx];
+                    if (!c) return null;
+                    return (
+                      <div key={`${gridIdx}-${i}`} className="flex flex-col items-center gap-0.5 animate-rise">
+                        <div className="flex h-20 w-14 sm:h-24 sm:w-16 items-center justify-center rounded-lg border border-element/30 bg-card/80 p-1 text-center shadow-glow-sm">
+                          <div>
+                            <p className="text-[9px] sm:text-[10px] font-bold text-gold leading-tight">{c.card.nameCn}</p>
+                            <p className="text-[7px] sm:text-[8px] text-muted-foreground">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
+                          </div>
+                        </div>
+                        <span className="text-[8px] sm:text-[9px] text-element">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 进度条 */}
             <div className="flex w-full max-w-xs items-center gap-2">
               <div className="h-1 flex-1 overflow-hidden rounded-full bg-card/60">
-                <div className="h-full rounded-full bg-element transition-all duration-500"
-                  style={{ width: `${(selectionStep / needTotal) * 100}%` }} />
+                <div
+                  className="h-full rounded-full bg-element transition-all duration-500"
+                  style={{ width: `${(selectionStep / needTotal) * 100}%` }}
+                />
               </div>
               <span className="text-xs text-muted-foreground/70">{selectionStep}/{needTotal}</span>
             </div>
