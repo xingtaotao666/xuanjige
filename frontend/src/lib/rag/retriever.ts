@@ -80,9 +80,20 @@ async function loadChunks(): Promise<Chunk[]> {
   return _chunksPromise;
 }
 
-/** 关键词检索，返回最相关片段。 */
-export async function searchRag(query: string, n = 5): Promise<RagSource[]> {
-  const chunks = await loadChunks();
+/** 关键词检索，返回最相关片段。
+ *  @param query 搜索关键词
+ *  @param n 返回条数
+ *  @param bookFilter 可选，只搜索指定来源（如 ['塔罗入门']），不传则搜索全部
+ */
+export async function searchRag(
+  query: string,
+  n = 5,
+  bookFilter?: string[],
+): Promise<RagSource[]> {
+  const allChunks = await loadChunks();
+  const chunks = bookFilter
+    ? allChunks.filter((c) => bookFilter.includes(c.book))
+    : allChunks;
   const keywords = tokenizeQuery(query);
   if (keywords.length === 0) return [];
 

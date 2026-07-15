@@ -51,7 +51,7 @@ export async function tarotDivinate(
   if (with_rag) {
     onStage?.({ stage: 'rag', message: '🔍 正在检索塔罗经典知识库…' });
     const ragQuery = buildRagQuery(question, tarot.cards);
-    ragSources = await searchRag(ragQuery, 5);
+    ragSources = await searchRag(ragQuery, 5, ['塔罗入门']);
   }
 
   // 3. LLM 解读
