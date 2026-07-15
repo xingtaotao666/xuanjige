@@ -63,6 +63,7 @@ export default function TarotSection() {
   const [gridCards, setGridCards] = useState<TarotCardPlacement[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [selectionStep, setSelectionStep] = useState(0); // 当前选的是第几张
+  const remainingDeckRef = useRef<TarotCardPlacement[]>([]); // 剩余牌堆，每次选完补充新牌
 
   // — 最终确定的手牌（按选中顺序） —
   const drawnCards = useMemo(() => {
@@ -97,6 +98,7 @@ export default function TarotSection() {
     setGridCards([]);
     setSelectedIndices([]);
     setSelectionStep(0);
+    remainingDeckRef.current = [];
     setRevealed(new Set());
   };
 
@@ -117,8 +119,14 @@ export default function TarotSection() {
         setCutting(false);
 
         // 切牌完成 → 准备 3×3 牌矩阵
-                const shuffled = shuffle(ALL_TAROT_CARDS);
+        const shuffled = shuffle(ALL_TAROT_CARDS);
         const grid: TarotCardPlacement[] = shuffled.slice(0, 9).map((card) => ({
+          position: '',
+          card,
+          orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
+        }));
+        // 剩下的牌存起来，每次选完补充新牌
+        remainingDeckRef.current = shuffle(shuffled.slice(9)).map((card) => ({
           position: '',
           card,
           orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
@@ -132,14 +140,38 @@ export default function TarotSection() {
     }, 3000);
   };
 
-  /** 从 3×3 矩阵中选择一张牌 */
+  /** 从 3×3 矩阵中选择一张牌，然后刷新剩余位置的牌面 */
   const selectGridCard = (gridIdx: number) => {
     const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
     if (selectedIndices.includes(gridIdx)) return; // 已选
     if (selectionStep >= positions.length) return; // 已选满
 
-    setSelectedIndices((prev) => [...prev, gridIdx]);
+    // 计算更新后的选中集合（包含本次点击）
+    const updatedSelected = [...selectedIndices, gridIdx];
+    setSelectedIndices(updatedSelected);
     const nextStep = selectionStep + 1;
+
+    // 刷新未选中的牌格：从剩余牌堆中抽新牌替换
+    const remaining = remainingDeckRef.current;
+    if (remaining.length > 0) {
+      setGridCards((prev) => {
+        const next = [...prev];
+        // 为每个未选中的位置换上新鲜牌（用 updatedSelected 保证正确）
+        const toReplace: number[] = [];
+        for (let i = 0; i < next.length; i++) {
+          if (!updatedSelected.includes(i)) {
+            toReplace.push(i);
+          }
+        }
+        const takeCount = Math.min(toReplace.length, remaining.length);
+        const fresh = remaining.splice(0, takeCount);
+        remainingDeckRef.current = remaining;
+        for (let j = 0; j < takeCount; j++) {
+          next[toReplace[j]] = fresh[j];
+        }
+        return next;
+      });
+    }
 
     // 选满后短暂延迟进入翻牌
     if (nextStep >= positions.length) {
