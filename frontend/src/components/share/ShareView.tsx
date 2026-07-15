@@ -4,9 +4,10 @@ import { decodeShare } from '@/lib/historyStore';
 import { useTheme, dominantElement } from '@/components/ThemeProvider';
 import BaziResultView from '@/components/bazi/BaziResultView';
 import YijingResultView from '@/components/yijing/YijingResultView';
+import TarotResultView from '@/components/tarot/TarotResultView';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import type { BaziAnalyzeResponse, DivinateResponse } from '@/types';
+import type { BaziAnalyzeResponse, DivinateResponse, TarotAnalyzeResponse } from '@/types';
 
 export default function ShareView() {
   const [params] = useSearchParams();
@@ -49,6 +50,7 @@ export default function ShareView() {
   }
 
   const isBazi = payload.type === 'bazi';
+  const isYijing = payload.type === 'yijing';
 
   return (
     <section className="relative min-h-screen py-24">
@@ -58,7 +60,7 @@ export default function ShareView() {
         {/* 分享横幅 */}
         <div className="mb-8 animate-rise rounded-xl border border-element/30 bg-card/60 px-6 py-5 text-center backdrop-blur-sm">
           <p className="font-kai text-lg text-gold title-glow">
-            🌟 这是朋友通过「玄机阁」分享给你的命理结果
+            🌟 这是朋友通过「玄机阁」分享给你的{isBazi ? '命理' : isYijing ? '占卜' : '塔罗'}结果
           </p>
           <p className="mt-2 text-xs text-muted-foreground/80">
             内容由 AI 结合传统命理学生成，仅供娱乐与参考
@@ -67,8 +69,10 @@ export default function ShareView() {
 
         {isBazi ? (
           <BaziResultView result={payload.result as BaziAnalyzeResponse} />
-        ) : (
+        ) : isYijing ? (
           <YijingResultView result={payload.result as DivinateResponse} />
+        ) : (
+          <TarotResultView result={payload.result as TarotAnalyzeResponse} />
         )}
 
         {/* 行动召唤 */}
@@ -84,6 +88,14 @@ export default function ShareView() {
               className="border-element/50 text-element hover:bg-element/10"
             >
               我也来占一卦
+            </Button>
+          </Link>
+          <Link to="/tarot">
+            <Button
+              variant="outline"
+              className="border-element/50 text-element hover:bg-element/10"
+            >
+              我也来抽塔罗
             </Button>
           </Link>
           <Link to="/">

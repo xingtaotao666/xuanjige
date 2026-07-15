@@ -5,7 +5,7 @@
 // 的 VITE_DEEPSEEK_API_KEY（部署时通过环境变量设置，避免硬编码进仓库）。
 // 无 Key 或请求失败时自动降级为规则式回应。
 
-export type LlmKind = 'bazi' | 'yijing' | 'consult';
+export type LlmKind = 'bazi' | 'yijing' | 'tarot' | 'consult';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -119,6 +119,14 @@ function fallbackResponse(messages: ChatMessage[], kind: LlmKind): string {
       '当前已完成四柱八字排盘、十神、五行强弱、神煞与大运计算，可在上方各标签页查看。\n\n' +
       '如需结合古籍文献的个性化命理解读，请在右上角「设置」中填入 DeepSeek API Key，' +
       '即可启用 AI 命理师解读。'
+    );
+  }
+  if (kind === 'tarot' || user.includes('塔罗') || user.includes('牌阵')) {
+    return (
+      '塔罗参考解读（AI 解读服务暂未配置 API Key）：\n\n' +
+      '当前已完成塔罗牌阵抽取，可在上方查看各张牌的牌面与位置含义。\n\n' +
+      '如需结合您具体问题的深度心灵解读，请在右上角「设置」中填入 DeepSeek API Key，' +
+      '即可启用 AI 塔罗大师解牌。'
     );
   }
   return (

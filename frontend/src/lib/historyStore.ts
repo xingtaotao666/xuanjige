@@ -1,9 +1,9 @@
 // 本地记忆（localStorage）与分享链接（URL 编码）的核心库
 // 所有数据均保存在用户本机浏览器，不经过任何服务器。
 
-import type { BaziAnalyzeResponse, DivinateResponse } from '@/types';
+import type { BaziAnalyzeResponse, DivinateResponse, TarotAnalyzeResponse } from '@/types';
 
-export type RecordType = 'bazi' | 'yijing';
+export type RecordType = 'bazi' | 'yijing' | 'tarot';
 
 export interface BaziInputSnapshot {
   birth_year: number;
@@ -35,7 +35,7 @@ export interface HistoryRecord {
   /** 列表展示标题 */
   title: string;
   input: InputSnapshot;
-  result: BaziAnalyzeResponse | DivinateResponse;
+  result: BaziAnalyzeResponse | DivinateResponse | TarotAnalyzeResponse;
 }
 
 export interface SharePayload {
@@ -43,7 +43,7 @@ export interface SharePayload {
   type: RecordType;
   createdAt: number;
   input: InputSnapshot;
-  result: BaziAnalyzeResponse | DivinateResponse;
+  result: BaziAnalyzeResponse | DivinateResponse | TarotAnalyzeResponse;
 }
 
 const HISTORY_KEY = 'xuanjige:history:v1';

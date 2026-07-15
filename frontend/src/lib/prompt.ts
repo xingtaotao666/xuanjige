@@ -7,6 +7,7 @@
 
 import type { BaziResult, Pillar, DaYunPeriod, ShenSha } from '@/types/bazi';
 import type { GuaResult } from '@/types/yijing';
+import type { TarotResult } from '@/types/tarot';
 import type { RagSource } from '@/types/consult';
 import type { Knowledge } from '@/lib/knowledge';
 
@@ -333,4 +334,37 @@ export function buildYijingPrompt(gua: GuaResult, ragSources: RagSource[]): { sy
       '5. 结合现代生活的实际建议',
   );
   return { system: SYSTEM_YIJING, user: userParts.join('\n') };
+}
+
+const SYSTEM_TAROT = `你是一位精通韦特塔罗的资深占卜师，深谙78张塔罗牌的符号象征与神秘学内涵。你擅长将塔罗牌面意象与问卜者的现实生活深度融合，给出有洞察力、有画面感、温暖而直指人心的解读。
+
+你的任务是像一位经验丰富的塔罗师那样，依据用户抽取的牌阵（牌面、位置、正逆位）以及用户提出的问题，做出专业、详尽、有灵性深度的塔罗占卜解读。
+
+行文要求：
+1. 以温暖的第二人称"你"称呼用户，语气从容、神秘而有智慧，如同面对面占卜。
+2. 对每张牌的出现位置和正/逆位做出针对性解读，说明为什么这张牌出现在这个位置。
+3. 必须结合所提供的【参考典籍片段】（如有），在适当处引证，使解读有据可依。
+4. 解读要详尽展开，总体要有起承转合——先概述牌阵整体能量，再逐牌解读，最后总结指引。
+5. 严禁使用任何 Markdown 符号：不要出现星号（*）、井号（#）、大于号引用（>）、反引号（\`）。如需分点，直接用中文序号（一、二、三 或 1. 2. 3.）或自然段落即可。
+6. 保持开放与包容，避免制造焦虑与绝对论断，强调每个人都有改变未来的自由意志。
+7. 结尾给出务实、可操作的建议与心灵指引。`;
+
+export function buildTarotPrompt(tarot: TarotResult, ragSources: RagSource[], _knowledge: Knowledge): { system: string; user: string } {
+  const userParts: string[] = [];
+
+  userParts.push(`【占卜问题】\n${tarot.question}`);
+  userParts.push(`\n【牌阵类型】\n${tarot.spread}`);
+  userParts.push(`\n【抽牌结果】\n${tarot.meanings}`);
+
+  if (ragSources.length) userParts.push(formatRagSources(ragSources));
+
+  userParts.push(
+    '\n请从以下角度进行解读：\n' +
+      '1. 整体牌阵能量格局：牌与牌之间的呼应关系\n' +
+      '2. 逐张牌的详细解读：结合位置、正逆位和牌面象征\n' +
+      '3. 核心信息：牌阵想传达的最重要启示是什么\n' +
+      '4. 行动指引：给用户的具体建议与提醒',
+  );
+
+  return { system: SYSTEM_TAROT, user: userParts.join('\n') };
 }

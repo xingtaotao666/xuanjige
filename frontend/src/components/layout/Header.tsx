@@ -16,6 +16,7 @@ const navLinks = [
   { path: '/', label: '首页' },
   { path: '/bazi', label: '八字排盘' },
   { path: '/yijing', label: '易经占卜' },
+  { path: '/tarot', label: '塔罗占卜' },
   { path: '/history', label: '记忆' },
   { path: '/about', label: '关于' },
 ];

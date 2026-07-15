@@ -1,0 +1,90 @@
+{
+  "type": "dizhi_canggan",
+  "description": "地支藏干表 - 每个地支暗藏的天干及其本气、中气、余气",
+  "dizhi_canggan": {
+    "子": {
+      "benqi": "癸",
+      "zhongqi": null,
+      "yuqi": null,
+      "list": ["癸"],
+      "description": "子藏癸水"
+    },
+    "丑": {
+      "benqi": "己",
+      "zhongqi": "癸",
+      "yuqi": "辛",
+      "list": ["己", "癸", "辛"],
+      "description": "丑藏己土（本气）、癸水（中气）、辛金（余气）"
+    },
+    "寅": {
+      "benqi": "甲",
+      "zhongqi": "丙",
+      "yuqi": "戊",
+      "list": ["甲", "丙", "戊"],
+      "description": "寅藏甲木（本气）、丙火（中气）、戊土（余气）"
+    },
+    "卯": {
+      "benqi": "乙",
+      "zhongqi": null,
+      "yuqi": null,
+      "list": ["乙"],
+      "description": "卯藏乙木"
+    },
+    "辰": {
+      "benqi": "戊",
+      "zhongqi": "乙",
+      "yuqi": "癸",
+      "list": ["戊", "乙", "癸"],
+      "description": "辰藏戊土（本气）、乙木（中气）、癸水（余气）"
+    },
+    "巳": {
+      "benqi": "丙",
+      "zhongqi": "戊",
+      "yuqi": "庚",
+      "list": ["丙", "戊", "庚"],
+      "description": "巳藏丙火（本气）、戊土（中气）、庚金（余气）"
+    },
+    "午": {
+      "benqi": "丁",
+      "zhongqi": "己",
+      "yuqi": null,
+      "list": ["丁", "己"],
+      "description": "午藏丁火（本气）、己土（中气）"
+    },
+    "未": {
+      "benqi": "己",
+      "zhongqi": "丁",
+      "yuqi": "乙",
+      "list": ["己", "丁", "乙"],
+      "description": "未藏己土（本气）、丁火（中气）、乙木（余气）"
+    },
+    "申": {
+      "benqi": "庚",
+      "zhongqi": "戊",
+      "yuqi": "壬",
+      "list": ["庚", "戊", "壬"],
+      "description": "申藏庚金（本气）、戊土（中气）、壬水（余气）"
+    },
+    "酉": {
+      "benqi": "辛",
+      "zhongqi": null,
+      "yuqi": null,
+      "list": ["辛"],
+      "description": "酉藏辛金"
+    },
+    "戌": {
+      "benqi": "戊",
+      "zhongqi": "辛",
+      "yuqi": "丁",
+      "list": ["戊", "辛", "丁"],
+      "description": "戌藏戊土（本气）、辛金（中气）、丁火（余气）"
+    },
+    "亥": {
+      "benqi": "壬",
+      "zhongqi": "甲",
+      "yuqi": null,
+      "list": ["壬", "甲"],
+      "description": "亥藏壬水（本气）、甲木（中气）"
+    }
+  }
+}

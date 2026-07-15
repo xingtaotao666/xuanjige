@@ -4,11 +4,12 @@ import { useHistory } from '@/hooks/useHistory';
 import { useTheme, dominantElement } from '@/components/ThemeProvider';
 import BaziResultView from '@/components/bazi/BaziResultView';
 import YijingResultView from '@/components/yijing/YijingResultView';
+import TarotResultView from '@/components/tarot/TarotResultView';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { buildShareUrl, type SharePayload, type HistoryRecord } from '@/lib/historyStore';
-import type { BaziAnalyzeResponse, DivinateResponse } from '@/types';
+import type { BaziAnalyzeResponse, DivinateResponse, TarotAnalyzeResponse } from '@/types';
 
 function formatDate(ts: number): string {
   try {
@@ -130,7 +131,7 @@ export default function HistoryPage() {
                             variant="secondary"
                             className="border border-element/30 bg-element/10 text-element"
                           >
-                            {rec.type === 'bazi' ? '八字' : '易经'}
+                            {rec.type === 'bazi' ? '八字' : rec.type === 'yijing' ? '易经' : '塔罗'}
                           </Badge>
                           <CardTitle className="truncate font-kai text-base text-gold">
                             {rec.title}
@@ -178,8 +179,10 @@ export default function HistoryPage() {
                     <div className="animate-rise">
                       {rec.type === 'bazi' ? (
                         <BaziResultView result={rec.result as BaziAnalyzeResponse} unlockKey={rec.key} />
-                      ) : (
+                      ) : rec.type === 'yijing' ? (
                         <YijingResultView result={rec.result as DivinateResponse} unlockKey={rec.key} />
+                      ) : (
+                        <TarotResultView result={rec.result as TarotAnalyzeResponse} unlockKey={rec.key} />
                       )}
                     </div>
                   )}

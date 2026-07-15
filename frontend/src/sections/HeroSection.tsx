@@ -121,7 +121,7 @@ export default function HeroSection() {
           className="mb-10 text-sm leading-relaxed text-foreground/80 animate-rise sm:text-base"
           style={{ animationDelay: '0.35s' }}
         >
-          融合千年典籍 · 易经六十四卦 · 四柱八字排盘
+          融合千年典籍 · 易经六十四卦 · 四柱八字 · 78 张塔罗
           <br className="hidden sm:block" />
           古籍 RAG 检索 · 大模型智能解读
         </p>
@@ -133,7 +133,7 @@ export default function HeroSection() {
           <Button
             size="lg"
             onClick={() => navigate('/bazi')}
-            className="w-full border border-element/50 bg-element/90 font-kai text-void shadow-glow-md backdrop-blur-sm transition hover:bg-element sm:w-44"
+            className="w-full border border-element/50 bg-element/90 font-kai text-void shadow-glow-md backdrop-blur-sm transition hover:bg-element sm:w-36"
           >
             八字排盘
           </Button>
@@ -141,9 +141,17 @@ export default function HeroSection() {
             size="lg"
             variant="outline"
             onClick={() => navigate('/yijing')}
-            className="w-full border border-element/50 font-kai text-element backdrop-blur-sm transition hover:bg-element/10 sm:w-44"
+            className="w-full border border-element/50 font-kai text-element backdrop-blur-sm transition hover:bg-element/10 sm:w-36"
           >
             易经占卜
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            onClick={() => navigate('/tarot')}
+            className="w-full border border-element/50 font-kai text-element backdrop-blur-sm transition hover:bg-element/10 sm:w-36"
+          >
+            塔罗占卜
           </Button>
         </div>
       </div>

@@ -16,14 +16,14 @@ import { SPREAD_POSITIONS, ALL_TAROT_CARDS } from '@/lib/tarot/cards';
 
 /* ==================== 步骤定义 ==================== */
 type Step =
-  | 'prepare'    // 事前准备
-  | 'question'   // 定问题
-  | 'spread'     // 选牌阵
-  | 'shuffle'    // 洗牌
-  | 'cut'        // 切牌
-  | 'draw'       // 抽牌摆阵
-  | 'reveal'     // 翻牌解读
-  | 'complete';  // 收尾（AI 解读）
+  | 'prepare'
+  | 'question'
+  | 'spread'
+  | 'shuffle'
+  | 'cut'
+  | 'draw'
+  | 'reveal'
+  | 'complete';
 
 const SPREAD_OPTIONS: { type: SpreadType; label: string; count: number; desc: string }[] = [
   { type: 'single', label: '单张牌', count: 1, desc: '快速指引 · 一针见血' },
@@ -53,19 +53,23 @@ export default function TarotSection() {
   const [spread, setSpread] = useState<SpreadType>('three');
   const [feedback, setFeedback] = useState('');
 
-  // — 洗牌 / 切牌动画 —
+  // — 洗牌 —
   const [shuffling, setShuffling] = useState(false);
+  const [shuffleDone, setShuffleDone] = useState(false); // 洗牌动画已完成
+  // — 切牌 —
   const [cutting, setCutting] = useState(false);
-  const shuffleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [cutDone, setCutDone] = useState(false);
   const cutTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // — 3×3 抽牌矩阵 —
   const [gridCards, setGridCards] = useState<TarotCardPlacement[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-  const [selectionStep, setSelectionStep] = useState(0); // 当前选的是第几张
-  const remainingDeckRef = useRef<TarotCardPlacement[]>([]); // 剩余牌堆，每次选完补充新牌
+  const [selectionStep, setSelectionStep] = useState(0);
+  const remainingDeckRef = useRef<TarotCardPlacement[]>([]);
+  // 换一批动画
+  const [reshuffling, setReshuffling] = useState(false);
 
-  // — 最终确定的手牌（按选中顺序） —
+  // — 最终手牌 —
   const drawnCards = useMemo(() => {
     const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
     return selectedIndices.slice(0, positions.length).map((gridIdx, i) => ({
@@ -74,19 +78,24 @@ export default function TarotSection() {
     }));
   }, [gridCards, selectedIndices, spread]);
 
-  // — 翻牌状态 —
+  // — 翻牌 —
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
 
-  // — 提交 AI 解读（只在进入 complete 时调用） —
+  // — AI 解读（传入已选的牌，不重新抽牌） —
   const doDivinate = useCallback(() => {
-    if (question.trim()) {
-      divinate({ question: question.trim(), spread, with_llm: true, with_rag: true });
+    if (question.trim() && drawnCards.length > 0) {
+      divinate({
+        question: question.trim(),
+        spread,
+        with_llm: true,
+        with_rag: true,
+        cards: drawnCards,
+      });
     }
-  }, [question, spread, divinate]);
+  }, [question, spread, divinate, drawnCards]);
 
-  // — 重置一切 —
+  // — 重置 —
   const handleReset = () => {
-    if (shuffleTimer.current) clearTimeout(shuffleTimer.current);
     if (cutTimer.current) clearTimeout(cutTimer.current);
     reset();
     setStep('prepare');
@@ -94,103 +103,148 @@ export default function TarotSection() {
     setQuestion('');
     setSpread('three');
     setShuffling(false);
+    setShuffleDone(false);
     setCutting(false);
+    setCutDone(false);
     setGridCards([]);
     setSelectedIndices([]);
     setSelectionStep(0);
     remainingDeckRef.current = [];
+    setReshuffling(false);
     setRevealed(new Set());
   };
 
   /* ================================================================
-     步骤过渡函数
+     步骤过渡
      ================================================================ */
 
   const goSpread = () => setStep('spread');
 
-  const startShuffle = () => {
+  /** 进入洗牌步骤（手动点击"开始洗牌"才触发动画） */
+  const enterShuffle = () => {
     setStep('shuffle');
-    setShuffling(true);
-    shuffleTimer.current = setTimeout(() => {
-      setShuffling(false);
-      setStep('cut');
-      setCutting(true);
-      cutTimer.current = setTimeout(() => {
-        setCutting(false);
-
-        // 切牌完成 → 准备 3×3 牌矩阵
-        const shuffled = shuffle(ALL_TAROT_CARDS);
-        const grid: TarotCardPlacement[] = shuffled.slice(0, 9).map((card) => ({
-          position: '',
-          card,
-          orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
-        }));
-        // 剩下的牌存起来，每次选完补充新牌
-        remainingDeckRef.current = shuffle(shuffled.slice(9)).map((card) => ({
-          position: '',
-          card,
-          orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
-        }));
-        setGridCards(grid);
-        setSelectedIndices([]);
-        setSelectionStep(0);
-        setRevealed(new Set());
-        setStep('draw');
-      }, 2500);
-    }, 3000);
+    setShuffling(false);
+    setShuffleDone(false);
   };
 
-  /** 从 3×3 矩阵中选择一张牌（点击后该牌在原位翻转显示牌名） */
+  /** 手动点击洗牌按钮 → 启动洗牌动画 */
+  const triggerShuffle = () => {
+    setShuffling(true);
+    setShuffleDone(false);
+    setTimeout(() => {
+      setShuffling(false);
+      setShuffleDone(true);
+    }, 2500);
+  };
+
+  /** 手动确认洗牌完成 → 进入切牌 */
+  const confirmShuffle = () => {
+    setStep('cut');
+    setCutting(true);
+    setCutDone(false);
+    cutTimer.current = setTimeout(() => {
+      setCutting(false);
+      setCutDone(true);
+    }, 2500);
+  };
+
+  /** 手动确认切牌完成 → 进入抽牌 */
+  const confirmCut = () => {
+    const shuffled = shuffle(ALL_TAROT_CARDS);
+    const grid: TarotCardPlacement[] = shuffled.slice(0, 9).map((card) => ({
+      position: '',
+      card,
+      orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
+    }));
+    remainingDeckRef.current = shuffle(shuffled.slice(9)).map((card) => ({
+      position: '',
+      card,
+      orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
+    }));
+    setGridCards(grid);
+    setSelectedIndices([]);
+    setSelectionStep(0);
+    setRevealed(new Set());
+    setStep('draw');
+  };
+
+  /** 选中一张牌 → 翻转动画 → 移除格子 + 替换新牌 */
   const selectGridCard = (gridIdx: number) => {
     const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
-    if (selectedIndices.includes(gridIdx)) return; // 已选
-    if (selectionStep >= positions.length) return; // 已选满
+    if (selectedIndices.includes(gridIdx)) return;
+    if (selectionStep >= positions.length) return;
 
-    setSelectedIndices((prev) => [...prev, gridIdx]);
     const nextStep = selectionStep + 1;
-
-    // 选满后短暂延迟进入翻牌
-    if (nextStep >= positions.length) {
-      setTimeout(() => {
-        setStep('reveal');
-      }, 600);
-    }
+    setSelectedIndices((prev) => [...prev, gridIdx]);
     setSelectionStep(nextStep);
+
+    // 延迟后把该格子替换为一张新牌（"跳走"效果）
+    if (nextStep < positions.length) {
+      setTimeout(() => {
+        setGridCards((prev) => {
+          const next = [...prev];
+          const remain = remainingDeckRef.current;
+          if (remain.length > 0) {
+            next[gridIdx] = remain.splice(0, 1)[0];
+            remainingDeckRef.current = remain;
+          } else {
+            // 剩余牌堆空了，从整副牌中排除已选牌重新补充
+            const used = new Set(selectedIndices.map((idx) => gridCards[idx]?.card?.number).filter(Boolean));
+            const pool = ALL_TAROT_CARDS.filter((c) => !used.has(c.number));
+            const fresh = shuffle(pool).map((card) => ({
+              position: '',
+              card,
+              orientation: Math.random() < 0.5 ? ('upright' as const) : ('reversed' as const),
+            }));
+            remainingDeckRef.current = fresh.slice(1);
+            next[gridIdx] = fresh[0];
+          }
+          return next;
+        });
+      }, 500);
+    }
+
+    // 选满后进入翻牌
+    if (nextStep >= positions.length) {
+      setTimeout(() => setStep('reveal'), 800);
+    }
   };
 
-  /** 换一批：把未选中的牌格从剩余牌堆中重新填充 */
+  /** 换一批 */
   const reshuffleGrid = () => {
-    if (selectionStep >= needTotal) return;
-    const remaining = remainingDeckRef.current;
-    if (remaining.length === 0) {
-      // 剩余牌堆空了，从整副牌中重新洗（排除已选）
-      const used = new Set(selectedIndices.map((idx) => gridCards[idx].card.number));
-      const pool = ALL_TAROT_CARDS.filter((c) => !used.has(c.number));
-      const fresh = shuffle(pool).map((card) => ({
-        position: '',
-        card,
-        orientation: Math.random() < 0.5 ? ('upright' as const) : ('reversed' as const),
-      }));
-      remainingDeckRef.current = fresh;
-    }
-    // 替换未选中的牌
-    setGridCards((prev) => {
-      const next = [...prev];
-      const toReplace: number[] = [];
-      for (let i = 0; i < next.length; i++) {
-        if (!selectedIndices.includes(i)) {
-          toReplace.push(i);
-        }
-      }
+    if (selectionStep >= (SPREAD_POSITIONS[spread] || []).length) return;
+
+    // 先触发动画
+    setReshuffling(true);
+    setTimeout(() => {
+      setReshuffling(false);
+
       const remain = remainingDeckRef.current;
-      const takeCount = Math.min(toReplace.length, remain.length);
-      const fresh = remain.splice(0, takeCount);
-      remainingDeckRef.current = remain;
-      for (let j = 0; j < takeCount; j++) {
-        next[toReplace[j]] = fresh[j];
+      if (remain.length === 0) {
+        const used = new Set(selectedIndices.map((idx) => gridCards[idx]?.card?.number).filter(Boolean));
+        const pool = ALL_TAROT_CARDS.filter((c) => !used.has(c.number));
+        const fresh = shuffle(pool).map((card) => ({
+          position: '',
+          card,
+          orientation: Math.random() < 0.5 ? ('upright' as const) : ('reversed' as const),
+        }));
+        remainingDeckRef.current = fresh;
       }
-      return next;
-    });
+
+      setGridCards((prev) => {
+        const next = [...prev];
+        const toReplace: number[] = [];
+        for (let i = 0; i < next.length; i++) {
+          if (!selectedIndices.includes(i)) toReplace.push(i);
+        }
+        const r = remainingDeckRef.current;
+        const takeCount = Math.min(toReplace.length, r.length);
+        const fresh = r.splice(0, takeCount);
+        remainingDeckRef.current = r;
+        for (let j = 0; j < takeCount; j++) next[toReplace[j]] = fresh[j];
+        return next;
+      });
+    }, 400);
   };
 
   const toggleReveal = (idx: number) => {
@@ -205,7 +259,6 @@ export default function TarotSection() {
     });
   };
 
-  /** 进入 complete 时触发 AI 解读 */
   const goComplete = () => {
     setStep('complete');
     if (!result) {
@@ -236,7 +289,9 @@ export default function TarotSection() {
 
   const handleShare = async () => {
     if (!result) return;
-    const url = buildShareUrl({ v: 1, type: 'tarot', createdAt: Date.now(), input: buildInput(), result });
+    const url = buildShareUrl({
+      v: 1, type: 'tarot', createdAt: Date.now(), input: buildInput(), result,
+    });
     try {
       await navigator.clipboard.writeText(url);
       setFeedback('分享链接已复制到剪贴板 🔗');
@@ -244,7 +299,7 @@ export default function TarotSection() {
   };
 
   /* ================================================================
-     渲染：步骤指示器
+     渲染
      ================================================================ */
   const steps: { key: Step; label: string }[] = [
     { key: 'prepare', label: '准备' },
@@ -265,6 +320,7 @@ export default function TarotSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710] via-[#0d0814] to-[#0a0710]" />
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
+
         {/* 标题 */}
         <div className="mb-6 text-center">
           <h1 className="font-kai text-3xl font-bold text-gold title-glow sm:text-4xl">
@@ -338,10 +394,7 @@ export default function TarotSection() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form
-                onSubmit={(e: FormEvent) => { e.preventDefault(); goSpread(); }}
-                className="space-y-5"
-              >
+              <form onSubmit={(e: FormEvent) => { e.preventDefault(); goSpread(); }} className="space-y-5">
                 <Textarea
                   placeholder="例如：近期事业发展如何？我和他/她的关系走向？…"
                   value={question}
@@ -351,10 +404,7 @@ export default function TarotSection() {
                   required
                   autoFocus
                 />
-                <Button
-                  type="submit"
-                  className="w-full bg-element font-kai text-void shadow-glow-md hover:bg-element/80"
-                >
+                <Button type="submit" className="w-full bg-element font-kai text-void shadow-glow-md hover:bg-element/80">
                   下一步
                 </Button>
               </form>
@@ -397,7 +447,7 @@ export default function TarotSection() {
                 已选：{spreadInfo?.label || spread} · {needTotal}张
               </p>
               <Button
-                onClick={() => { startShuffle(); }}
+                onClick={enterShuffle}
                 className="w-full bg-element font-kai text-void shadow-glow-md hover:bg-element/80"
               >
                 开始仪式 · 洗牌
@@ -407,45 +457,44 @@ export default function TarotSection() {
         )}
 
         {/* ================================================================
-            STEP 4: 洗牌（自动动画 + 手动点击触发）
+            STEP 4: 手动洗牌（用户点击触发动画，再手动确认完成）
             ================================================================ */}
         {step === 'shuffle' && (
           <div className="flex flex-col items-center gap-8">
             <div className="text-center">
               <p className="font-kai text-lg text-gold/90">集中精神 · 洗牌</p>
-              <p className="mt-1 text-xs text-muted-foreground/70">在心中默念您的问题，感受牌的能量</p>
+              <p className="mt-1 text-xs text-muted-foreground/70">点击按钮给予牌能量，感受牌在您手中流动</p>
             </div>
 
-            {/* 牌叠动画 */}
+            {/* 牌叠 */}
             <div className="relative h-48 w-32">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className={`card-stack-layer tarot-back h-48 w-32 ${
-                    shuffling ? 'animate-shuffle-card' : ''
-                  }`}
-                  style={{
-                    top: `${i * 2}px`,
-                    left: `${i * 2}px`,
-                    zIndex: 5 - i,
-                    animationDelay: `${i * 0.05}s`,
-                  }}
+                  className={`card-stack-layer tarot-back h-48 w-32 ${shuffling ? 'animate-shuffle-card' : ''}`}
+                  style={{ top: `${i * 2}px`, left: `${i * 2}px`, zIndex: 5 - i, animationDelay: `${i * 0.05}s` }}
                 />
               ))}
             </div>
 
-            <Button
-              onClick={startShuffle}
-              disabled={shuffling}
-              className="bg-element px-10 font-kai text-void shadow-glow-md hover:bg-element/80"
-            >
-              点击洗牌
-            </Button>
+            {!shuffling && !shuffleDone && (
+              <Button onClick={triggerShuffle} className="bg-element px-10 font-kai text-void shadow-glow-md hover:bg-element/80">
+                🔀 点击开始洗牌
+              </Button>
+            )}
+            {shuffling && (
+              <p className="animate-breathe text-sm text-element/70">牌正在流转…</p>
+            )}
+            {shuffleDone && !shuffling && (
+              <Button onClick={confirmShuffle} className="bg-element px-10 font-kai text-void shadow-glow-md hover:bg-element/80">
+                ✓ 洗好了，切牌
+              </Button>
+            )}
           </div>
         )}
 
         {/* ================================================================
-            STEP 5: 切牌（自动动画）
+            STEP 5: 手动切牌
             ================================================================ */}
         {step === 'cut' && (
           <div className="flex flex-col items-center gap-8">
@@ -455,18 +504,15 @@ export default function TarotSection() {
             </div>
 
             <div className="flex items-end gap-6">
-              {/* 左叠 */}
               <div className="flex flex-col items-center gap-2">
                 <div className={`tarot-back h-32 w-20 ${cutting ? 'animate-float' : ''}`} />
                 <span className="text-xs text-muted-foreground/50">左</span>
               </div>
-              {/* 中叠（原牌叠） */}
               <div className="flex flex-col items-center gap-2">
                 <div className={`tarot-back h-40 w-24 ${cutting ? 'animate-deck-float' : ''}`}
                   style={{ animationDelay: '0.3s' }} />
                 <span className="text-xs text-muted-foreground/50">中</span>
               </div>
-              {/* 右叠 */}
               <div className="flex flex-col items-center gap-2">
                 <div className={`tarot-back h-28 w-20 ${cutting ? 'animate-float' : ''}`}
                   style={{ animationDelay: '0.6s' }} />
@@ -474,14 +520,19 @@ export default function TarotSection() {
               </div>
             </div>
 
-            <p className="animate-breathe text-sm text-element/70">
-              {cutting ? '牌的能量正在融合…' : '切牌完成'}
-            </p>
+            {cutting && (
+              <p className="animate-breathe text-sm text-element/70">牌的能量正在融合…</p>
+            )}
+            {cutDone && !cutting && (
+              <Button onClick={confirmCut} className="bg-element px-10 font-kai text-void shadow-glow-md hover:bg-element/80">
+                ✓ 切好了，开始抽牌
+              </Button>
+            )}
           </div>
         )}
 
         {/* ================================================================
-            STEP 6: 抽牌摆阵 — 3×3 矩阵 + 换一批
+            STEP 6: 抽牌 — 3×3 矩阵 + 选后跳转到已选区
             ================================================================ */}
         {step === 'draw' && gridCards.length > 0 && (
           <div className="flex flex-col items-center gap-6">
@@ -492,79 +543,86 @@ export default function TarotSection() {
               </p>
             </div>
 
-            {/* 3×3 牌矩阵 — 选中的牌在原位翻转显示 */}
+            {/* 3×3 矩阵 */}
             <div className="grid grid-cols-3 gap-3 sm:gap-4">
-              {gridCards.map((_, gridIdx) => {
+              {gridCards.map((card, gridIdx) => {
                 const isSelected = selectedIndices.includes(gridIdx);
-                const selectOrder = selectedIndices.indexOf(gridIdx);
-                const isActive = !isSelected && selectionStep < needTotal;
+                const isFresh = !isSelected && selectionStep < needTotal;
 
                 return (
-                  <div key={gridIdx} className="flex flex-col items-center gap-1">
+                  <div key={gridIdx} className={`flex flex-col items-center gap-1 transition-all duration-500 ${
+                    isSelected ? 'animate-rise opacity-0 scale-75 pointer-events-none' : ''
+                  }`}>
                     <button
                       onClick={() => selectGridCard(gridIdx)}
-                      disabled={!isActive}
+                      disabled={!isFresh}
                       className={`card-perspective h-32 w-22 sm:h-40 sm:w-28 transition-all duration-300 ${
-                        isActive
+                        isFresh
                           ? 'cursor-pointer hover:scale-105 hover:shadow-glow-lg'
-                          : isSelected
-                            ? 'cursor-default shadow-glow-md'
-                            : 'cursor-default'
-                      }`}
+                          : 'cursor-default'
+                      } ${reshuffling && isFresh ? 'animate-pulse-glow scale-105' : ''}`}
                     >
-                      <div className={`card-inner h-full w-full ${isSelected ? 'card-flipped' : ''}`}>
-                        {/* 背面（未选时显示） */}
+                      <div className="card-inner h-full w-full">
                         <div className="card-back tarot-back flex items-center justify-center rounded-xl border border-element/20">
                           <span className="font-kai text-xs text-gold/50">?</span>
                         </div>
-                        {/* 正面（选中后显示牌面） */}
-                        <div className="card-front flex items-center justify-center rounded-xl border border-element/40 bg-card p-1 sm:p-2">
+                        <div className="card-front flex items-center justify-center rounded-xl border border-element/30 bg-card p-1 sm:p-2">
                           <div className="text-center">
-                            <div className="text-[11px] sm:text-sm font-kai font-bold text-gold leading-tight">
-                              {gridCards[gridIdx].card.nameCn}
+                            <div className="text-[10px] sm:text-sm font-kai font-bold text-gold leading-tight">
+                              {card.card.nameCn}
                             </div>
-                            <div className="mt-0.5 text-[8px] sm:text-[10px] text-muted-foreground/70">
-                              {gridCards[gridIdx].orientation === 'upright' ? '正位' : '逆位'}
-                            </div>
-                            <div className="mt-0.5 text-[9px] sm:text-[11px] text-element">
-                              ✦ 第{selectOrder + 1}张
+                            <div className="mt-0.5 text-[7px] sm:text-[10px] text-muted-foreground/70">
+                              {card.orientation === 'upright' ? '正位' : '逆位'}
                             </div>
                           </div>
                         </div>
                       </div>
                     </button>
-                    {isSelected && (
-                      <span className="text-[9px] text-element">
-                        {SPREAD_POSITIONS[spread]?.[selectOrder] || `#${selectOrder + 1}`}
-                      </span>
-                    )}
                   </div>
                 );
               })}
             </div>
 
-            {/* 换一批按钮（未选满时显示） */}
+            {/* 已选区 — 选中的牌跳转到这里 */}
+            {selectedIndices.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-3 animate-rise w-full">
+                {selectedIndices.map((gridIdx, i) => {
+                  const c = gridCards[gridIdx];
+                  if (!c) return null;
+                  return (
+                    <div key={gridIdx} className="flex flex-col items-center gap-1">
+                      <div className="flex h-24 w-16 sm:h-28 sm:w-20 items-center justify-center rounded-lg border border-element/30 bg-card/80 p-1 text-center shadow-glow-sm">
+                        <div>
+                          <p className="text-[10px] sm:text-xs font-bold text-gold leading-tight">{c.card.nameCn}</p>
+                          <p className="text-[7px] sm:text-[9px] text-muted-foreground">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
+                        </div>
+                      </div>
+                      <span className="text-[9px] text-element">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* 换一批 */}
             {selectionStep < needTotal && (
               <Button
                 variant="outline"
                 onClick={reshuffleGrid}
+                disabled={reshuffling}
                 className="border-element/50 text-element hover:bg-element/10 font-kai"
               >
-                🔄 换一批
+                {reshuffling ? '🔄 重新洗牌中…' : '🔄 换一批'}
               </Button>
             )}
 
-            {/* 进度条 */}
+            {/* 进度 */}
             <div className="flex w-full max-w-xs items-center gap-2">
               <div className="h-1 flex-1 overflow-hidden rounded-full bg-card/60">
-                <div
-                  className="h-full rounded-full bg-element transition-all duration-500"
-                  style={{ width: `${(selectionStep / needTotal) * 100}%` }}
-                />
+                <div className="h-full rounded-full bg-element transition-all duration-500"
+                  style={{ width: `${(selectionStep / needTotal) * 100}%` }} />
               </div>
-              <span className="text-xs text-muted-foreground/70">
-                {selectionStep}/{needTotal}
-              </span>
+              <span className="text-xs text-muted-foreground/70">{selectionStep}/{needTotal}</span>
             </div>
           </div>
         )}
@@ -584,17 +642,11 @@ export default function TarotSection() {
                 const isRev = revealed.has(i);
                 return (
                   <div key={i} className="flex w-28 flex-col items-center gap-1.5">
-                    <button
-                      onClick={() => toggleReveal(i)}
-                      disabled={isRev}
-                      className="card-perspective h-40 w-28"
-                    >
+                    <button onClick={() => toggleReveal(i)} disabled={isRev} className="card-perspective h-40 w-28">
                       <div className={`card-inner h-full w-full ${isRev ? 'card-flipped' : ''}`}>
-                        {/* 背面 */}
                         <div className="card-back tarot-back flex items-center justify-center rounded-xl">
                           <span className="font-kai text-lg text-gold/40">{i + 1}</span>
                         </div>
-                        {/* 正面 */}
                         <div className="card-front flex items-center justify-center rounded-xl border border-element/30 bg-card p-2">
                           <div className="text-center">
                             <div className="text-sm font-kai font-bold text-gold leading-tight">{c.card.nameCn}</div>
@@ -613,7 +665,6 @@ export default function TarotSection() {
               })}
             </div>
 
-            {/* 已翻开牌的简要含义 */}
             {revealed.size > 0 && (
               <div className="mx-auto max-w-lg space-y-2 animate-rise">
                 {[...revealed].sort().map((i) => {
@@ -653,7 +704,6 @@ export default function TarotSection() {
             ================================================================ */}
         {step === 'complete' && (
           <div className="space-y-6">
-            {/* 收尾横幅 */}
             <div className="animate-rise rounded-xl border border-element/25 bg-element/5 px-6 py-5 text-center backdrop-blur-sm">
               <p className="font-kai text-lg text-gold">🌟 塔罗已揭示 · 答案在你心中</p>
               <p className="mt-1 text-xs text-muted-foreground/80">
@@ -661,7 +711,7 @@ export default function TarotSection() {
               </p>
             </div>
 
-            {/* 已翻开的牌快览 */}
+            {/* 牌快览 */}
             <div className="flex flex-wrap justify-center gap-2">
               {drawnCards.map((c, i) => (
                 <div key={i} className="flex w-20 flex-col items-center gap-0.5">
@@ -676,7 +726,15 @@ export default function TarotSection() {
               ))}
             </div>
 
-            {/* 保存 / 分享（仅在有 result 时显示） */}
+            {/* 加载中 */}
+            {loading && !result && (
+              <div className="flex flex-col items-center gap-4 py-12">
+                <div className="inline-block h-10 w-10 animate-spin rounded-full border-3 border-element border-t-transparent" />
+                <p className="text-sm text-element/80 font-kai">塔罗师正在解读牌面…</p>
+              </div>
+            )}
+
+            {/* 保存/分享 */}
             {result && (
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <Button variant="outline" onClick={handleSave} className="border-element/50 text-element hover:bg-element/10">
@@ -689,15 +747,7 @@ export default function TarotSection() {
             )}
             {feedback && <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>}
 
-            {/* 加载中状态 */}
-            {loading && !result && (
-              <div className="flex flex-col items-center gap-4 py-12">
-                <div className="inline-block h-10 w-10 animate-spin rounded-full border-3 border-element border-t-transparent" />
-                <p className="text-sm text-element/80 font-kai">塔罗师正在解读牌面…</p>
-              </div>
-            )}
-
-            {/* AI 解读（带 PayWall） — 当 result 存在时显示 */}
+            {/* AI 解读（带 PayWall）— 传入正确的 result */}
             {result && (
               <TarotResultView
                 result={result}
@@ -705,11 +755,18 @@ export default function TarotSection() {
                 unlockKey={makeRecordKey('tarot', buildInput())}
               />
             )}
+
+            {/* 错误提示 */}
+            {error && (
+              <div className="rounded bg-red-950/40 p-3 text-center text-sm text-red-300">
+                {error}
+              </div>
+            )}
           </div>
         )}
 
-        {/* ———— 错误提示 ———— */}
-        {error && (
+        {/* ———— 全局错误 ———— */}
+        {error && step !== 'complete' && (
           <div className="mt-4 rounded bg-red-950/40 p-3 text-center text-sm text-red-300">
             {error}
           </div>
