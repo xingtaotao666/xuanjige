@@ -225,14 +225,16 @@
   color: rgba(212, 168, 67, 0.3);
 }
 
-/* 选牌跳走动画 */
+/* 选牌跳走动画：
+   0-65% 显示牌面内容（保持原位 + 放大高亮）
+   65-100% 飞走（缩小 + 上移 + 淡出）*/
 @keyframes card-jump {
-  0% { transform: scale3d(1, 1, 1) translateY(0); opacity: 1; z-index: 10; }
-  30% { transform: scale3d(1.15, 1.15, 1.15) translateY(0); opacity: 1; }
-  100% { transform: scale3d(0.8, 0.8, 0.8) translateY(-60px); opacity: 0; z-index: 10; }
+  0%   { transform: scale(1) translateY(0); opacity: 1; }
+  65%  { transform: scale(1.12) translateY(0); opacity: 1; }
+  100% { transform: scale(0.6) translateY(-50px); opacity: 0; }
 }
 .animate-card-jump {
-  animation: card-jump 0.35s ease-out forwards;
+  animation: card-jump 1.2s ease-in-out forwards;
 }
 
 /* 牌叠层叠 */

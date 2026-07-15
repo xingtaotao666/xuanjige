@@ -195,7 +195,7 @@ export default function TarotSection() {
     const nextStep = selectionStep + 1;
     setSelectionStep(nextStep);
 
-    // 350ms 后：翻转牌跳走，原位补新牌
+    // 1.2s 后：翻转牌跳走，原位补新牌
     setTimeout(() => {
       setFlippingPositions((prev) => {
         const n = new Set(prev);
@@ -221,10 +221,10 @@ export default function TarotSection() {
         }
         return next;
       });
-    }, 350);
+    }, 1200);
 
     if (nextStep >= positions.length) {
-      setTimeout(() => setStep('reveal'), 600);
+      setTimeout(() => setStep('reveal'), 1400);
     }
   };
 
