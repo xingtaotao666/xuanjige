@@ -560,8 +560,8 @@ export default function TarotSection() {
               </p>
             </div>
 
-            {/* 3×3 矩阵 */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+            {/* 3×3 矩阵 — 自适应手机/平板/桌面 */}
+            <div className="grid w-full max-w-md grid-cols-3 gap-2 sm:gap-4">
               {gridCards.map((card, gridIdx) => {
                 const isFlipping = flippingPositions.has(gridIdx);
                 const isFresh = !isFlipping && selectionStep < needTotal;
@@ -576,7 +576,7 @@ export default function TarotSection() {
                     <button
                       onClick={() => selectGridCard(gridIdx)}
                       disabled={!isFresh}
-                      className={`card-perspective h-32 w-22 sm:h-40 sm:w-28 transition-all duration-300 ${
+                      className={`card-perspective w-full aspect-[5/7] transition-all duration-300 ${
                         isFresh
                           ? 'cursor-pointer hover:scale-105 hover:shadow-glow-lg'
                           : isFlipping
@@ -586,16 +586,16 @@ export default function TarotSection() {
                     >
                       <div className={`card-inner h-full w-full ${isFlipping ? 'card-flipped' : ''}`}>
                         {/* 背面 */}
-                        <div className="card-back tarot-back flex items-center justify-center rounded-xl border border-element/20">
-                          <span className="font-kai text-xs text-gold/50">?</span>
+                        <div className="card-back tarot-back flex items-center justify-center rounded-xl border border-element/20 text-[clamp(0.6rem,4vw,1rem)]">
+                          <span className="font-kai text-gold/50">?</span>
                         </div>
                         {/* 正面（翻转时显示） */}
-                        <div className="card-front flex items-center justify-center rounded-xl border border-element/40 bg-card p-1 sm:p-2 shadow-glow-md">
-                          <div className="text-center">
-                            <div className="text-[10px] sm:text-sm font-kai font-bold text-gold leading-tight">
+                        <div className="card-front flex items-center justify-center rounded-xl border border-element/40 bg-card p-1 shadow-glow-md">
+                          <div className="text-center px-0.5">
+                            <div className="font-kai font-bold text-gold leading-tight text-[clamp(0.55rem,3.5vw,0.9rem)]">
                               {card.card.nameCn}
                             </div>
-                            <div className="mt-0.5 text-[7px] sm:text-[10px] text-muted-foreground/70">
+                            <div className="mt-0.5 text-[clamp(0.45rem,2.5vw,0.7rem)] text-muted-foreground/70">
                               {card.orientation === 'upright' ? '正位' : '逆位'}
                             </div>
                           </div>
@@ -626,13 +626,13 @@ export default function TarotSection() {
                 <div className="flex flex-wrap justify-center gap-2">
                   {selectedCards.map((c, i) => (
                     <div key={`${c.card.number}-${i}`} className="flex flex-col items-center gap-0.5 animate-rise">
-                      <div className="flex h-20 w-14 sm:h-24 sm:w-16 items-center justify-center rounded-lg border border-element/30 bg-card/80 p-1 text-center shadow-glow-sm">
+                      <div className="flex w-12 sm:w-16 aspect-[5/7] items-center justify-center rounded-lg border border-element/30 bg-card/80 p-0.5 text-center shadow-glow-sm">
                         <div>
-                          <p className="text-[9px] sm:text-[10px] font-bold text-gold leading-tight">{c.card.nameCn}</p>
-                          <p className="text-[7px] sm:text-[8px] text-muted-foreground">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
+                          <p className="text-[clamp(0.45rem,2.5vw,0.65rem)] font-bold text-gold leading-tight">{c.card.nameCn}</p>
+                          <p className="text-[clamp(0.35rem,2vw,0.5rem)] text-muted-foreground">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
                         </div>
                       </div>
-                      <span className="text-[8px] sm:text-[9px] text-element">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
+                      <span className="text-[clamp(0.35rem,2vw,0.55rem)] text-element">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
                     </div>
                   ))}
                 </div>
@@ -662,27 +662,27 @@ export default function TarotSection() {
               <p className="text-xs text-muted-foreground/70">点击牌面 · 揭开塔罗的启示</p>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
               {drawnCards.map((c, i) => {
                 const isRev = revealed.has(i);
                 return (
-                  <div key={i} className="flex w-28 flex-col items-center gap-1.5">
-                    <button onClick={() => toggleReveal(i)} disabled={isRev} className="card-perspective h-40 w-28">
+                  <div key={i} className="flex w-[calc(33%-1rem)] max-w-[7rem] flex-col items-center gap-1.5">
+                    <button onClick={() => toggleReveal(i)} disabled={isRev} className="card-perspective w-full aspect-[5/7]">
                       <div className={`card-inner h-full w-full ${isRev ? 'card-flipped' : ''}`}>
                         <div className="card-back tarot-back flex items-center justify-center rounded-xl">
                           <span className="font-kai text-lg text-gold/40">{i + 1}</span>
                         </div>
-                        <div className="card-front flex items-center justify-center rounded-xl border border-element/30 bg-card p-2">
+                        <div className="card-front flex items-center justify-center rounded-xl border border-element/30 bg-card p-1 sm:p-2">
                           <div className="text-center">
-                            <div className="text-sm font-kai font-bold text-gold leading-tight">{c.card.nameCn}</div>
-                            <div className="mt-1 text-[10px] text-muted-foreground/70">
+                            <div className="text-[clamp(0.6rem,3.5vw,0.9rem)] font-kai font-bold text-gold leading-tight">{c.card.nameCn}</div>
+                            <div className="mt-0.5 text-[clamp(0.45rem,2.5vw,0.7rem)] text-muted-foreground/70">
                               {c.orientation === 'upright' ? '正位' : '逆位'}
                             </div>
                           </div>
                         </div>
                       </div>
                     </button>
-                    <span className={`text-[10px] ${isRev ? 'text-element' : 'text-muted-foreground/40'}`}>
+                    <span className={`text-[clamp(0.4rem,2.5vw,0.7rem)] ${isRev ? 'text-element' : 'text-muted-foreground/40'}`}>
                       {c.position}
                     </span>
                   </div>
