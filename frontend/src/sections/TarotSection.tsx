@@ -63,22 +63,22 @@ export default function TarotSection() {
 
   // — 3×3 抽牌矩阵 —
   const [gridCards, setGridCards] = useState<TarotCardPlacement[]>([]);
-  /** 当前正在"显示内容"的位置集合（点击后短暂保留，约 800ms 后随牌一起移除） */
+  /** 正在翻转显示内容的位置（点击后加入，800ms 后移除） */
   const [flippingPositions, setFlippingPositions] = useState<Set<number>>(new Set());
-  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  /** 已选择的牌（每选一张追加），不按位置索引 */
+  const [selectedCards, setSelectedCards] = useState<TarotCardPlacement[]>([]);
   const [selectionStep, setSelectionStep] = useState(0);
   const remainingDeckRef = useRef<TarotCardPlacement[]>([]);
-  // 换一批动画
   const [reshuffling, setReshuffling] = useState(false);
 
   // — 最终手牌 —
   const drawnCards = useMemo(() => {
     const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
-    return selectedIndices.slice(0, positions.length).map((gridIdx, i) => ({
-      ...gridCards[gridIdx],
+    return selectedCards.slice(0, positions.length).map((c, i) => ({
+      ...c,
       position: positions[i] || `位置${i + 1}`,
     }));
-  }, [gridCards, selectedIndices, spread]);
+  }, [selectedCards, spread]);
 
   // — 翻牌 —
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
@@ -110,7 +110,7 @@ export default function TarotSection() {
     setCutDone(false);
     setGridCards([]);
     setFlippingPositions(new Set());
-    setSelectedIndices([]);
+    setSelectedCards([]);
     setSelectionStep(0);
     remainingDeckRef.current = [];
     setReshuffling(false);
@@ -166,32 +166,38 @@ export default function TarotSection() {
     }));
     setGridCards(grid);
     setFlippingPositions(new Set());
-    setSelectedIndices([]);
+    setSelectedCards([]);
     setSelectionStep(0);
     setRevealed(new Set());
     setStep('draw');
   };
 
   /** 选中一张牌：
-   *  1) 立即翻转显示牌面内容（300ms 内）
-   *  2) 800ms 后从格子里"跳走"，格子补充一张新牌
+   *  1) 记录当前卡牌进 selectedCards
+   *  2) 将该位置标记为 flipping（显示牌面）
+   *  3) 800ms 后移除 flipping 标记，该位置补新牌 → 再次可选
    */
   const selectGridCard = (gridIdx: number) => {
     const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
-    if (flippingPositions.has(gridIdx) || selectedIndices.includes(gridIdx)) return;
+    if (flippingPositions.has(gridIdx)) return; // 正在翻转中，不可点击
     if (selectionStep >= positions.length) return;
 
-    const nextStep = selectionStep + 1;
-    // 阶段 1：标记为正在翻转（显示牌面）
+    const card = gridCards[gridIdx];
+    if (!card) return;
+
+    // 记录到已选列表（只追加）
+    setSelectedCards((prev) => [...prev, { ...card }]);
+
+    // 标记翻转（显示牌面内容）
     setFlippingPositions((prev) => {
       const n = new Set(prev);
       n.add(gridIdx);
       return n;
     });
-    setSelectedIndices((prev) => [...prev, gridIdx]);
+    const nextStep = selectionStep + 1;
     setSelectionStep(nextStep);
 
-    // 阶段 2：800ms 后跳走 + 补新牌
+    // 800ms 后：移除翻转标记 + 补新牌 → 该位置可再次点击
     setTimeout(() => {
       setFlippingPositions((prev) => {
         const n = new Set(prev);
@@ -205,11 +211,10 @@ export default function TarotSection() {
           next[gridIdx] = remain.splice(0, 1)[0];
           remainingDeckRef.current = remain;
         } else {
-          // 剩余牌堆空了，从整副牌中排除已选牌重新补充
-          const used = new Set(
-            selectedIndices.map((idx) => gridCards[idx]?.card?.number).filter(Boolean),
+          const usedNumbers = new Set(
+            selectedCards.map((c) => c.card.number),
           );
-          const pool = ALL_TAROT_CARDS.filter((c) => !used.has(c.number));
+          const pool = ALL_TAROT_CARDS.filter((c) => !usedNumbers.has(c.number));
           const fresh = shuffle(pool).map((card) => ({
             position: '',
             card,
@@ -222,13 +227,12 @@ export default function TarotSection() {
       });
     }, 800);
 
-    // 选满后进入翻牌
     if (nextStep >= positions.length) {
       setTimeout(() => setStep('reveal'), 1200);
     }
   };
 
-  /** 换一批：未选中的牌格从剩余牌堆中重新填充 */
+  /** 换一批：未在翻转中的位置全部补新牌 */
   const reshuffleGrid = () => {
     if (selectionStep >= (SPREAD_POSITIONS[spread] || []).length) return;
 
@@ -238,10 +242,8 @@ export default function TarotSection() {
 
       const remain = remainingDeckRef.current;
       if (remain.length === 0) {
-        const used = new Set(
-          selectedIndices.map((idx) => gridCards[idx]?.card?.number).filter(Boolean),
-        );
-        const pool = ALL_TAROT_CARDS.filter((c) => !used.has(c.number));
+        const usedNumbers = new Set(selectedCards.map((c) => c.card.number));
+        const pool = ALL_TAROT_CARDS.filter((c) => !usedNumbers.has(c.number));
         const fresh = shuffle(pool).map((card) => ({
           position: '',
           card,
@@ -254,10 +256,7 @@ export default function TarotSection() {
         const next = [...prev];
         const toReplace: number[] = [];
         for (let i = 0; i < next.length; i++) {
-          // 只替换未在 flipping 状态的格子
-          if (!flippingPositions.has(i) && !selectedIndices.includes(i)) {
-            toReplace.push(i);
-          }
+          if (!flippingPositions.has(i)) toReplace.push(i);
         }
         const r = remainingDeckRef.current;
         const takeCount = Math.min(toReplace.length, r.length);
@@ -569,7 +568,7 @@ export default function TarotSection() {
             <div className="grid grid-cols-3 gap-3 sm:gap-4">
               {gridCards.map((card, gridIdx) => {
                 const isFlipping = flippingPositions.has(gridIdx);
-                const isFresh = !isFlipping && !selectedIndices.includes(gridIdx) && selectionStep < needTotal;
+                const isFresh = !isFlipping && selectionStep < needTotal;
 
                 return (
                   <div
@@ -625,25 +624,21 @@ export default function TarotSection() {
             )}
 
             {/* 已选区 — 选中的牌跳转到这里 */}
-            {selectedIndices.length > 0 && (
+            {selectedCards.length > 0 && (
               <div className="w-full rounded-xl border border-element/20 bg-card/30 p-4 backdrop-blur-sm">
-                <p className="mb-2 text-center text-[11px] text-element/70 font-kai">✦ 已选 {selectedIndices.length}/{needTotal} 张 ✦</p>
+                <p className="mb-2 text-center text-[11px] text-element/70 font-kai">✦ 已选 {selectedCards.length}/{needTotal} 张 ✦</p>
                 <div className="flex flex-wrap justify-center gap-2">
-                  {selectedIndices.map((gridIdx, i) => {
-                    const c = gridCards[gridIdx];
-                    if (!c) return null;
-                    return (
-                      <div key={`${gridIdx}-${i}`} className="flex flex-col items-center gap-0.5 animate-rise">
-                        <div className="flex h-20 w-14 sm:h-24 sm:w-16 items-center justify-center rounded-lg border border-element/30 bg-card/80 p-1 text-center shadow-glow-sm">
-                          <div>
-                            <p className="text-[9px] sm:text-[10px] font-bold text-gold leading-tight">{c.card.nameCn}</p>
-                            <p className="text-[7px] sm:text-[8px] text-muted-foreground">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
-                          </div>
+                  {selectedCards.map((c, i) => (
+                    <div key={`${c.card.number}-${i}`} className="flex flex-col items-center gap-0.5 animate-rise">
+                      <div className="flex h-20 w-14 sm:h-24 sm:w-16 items-center justify-center rounded-lg border border-element/30 bg-card/80 p-1 text-center shadow-glow-sm">
+                        <div>
+                          <p className="text-[9px] sm:text-[10px] font-bold text-gold leading-tight">{c.card.nameCn}</p>
+                          <p className="text-[7px] sm:text-[8px] text-muted-foreground">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
                         </div>
-                        <span className="text-[8px] sm:text-[9px] text-element">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
                       </div>
-                    );
-                  })}
+                      <span className="text-[8px] sm:text-[9px] text-element">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
