@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, type FormEvent } from 'react';
+import { useState, useRef, useCallback, useMemo, type FormEvent } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,11 +12,11 @@ import {
   type InputSnapshot,
 } from '@/lib/historyStore';
 import type { SpreadType, TarotCardPlacement } from '@/types/tarot';
-import { SPREAD_POSITIONS } from '@/lib/tarot/cards';
+import { SPREAD_POSITIONS, ALL_TAROT_CARDS } from '@/lib/tarot/cards';
 
-/* ==================== 等 = 步骤定义 ==================== */
+/* ==================== 步骤定义 ==================== */
 type Step =
-  | 'prepare'    // 事 & 前准备
+  | 'prepare'    // 事前准备
   | 'question'   // 定问题
   | 'spread'     // 选牌阵
   | 'shuffle'    // 洗牌
@@ -31,6 +31,16 @@ const SPREAD_OPTIONS: { type: SpreadType; label: string; count: number; desc: st
   { type: 'cross', label: '六芒星', count: 6, desc: '全面剖析 · 深入洞察' },
   { type: 'celtic', label: '凯尔特十字', count: 10, desc: '终极详占 · 无所不包' },
 ];
+
+/** Fisher-Yates 洗牌 */
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 /* ==================== 主组件 ==================== */
 export default function TarotSection() {
@@ -49,12 +59,24 @@ export default function TarotSection() {
   const shuffleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cutTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // — 已抽取的牌 —
-  const [drawnCards, setDrawnCards] = useState<TarotCardPlacement[]>([]);
-  const [revealed, setRevealed] = useState<Set<number>>(new Set());
-  const [currentDraw, setCurrentDraw] = useState(-1); // -1 = 还未开始抽
+  // — 3×3 抽牌矩阵 —
+  const [gridCards, setGridCards] = useState<TarotCardPlacement[]>([]);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [selectionStep, setSelectionStep] = useState(0); // 当前选的是第几张
 
-  // — 提交一次（实际调用 engine + AI） —
+  // — 最终确定的手牌（按选中顺序） —
+  const drawnCards = useMemo(() => {
+    const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
+    return selectedIndices.slice(0, positions.length).map((gridIdx, i) => ({
+      ...gridCards[gridIdx],
+      position: positions[i] || `位置${i + 1}`,
+    }));
+  }, [gridCards, selectedIndices, spread]);
+
+  // — 翻牌状态 —
+  const [revealed, setRevealed] = useState<Set<number>>(new Set());
+
+  // — 提交 AI 解读（只在进入 complete 时调用） —
   const doDivinate = useCallback(() => {
     if (question.trim()) {
       divinate({ question: question.trim(), spread, with_llm: true, with_rag: true });
@@ -72,9 +94,10 @@ export default function TarotSection() {
     setSpread('three');
     setShuffling(false);
     setCutting(false);
-    setDrawnCards([]);
+    setGridCards([]);
+    setSelectedIndices([]);
+    setSelectionStep(0);
     setRevealed(new Set());
-    setCurrentDraw(-1);
   };
 
   /* ================================================================
@@ -88,45 +111,49 @@ export default function TarotSection() {
     setShuffling(true);
     shuffleTimer.current = setTimeout(() => {
       setShuffling(false);
-      // 自动进入切牌
       setStep('cut');
       setCutting(true);
       cutTimer.current = setTimeout(() => {
         setCutting(false);
-        // 切牌完成 → 进入抽牌
-        setDrawnCards([]);
+
+        // 切牌完成 → 准备 3×3 牌矩阵
+                const shuffled = shuffle(ALL_TAROT_CARDS);
+        const grid: TarotCardPlacement[] = shuffled.slice(0, 9).map((card) => ({
+          position: '',
+          card,
+          orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
+        }));
+        setGridCards(grid);
+        setSelectedIndices([]);
+        setSelectionStep(0);
         setRevealed(new Set());
-        setCurrentDraw(0);
         setStep('draw');
       }, 2500);
     }, 3000);
   };
 
-  const drawCard = () => {
-    if (currentDraw < 0) return;
+  /** 从 3×3 矩阵中选择一张牌 */
+  const selectGridCard = (gridIdx: number) => {
     const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
-    if (currentDraw >= positions.length) return;
+    if (selectedIndices.includes(gridIdx)) return; // 已选
+    if (selectionStep >= positions.length) return; // 已选满
 
-    // 调用 divinate 来抽牌（首次抽牌时触发实际计算）
-    if (drawnCards.length === 0) {
-      doDivinate();
-    }
+    setSelectedIndices((prev) => [...prev, gridIdx]);
+    const nextStep = selectionStep + 1;
 
-    // 模拟一张牌（引擎会在首次调用时生成全部牌）
-    setCurrentDraw((prev) => prev + 1);
-    // 所有牌抽完 → 自动进入翻牌
-    if (currentDraw + 1 >= positions.length) {
+    // 选满后短暂延迟进入翻牌
+    if (nextStep >= positions.length) {
       setTimeout(() => {
         setStep('reveal');
-      }, 800);
+      }, 600);
     }
+    setSelectionStep(nextStep);
   };
 
   const toggleReveal = (idx: number) => {
     setRevealed((prev) => {
       const next = new Set(prev);
       next.add(idx);
-      // 全部翻完 → 可进入 complete
       const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
       if (next.size >= positions.length) {
         setTimeout(() => setStep('complete'), 1200);
@@ -135,8 +162,12 @@ export default function TarotSection() {
     });
   };
 
+  /** 进入 complete 时触发 AI 解读 */
   const goComplete = () => {
     setStep('complete');
+    if (!result) {
+      doDivinate();
+    }
   };
 
   /* ================================================================
@@ -183,6 +214,8 @@ export default function TarotSection() {
     { key: 'complete', label: '解读' },
   ];
   const stepIdx = steps.findIndex((s) => s.key === step);
+  const spreadInfo = SPREAD_OPTIONS.find((o) => o.type === spread);
+  const needTotal = spreadInfo?.count || 0;
 
   return (
     <section className="relative min-h-screen py-20">
@@ -318,8 +351,7 @@ export default function TarotSection() {
                 ))}
               </div>
               <p className="text-center text-xs text-muted-foreground/70 animate-rise">
-                已选：{SPREAD_OPTIONS.find((o) => o.type === spread)?.label || spread} ·{' '}
-                {SPREAD_OPTIONS.find((o) => o.type === spread)?.count || 0}张
+                已选：{spreadInfo?.label || spread} · {needTotal}张
               </p>
               <Button
                 onClick={() => { startShuffle(); }}
@@ -406,67 +438,97 @@ export default function TarotSection() {
         )}
 
         {/* ================================================================
-            STEP 6: 抽牌摆阵
+            STEP 6: 抽牌摆阵 — 3×3 矩阵
             ================================================================ */}
-        {step === 'draw' && (
+        {step === 'draw' && gridCards.length > 0 && (
           <div className="flex flex-col items-center gap-6">
             <div className="text-center">
-              <p className="font-kai text-lg text-gold/90">抽牌摆阵</p>
+              <p className="font-kai text-lg text-gold/90">凭直觉选牌</p>
               <p className="text-xs text-muted-foreground/70">
-                点击中央的牌叠，抽出
-                {SPREAD_OPTIONS.find((o) => o.type === spread)?.count || 0}张牌
+                从 9 张牌中选出 {needTotal} 张 · 已选 {selectionStep}/{needTotal}
               </p>
             </div>
 
-            <div className="relative flex w-full flex-wrap items-center justify-center gap-3 min-h-[280px]">
-              {/* 牌阵位置（背面占位） */}
-              {currentDraw > 0 && (
-                <div className="flex w-full flex-wrap justify-center gap-3 animate-rise">
-                  {(SPREAD_POSITIONS[spread] || []).map((pos, i) => {
-                    if (i >= currentDraw) return null;
-                    return (
-                      <div key={i} className="flex w-28 flex-col items-center gap-1">
-                        <div className="tarot-back h-40 w-28 flex items-center justify-center">
-                          <span className="text-xs text-gold/40 font-kai">
-                            {SPREAD_OPTIONS.find((o) => o.type === spread)?.count === 1 ? '' : `${i + 1}`}
-                          </span>
+            {/* 3×3 牌矩阵 */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+              {gridCards.map((_, gridIdx) => {
+                const isSelected = selectedIndices.includes(gridIdx);
+                const selectOrder = selectedIndices.indexOf(gridIdx);
+                const isActive = !isSelected && selectionStep < needTotal;
+
+                return (
+                  <div key={gridIdx} className="flex flex-col items-center gap-1">
+                    <button
+                      onClick={() => selectGridCard(gridIdx)}
+                      disabled={!isActive}
+                      className={`card-perspective h-32 w-22 sm:h-40 sm:w-28 transition-all duration-300 ${
+                        isActive
+                          ? 'cursor-pointer hover:scale-105 hover:shadow-glow-lg'
+                          : isSelected
+                            ? 'cursor-default opacity-40 scale-95'
+                            : 'cursor-default'
+                      } ${!isActive && !isSelected ? 'opacity-30' : ''}`}
+                    >
+                      <div className={`card-inner h-full w-full ${isSelected ? 'card-flipped' : ''}`}>
+                        {/* 背面（未选时显示） */}
+                        <div className="card-back tarot-back flex items-center justify-center rounded-xl border border-element/20">
+                          <span className="font-kai text-xs text-gold/50">?</span>
                         </div>
-                        <span className="text-[10px] text-muted-foreground/60">{pos}</span>
+                        {/* 正面（选中后显示牌面） */}
+                        <div className="card-front flex items-center justify-center rounded-xl border border-element/30 bg-card p-1 sm:p-2">
+                          <div className="text-center">
+                            <div className="text-[11px] sm:text-sm font-kai font-bold text-gold leading-tight">
+                              {gridCards[gridIdx].card.nameCn}
+                            </div>
+                            <div className="mt-0.5 text-[8px] sm:text-[10px] text-muted-foreground/70">
+                              {gridCards[gridIdx].orientation === 'upright' ? '正位' : '逆位'}
+                            </div>
+                            {isSelected && (
+                              <div className="mt-0.5 text-[9px] sm:text-[11px] text-element/80">
+                                ← 第{selectOrder + 1}张
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* 牌叠（可点击抽牌） */}
-              {currentDraw >= 0 && currentDraw < (SPREAD_POSITIONS[spread] || []).length && (
-                <div className="absolute inset-0 flex items-center justify-center" style={{ pointerEvents: loading ? 'none' : 'auto' }}>
-                  <button
-                    onClick={drawCard}
-                    disabled={loading}
-                    className="group cursor-pointer focus:outline-none"
-                  >
-                    <div className="tarot-back relative h-40 w-28 transition-all duration-300 group-hover:scale-105 group-hover:shadow-glow-lg animate-deck-float">
-                      <span className="absolute inset-0 flex items-center justify-center font-kai text-sm text-gold/60">
-                        点击抽牌
-                      </span>
-                    </div>
-                  </button>
-                </div>
-              )}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
 
-            {currentDraw > 0 && currentDraw < (SPREAD_POSITIONS[spread] || []).length && (
-              <p className="text-xs text-muted-foreground/70">
-                已抽 {currentDraw} / {SPREAD_POSITIONS[spread]?.length || 0} 张
-              </p>
-            )}
+            {/* 进度条 */}
+            <div className="flex w-full max-w-xs items-center gap-2">
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-card/60">
+                <div
+                  className="h-full rounded-full bg-element transition-all duration-500"
+                  style={{ width: `${(selectionStep / needTotal) * 100}%` }}
+                />
+              </div>
+              <span className="text-xs text-muted-foreground/70">
+                {selectionStep}/{needTotal}
+              </span>
+            </div>
 
-            {loading && (
-              <p className="flex items-center gap-2 text-sm text-element/70">
-                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-element border-t-transparent" />
-                塔罗正在感应您的能量…
-              </p>
+            {/* 已选牌预览 */}
+            {selectionStep > 0 && (
+              <div className="flex flex-wrap justify-center gap-2 animate-rise">
+                {selectedIndices.map((gridIdx, i) => (
+                  <div key={gridIdx} className="flex flex-col items-center gap-0.5">
+                    <div className="flex h-20 w-14 items-center justify-center rounded-lg border border-element/25 bg-card/70 p-1 text-center">
+                      <div>
+                        <p className="text-[9px] font-bold text-gold leading-tight">
+                          {gridCards[gridIdx].card.nameCn}
+                        </p>
+                        <p className="text-[8px] text-muted-foreground">
+                          {gridCards[gridIdx].orientation === 'upright' ? '正位' : '逆位'}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[9px] text-element/70">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         )}
@@ -482,7 +544,7 @@ export default function TarotSection() {
             </div>
 
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-              {(SPREAD_POSITIONS[spread] || []).map((pos, i) => {
+              {drawnCards.map((c, i) => {
                 const isRev = revealed.has(i);
                 return (
                   <div key={i} className="flex w-28 flex-col items-center gap-1.5">
@@ -491,11 +553,7 @@ export default function TarotSection() {
                       disabled={isRev}
                       className="card-perspective h-40 w-28"
                     >
-                      <div
-                        className={`card-inner h-full w-full ${
-                          isRev ? 'card-flipped' : ''
-                        }`}
-                      >
+                      <div className={`card-inner h-full w-full ${isRev ? 'card-flipped' : ''}`}>
                         {/* 背面 */}
                         <div className="card-back tarot-back flex items-center justify-center rounded-xl">
                           <span className="font-kai text-lg text-gold/40">{i + 1}</span>
@@ -503,18 +561,16 @@ export default function TarotSection() {
                         {/* 正面 */}
                         <div className="card-front flex items-center justify-center rounded-xl border border-element/30 bg-card p-2">
                           <div className="text-center">
-                            <div className="text-sm font-kai font-bold text-gold leading-tight">
-                              {getCardSnippet(result?.tarot?.cards, i)}
-                            </div>
+                            <div className="text-sm font-kai font-bold text-gold leading-tight">{c.card.nameCn}</div>
                             <div className="mt-1 text-[10px] text-muted-foreground/70">
-                              {result?.tarot?.cards?.[i]?.orientation === 'upright' ? '正位' : '逆位'}
+                              {c.orientation === 'upright' ? '正位' : '逆位'}
                             </div>
                           </div>
                         </div>
                       </div>
                     </button>
                     <span className={`text-[10px] ${isRev ? 'text-element' : 'text-muted-foreground/40'}`}>
-                      {pos}
+                      {c.position}
                     </span>
                   </div>
                 );
@@ -525,7 +581,7 @@ export default function TarotSection() {
             {revealed.size > 0 && (
               <div className="mx-auto max-w-lg space-y-2 animate-rise">
                 {[...revealed].sort().map((i) => {
-                  const c = result?.tarot?.cards?.[i];
+                  const c = drawnCards[i];
                   if (!c) return null;
                   return (
                     <div key={i} className="rounded-lg border border-element/20 bg-card/40 px-4 py-2">
@@ -544,12 +600,13 @@ export default function TarotSection() {
               </div>
             )}
 
-            {revealed.size >= (SPREAD_POSITIONS[spread] || []).length && (
+            {revealed.size >= needTotal && (
               <Button
                 onClick={goComplete}
                 className="bg-element font-kai text-void shadow-glow-md hover:bg-element/80"
+                disabled={loading}
               >
-                查看完整解读
+                {loading ? 'AI 解读中…' : '查看完整解读'}
               </Button>
             )}
           </div>
@@ -558,7 +615,7 @@ export default function TarotSection() {
         {/* ================================================================
             STEP 8: 收尾 / AI 解读
             ================================================================ */}
-        {step === 'complete' && result && (
+        {step === 'complete' && (
           <div className="space-y-6">
             {/* 收尾横幅 */}
             <div className="animate-rise rounded-xl border border-element/25 bg-element/5 px-6 py-5 text-center backdrop-blur-sm">
@@ -570,7 +627,7 @@ export default function TarotSection() {
 
             {/* 已翻开的牌快览 */}
             <div className="flex flex-wrap justify-center gap-2">
-              {result.tarot.cards.map((c, i) => (
+              {drawnCards.map((c, i) => (
                 <div key={i} className="flex w-20 flex-col items-center gap-0.5">
                   <div className="flex h-28 w-20 items-center justify-center rounded-lg border border-element/25 bg-card/70 p-1 text-center">
                     <div>
@@ -583,23 +640,35 @@ export default function TarotSection() {
               ))}
             </div>
 
-            {/* 保存 / 分享 */}
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Button variant="outline" onClick={handleSave} className="border-element/50 text-element hover:bg-element/10">
-                💾 存入记忆
-              </Button>
-              <Button variant="default" onClick={handleShare} className="bg-element text-void shadow-glow-md hover:bg-element/80">
-                🔗 复制分享链接
-              </Button>
-            </div>
+            {/* 保存 / 分享（仅在有 result 时显示） */}
+            {result && (
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Button variant="outline" onClick={handleSave} className="border-element/50 text-element hover:bg-element/10">
+                  💾 存入记忆
+                </Button>
+                <Button variant="default" onClick={handleShare} className="bg-element text-void shadow-glow-md hover:bg-element/80">
+                  🔗 复制分享链接
+                </Button>
+              </div>
+            )}
             {feedback && <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>}
 
-            {/* AI 解读（带 PayWall） */}
-            <TarotResultView
-              result={result}
-              onReset={handleReset}
-              unlockKey={makeRecordKey('tarot', buildInput())}
-            />
+            {/* 加载中状态 */}
+            {loading && !result && (
+              <div className="flex flex-col items-center gap-4 py-12">
+                <div className="inline-block h-10 w-10 animate-spin rounded-full border-3 border-element border-t-transparent" />
+                <p className="text-sm text-element/80 font-kai">塔罗师正在解读牌面…</p>
+              </div>
+            )}
+
+            {/* AI 解读（带 PayWall） — 当 result 存在时显示 */}
+            {result && (
+              <TarotResultView
+                result={result}
+                onReset={handleReset}
+                unlockKey={makeRecordKey('tarot', buildInput())}
+              />
+            )}
           </div>
         )}
 
@@ -613,11 +682,4 @@ export default function TarotSection() {
       </div>
     </section>
   );
-}
-
-/** 辅助：获取牌的简短名称 */
-function getCardSnippet(cards: TarotCardPlacement[] | undefined, idx: number): string {
-  if (!cards || !cards[idx]) return '?';
-  const c = cards[idx].card;
-  return c.nameCn.length > 4 ? c.nameCn.slice(0, 4) : c.nameCn;
 }
