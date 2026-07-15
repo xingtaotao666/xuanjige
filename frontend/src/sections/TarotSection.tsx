@@ -22,7 +22,6 @@ type Step =
   | 'shuffle'
   | 'cut'
   | 'draw'
-  | 'reveal'
   | 'complete';
 
 const SPREAD_OPTIONS: { type: SpreadType; label: string; count: number; desc: string }[] = [
@@ -80,9 +79,6 @@ export default function TarotSection() {
     }));
   }, [selectedCards, spread]);
 
-  // — 翻牌 —
-  const [revealed, setRevealed] = useState<Set<number>>(new Set());
-
   // — AI 解读（传入已选的牌，不重新抽牌） —
   const doDivinate = useCallback(() => {
     if (question.trim() && drawnCards.length > 0) {
@@ -114,7 +110,6 @@ export default function TarotSection() {
     setSelectionStep(0);
     remainingDeckRef.current = [];
     setReshuffling(false);
-    setRevealed(new Set());
   };
 
   /* ================================================================
@@ -168,7 +163,6 @@ export default function TarotSection() {
     setFlippingPositions(new Set());
     setSelectedCards([]);
     setSelectionStep(0);
-    setRevealed(new Set());
     setStep('draw');
   };
 
@@ -224,7 +218,12 @@ export default function TarotSection() {
     }, 1200);
 
     if (nextStep >= positions.length) {
-      setTimeout(() => setStep('reveal'), 1400);
+      setTimeout(() => {
+        setStep('complete');
+        if (!result) {
+          doDivinate();
+        }
+      }, 1400);
     }
   };
 
@@ -262,21 +261,6 @@ export default function TarotSection() {
         return next;
       });
     }, 400);
-  };
-
-  const toggleReveal = (idx: number) => {
-    setRevealed((prev) => {
-      const next = new Set(prev);
-      next.add(idx);
-      return next;
-    });
-  };
-
-  const goComplete = () => {
-    setStep('complete');
-    if (!result) {
-      doDivinate();
-    }
   };
 
   /* ================================================================
@@ -321,7 +305,6 @@ export default function TarotSection() {
     { key: 'shuffle', label: '洗牌' },
     { key: 'cut', label: '切牌' },
     { key: 'draw', label: '抽牌' },
-    { key: 'reveal', label: '翻牌' },
     { key: 'complete', label: '解读' },
   ];
   const stepIdx = steps.findIndex((s) => s.key === step);
@@ -649,79 +632,7 @@ export default function TarotSection() {
         )}
 
         {/* ================================================================
-            STEP 7: 翻牌解读
-            ================================================================ */}
-        {step === 'reveal' && (
-          <div className="flex flex-col items-center gap-6">
-            <div className="text-center">
-              <p className="font-kai text-lg text-gold/90">翻牌 · 逐张揭示</p>
-              <p className="text-xs text-muted-foreground/70">点击牌面 · 揭开塔罗的启示</p>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
-              {drawnCards.map((c, i) => {
-                const isRev = revealed.has(i);
-                return (
-                  <div key={i} className="flex w-[calc(33%-1rem)] max-w-[7rem] flex-col items-center gap-1.5">
-                    <button onClick={() => toggleReveal(i)} disabled={isRev} className="card-perspective w-full aspect-[5/7]">
-                      <div className={`card-inner h-full w-full ${isRev ? 'card-flipped' : ''}`}>
-                        <div className="card-back tarot-back flex items-center justify-center rounded-xl">
-                          <span className="font-kai text-lg text-gold/40">{i + 1}</span>
-                        </div>
-                        <div className="card-front flex items-center justify-center rounded-xl border border-element/30 bg-card p-1 sm:p-2">
-                          <div className="text-center">
-                            <div className="text-[clamp(0.6rem,3.5vw,0.9rem)] font-kai font-bold text-gold leading-tight">{c.card.nameCn}</div>
-                            <div className="mt-0.5 text-[clamp(0.45rem,2.5vw,0.7rem)] text-muted-foreground/70">
-                              {c.orientation === 'upright' ? '正位' : '逆位'}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                    <span className={`text-[clamp(0.4rem,2.5vw,0.7rem)] ${isRev ? 'text-element' : 'text-muted-foreground/40'}`}>
-                      {c.position}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {revealed.size > 0 && (
-              <div className="mx-auto max-w-lg space-y-2 animate-rise">
-                {[...revealed].sort().map((i) => {
-                  const c = drawnCards[i];
-                  if (!c) return null;
-                  return (
-                    <div key={i} className="rounded-lg border border-element/20 bg-card/40 px-4 py-2">
-                      <p className="text-xs font-bold text-gold">
-                        {c.card.nameCn}
-                        <span className="ml-1 font-normal text-muted-foreground">
-                          · {c.position} · {c.orientation === 'upright' ? '正位' : '逆位'}
-                        </span>
-                      </p>
-                      <p className="mt-0.5 text-[11px] text-foreground/70 line-clamp-2">
-                        {c.orientation === 'upright' ? c.card.meaningUpright : c.card.meaningReversed}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {revealed.size >= needTotal && (
-              <Button
-                onClick={goComplete}
-                className="bg-element font-kai text-void shadow-glow-md hover:bg-element/80"
-                disabled={loading}
-              >
-                {loading ? 'AI 解读中…' : '查看完整解读'}
-              </Button>
-            )}
-          </div>
-        )}
-
-        {/* ================================================================
-            STEP 8: 收尾 / AI 解读
+            STEP 7: 收尾 / AI 解读
             ================================================================ */}
         {step === 'complete' && (
           <div className="space-y-6">
