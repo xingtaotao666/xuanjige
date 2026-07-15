@@ -4,7 +4,7 @@
  */
 import type { TarotRequest, TarotAnalyzeResponse, TarotResult } from '@/types/tarot';
 import { drawCards } from '@/lib/tarot/engine';
-import { searchRag } from '@/lib/rag/retriever';
+import { searchTarotKnowledge } from '@/lib/rag/tarotKnowledge';
 import { callDeepSeek } from '@/lib/llm/deepseek';
 import { buildTarotPrompt } from '@/lib/prompt';
 import { loadKnowledge } from '@/lib/knowledge';
@@ -20,14 +20,6 @@ function formatMeanings(cards: TarotResult['cards']): string {
         `  元素：${p.card.element}`,
     )
     .join('\n');
-}
-
-/** 构建 RAG 检索查询：综合用户问题 + 牌面内容（牌名、位置、正逆位、关键词、含义） */
-function buildRagQuery(question: string, cards: TarotResult['cards']): string {
-  const cardPart = cards
-    .map((p) => `${p.card.nameCn} ${p.card.nameEn} ${p.card.keywords} ${p.position} ${p.orientation === 'upright' ? '正位' : '逆位'}`)
-    .join(' ');
-  return `${question} ${cardPart}`;
 }
 
 export interface TarotDivinationStage {
@@ -46,12 +38,13 @@ export async function tarotDivinate(
     ? { spread, question, cards, meanings: formatMeanings(cards) }
     : drawCards(spread, question);
 
-  // 2. RAG 检索（基于牌面 + 用户问题）
+  // 2. RAG 检索 — 基于牌名+关键词直接查找
   let ragSources = undefined;
   if (with_rag) {
     onStage?.({ stage: 'rag', message: '🔍 正在检索塔罗经典知识库…' });
-    const ragQuery = buildRagQuery(question, tarot.cards);
-    ragSources = await searchRag(ragQuery, 5, ['塔罗入门']);
+    const cardNames = tarot.cards.map((c) => `${c.card.nameCn} ${c.card.nameEn}`);
+    const cardKeywords = tarot.cards.flatMap((c) => c.card.keywords.split(','));
+    ragSources = await searchTarotKnowledge(cardNames, cardKeywords);
   }
 
   // 3. LLM 解读
