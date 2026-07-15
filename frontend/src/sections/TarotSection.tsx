@@ -763,6 +763,14 @@ export default function TarotSection() {
               </div>
             )}
 
+            {/* AI 解读出错提示 */}
+            {error && !loading && !result && (
+              <div className="rounded-lg border border-red-500/30 bg-red-950/30 p-4 text-center text-sm text-red-300">
+                <p>⚠️ {error}</p>
+                <p className="mt-2 text-xs text-red-400/70">可尝试重新占卜或在右上角设置中配置 DeepSeek API Key</p>
+              </div>
+            )}
+
             {/* 保存/分享 */}
             {result && (
               <div className="flex flex-wrap items-center justify-center gap-3">
@@ -776,20 +784,13 @@ export default function TarotSection() {
             )}
             {feedback && <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>}
 
-            {/* AI 解读（带 PayWall）— 传入正确的 result */}
+            {/* AI 解读 + RAG 内容来源（测试阶段免费展示） */}
             {result && (
               <TarotResultView
                 result={result}
                 onReset={handleReset}
-                unlockKey={makeRecordKey('tarot', buildInput())}
+                unlockKey=""
               />
-            )}
-
-            {/* 错误提示 */}
-            {error && (
-              <div className="rounded bg-red-950/40 p-3 text-center text-sm text-red-300">
-                {error}
-              </div>
             )}
           </div>
         )}
