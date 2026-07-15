@@ -274,7 +274,13 @@ export default function TarotSection() {
       next.add(idx);
       const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
       if (next.size >= positions.length) {
-        setTimeout(() => setStep('complete'), 1200);
+        // 自动翻完所有牌 → 1.2s 后跳到 complete，并触发 AI 解读
+        setTimeout(() => {
+          setStep('complete');
+          if (!result) {
+            doDivinate();
+          }
+        }, 1200);
       }
       return next;
     });
