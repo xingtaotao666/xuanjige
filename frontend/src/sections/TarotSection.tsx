@@ -173,9 +173,8 @@ export default function TarotSection() {
   };
 
   /** 选中一张牌：
-   *  1) 记录当前卡牌进 selectedCards
-   *  2) 将该位置标记为 flipping（显示牌面）
-   *  3) 800ms 后移除 flipping 标记，该位置补新牌 → 再次可选
+   *  1) 立即记录、翻转显示牌面
+   *  2) 350ms 后跳走到已选区，原位补新牌 → 可再次点击
    */
   const selectGridCard = (gridIdx: number) => {
     const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
@@ -185,10 +184,9 @@ export default function TarotSection() {
     const card = gridCards[gridIdx];
     if (!card) return;
 
-    // 记录到已选列表（只追加）
+    // 记录到已选列表
     setSelectedCards((prev) => [...prev, { ...card }]);
-
-    // 标记翻转（显示牌面内容）
+    // 标记翻转（显示牌面）
     setFlippingPositions((prev) => {
       const n = new Set(prev);
       n.add(gridIdx);
@@ -197,7 +195,7 @@ export default function TarotSection() {
     const nextStep = selectionStep + 1;
     setSelectionStep(nextStep);
 
-    // 800ms 后：移除翻转标记 + 补新牌 → 该位置可再次点击
+    // 350ms 后：翻转牌跳走，原位补新牌
     setTimeout(() => {
       setFlippingPositions((prev) => {
         const n = new Set(prev);
@@ -211,9 +209,7 @@ export default function TarotSection() {
           next[gridIdx] = remain.splice(0, 1)[0];
           remainingDeckRef.current = remain;
         } else {
-          const usedNumbers = new Set(
-            selectedCards.map((c) => c.card.number),
-          );
+          const usedNumbers = new Set(selectedCards.map((c) => c.card.number));
           const pool = ALL_TAROT_CARDS.filter((c) => !usedNumbers.has(c.number));
           const fresh = shuffle(pool).map((card) => ({
             position: '',
@@ -225,10 +221,10 @@ export default function TarotSection() {
         }
         return next;
       });
-    }, 800);
+    }, 350);
 
     if (nextStep >= positions.length) {
-      setTimeout(() => setStep('reveal'), 1200);
+      setTimeout(() => setStep('reveal'), 600);
     }
   };
 
@@ -569,8 +565,8 @@ export default function TarotSection() {
                 return (
                   <div
                     key={gridIdx}
-                    className={`flex flex-col items-center gap-1 transition-all duration-500 ${
-                      isFlipping ? 'scale-110 z-10' : 'scale-100'
+                    className={`flex flex-col items-center gap-1 ${
+                      isFlipping ? 'animate-card-jump' : ''
                     }`}
                   >
                     <button
