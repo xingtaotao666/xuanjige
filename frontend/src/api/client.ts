@@ -11,7 +11,7 @@ import type { TarotAnalyzeResponse, TarotRequest } from '../types/tarot';
 
 import { baziAnalyze, baziBasic } from '@/lib/services/baziService';
 import { yijingDivinate } from '@/lib/services/yijingService';
-import { tarotDivinate } from '@/lib/services/tarotService';
+import { tarotDivinate, type TarotDivinationStage } from '@/lib/services/tarotService';
 import { getHexagramByXuhao } from '@/lib/yijing/data';
 import { getGuaci } from '@/lib/yijing/guaci';
 
@@ -72,8 +72,10 @@ export const getHexagram = async (sequence: number): Promise<GuaData> => {
 
 // --- Tarot ---
 
-export const analyzeTarot = (data: TarotRequest): Promise<TarotAnalyzeResponse> =>
-  tarotDivinate(data);
+export const analyzeTarot = (
+  data: TarotRequest,
+  onStage?: (stage: TarotDivinationStage) => void,
+): Promise<TarotAnalyzeResponse> => tarotDivinate(data, onStage);
 
 // --- Consult（纯前端模式已下线，保留签名避免导入报错） ---
 

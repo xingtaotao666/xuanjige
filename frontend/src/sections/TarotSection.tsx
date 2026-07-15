@@ -44,7 +44,7 @@ function shuffle<T>(arr: T[]): T[] {
 
 /* ==================== 主组件 ==================== */
 export default function TarotSection() {
-  const { loading, error, result, divinate, reset } = useTarot();
+  const { loading, error, result, stage, divinate, reset } = useTarot();
   const { add } = useHistory();
 
   // — 基础状态 —
@@ -272,16 +272,6 @@ export default function TarotSection() {
     setRevealed((prev) => {
       const next = new Set(prev);
       next.add(idx);
-      const positions = SPREAD_POSITIONS[spread] || ['当前指引'];
-      if (next.size >= positions.length) {
-        // 自动翻完所有牌 → 1.2s 后跳到 complete，并触发 AI 解读
-        setTimeout(() => {
-          setStep('complete');
-          if (!result) {
-            doDivinate();
-          }
-        }, 1200);
-      }
       return next;
     });
   };
@@ -761,11 +751,30 @@ export default function TarotSection() {
               ))}
             </div>
 
-            {/* 加载中 */}
+            {/* 加载中 — 分阶段显示：RAG 检索 / DS 解读 */}
             {loading && !result && (
-              <div className="flex flex-col items-center gap-4 py-12">
-                <div className="inline-block h-10 w-10 animate-spin rounded-full border-3 border-element border-t-transparent" />
-                <p className="text-sm text-element/80 font-kai">塔罗师正在解读牌面…</p>
+              <div className="flex flex-col items-center gap-4 py-12 animate-rise">
+                <div className="relative h-16 w-16">
+                  <div className="absolute inset-0 rounded-full border-2 border-element/30" />
+                  <div className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-element" />
+                  <div className="absolute inset-0 flex items-center justify-center text-2xl">🔮</div>
+                </div>
+                <p className="font-kai text-base text-element animate-breathe">
+                  {stage?.message || '塔罗师正在解读牌面…'}
+                </p>
+                <div className="flex items-center gap-1 text-[10px] text-muted-foreground/60">
+                  <span className={stage?.stage === 'rag' ? 'text-element font-bold' : ''}>
+                    ① 检索知识库
+                  </span>
+                  <span>→</span>
+                  <span className={stage?.stage === 'llm' ? 'text-element font-bold' : ''}>
+                    ② AI 解读
+                  </span>
+                  <span>→</span>
+                  <span className={stage?.stage === 'done' ? 'text-element font-bold' : ''}>
+                    ③ 完成
+                  </span>
+                </div>
               </div>
             )}
 
