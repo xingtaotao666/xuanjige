@@ -1,8 +1,6 @@
 /**
  * 塔罗知识检索——根据牌面直接检索对应知识库片段
- * 不同于通用 searchRag（单字匹配），本函数：
- * 1. 用牌的中英文名作为关键词精确查找
- * 2. 返回匹配的完整段落
+ * 自动解析 tarot_intro.txt 中的 `###` 标题提取各书原文
  */
 import type { RagSource } from '@/types/consult';
 
@@ -21,20 +19,42 @@ function corpusUrl(rel: string): string {
   return `${import.meta.env.BASE_URL}${rel}`;
 }
 
+/** 从 `### 标题` 中提取书名（去掉《》符号） */
+function extractBookName(header: string): string {
+  // 匹配 ### 《书名》 或 ### 《书名》（《别名》）— 作者
+  let name = header.replace(/^#+\s*/, '').trim();
+  // 提取《》内的内容
+  const match = name.match(/《(.+?)》/);
+  if (match) return match[1];
+  // 没有《》就取冒号/句号前的部分
+  const cut = name.split(/[：:。]/)[0];
+  return cut || '塔罗入门';
+}
+
 async function loadChunks(): Promise<Chunk[]> {
   if (_cache) return _cache;
   if (_promise) return _promise;
   _promise = (async () => {
     const chunks: Chunk[] = [];
+    let currentBook = '塔罗入门';
     try {
       const res = await fetch(corpusUrl(CORPUS_PATH));
       if (res.ok) {
         const text = await res.text();
-        for (const raw of text.split('\n\n')) {
+        const parts = text.split('\n\n');
+        for (const raw of parts) {
           const para = raw.trim();
-          if (!para || para.length < CHUNK_MIN_CHARS) continue;
-          if (para.startsWith('#')) continue;
-          chunks.push({ text: para, book: '塔罗入门' });
+          if (!para) continue;
+
+          // 检测标题行
+          if (para.startsWith('### ') || para.startsWith('## ')) {
+            currentBook = extractBookName(para);
+            continue;
+          }
+          if (para.startsWith('#')) continue; // 其他标题跳过
+
+          if (para.length < CHUNK_MIN_CHARS) continue;
+          chunks.push({ text: para, book: currentBook });
         }
       }
     } catch {
@@ -46,7 +66,7 @@ async function loadChunks(): Promise<Chunk[]> {
   return _promise;
 }
 
-/** 根据牌名（中、英）、位置名称、关键词，返回知识库中最相关的段落 */
+/** 根据牌名（中、英）、关键词，返回知识库中最相关的段落 */
 export async function searchTarotKnowledge(
   cardNames: string[],
   cardKeywords: string[],
@@ -56,9 +76,7 @@ export async function searchTarotKnowledge(
   // 为每张牌构建关键词集合
   const allKeywords = new Set<string>();
   for (const name of cardNames) {
-    // 中英文名
     allKeywords.add(name.toLowerCase());
-    // 单字中文：大牌如"愚者""魔术师"，小牌如"权杖"+"二"
     for (const ch of name) {
       if (ch >= '\u4e00' && ch <= '\u9fff') allKeywords.add(ch);
     }
