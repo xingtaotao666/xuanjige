@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, type FormEvent } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect, type FormEvent } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,7 +11,7 @@ import {
   makeRecordKey,
   type InputSnapshot,
 } from '@/lib/historyStore';
-import type { SpreadType, TarotCardPlacement } from '@/types/tarot';
+import type { SpreadType, TarotCardPlacement, TarotAnalyzeResponse } from '@/types/tarot';
 import { SPREAD_POSITIONS, ALL_TAROT_CARDS } from '@/lib/tarot/cards';
 
 /* ==================== 步骤定义 ==================== */
@@ -55,6 +55,25 @@ export default function TarotSection() {
   // — 手动输牌模式 —
   const [manualMode, setManualMode] = useState(false);
   const [manualCards, setManualCards] = useState('');
+
+  // — 导航恢复：保存/恢复结果 —
+  const [savedResult, setSavedResult] = useState<TarotAnalyzeResponse | null>(() => {
+    try {
+      const raw = sessionStorage.getItem('tarot_result');
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  });
+  const SAVE_KEY = 'tarot_saved_state';
+  const restoredState = useMemo(() => {
+    try {
+      const raw = sessionStorage.getItem(SAVE_KEY);
+      if (raw) {
+        sessionStorage.removeItem(SAVE_KEY);
+        return JSON.parse(raw) as Record<string, unknown>;
+      }
+    } catch {}
+    return null;
+  }, []);
 
   // — 洗牌 —
   const [shuffling, setShuffling] = useState(false);
@@ -145,11 +164,45 @@ export default function TarotSection() {
     });
   }, [question, manualCards, divinate, setStep]);
 
+  // — 状态持久化：导航离开再回来时保留结果 —
+  useEffect(() => {
+    if (restoredState) {
+      // 恢复步骤和输入状态
+      if (typeof restoredState.step === 'string') setStep(restoredState.step as Step);
+      if (typeof restoredState.question === 'string') setQuestion(restoredState.question);
+      if (typeof restoredState.spread === 'string') setSpread(restoredState.spread as SpreadType);
+      if (typeof restoredState.manualMode === 'boolean') setManualMode(restoredState.manualMode);
+      if (typeof restoredState.manualCards === 'string') setManualCards(restoredState.manualCards);
+      if (Array.isArray(restoredState.selectedCards)) setSelectedCards(restoredState.selectedCards as TarotCardPlacement[]);
+      if (Array.isArray(restoredState.gridCards)) setGridCards(restoredState.gridCards as TarotCardPlacement[]);
+      if (typeof restoredState.selectionStep === 'number') setSelectionStep(restoredState.selectionStep);
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      try {
+        const state = {
+          step,
+          question,
+          spread,
+          manualMode,
+          manualCards,
+          selectedCards,
+          gridCards,
+          selectionStep,
+          result: result || savedResult,
+        };
+        sessionStorage.setItem(SAVE_KEY, JSON.stringify(state));
+      } catch {}
+    };
+  }, [step, question, spread, manualMode, manualCards, selectedCards, gridCards, selectionStep, result, savedResult]);
+
   // — 重置 —
   const handleReset = () => {
     if (cutTimer.current) clearTimeout(cutTimer.current);
     reset();
-    setStep('prepare');
+    setStep('question');
     setFeedback('');
     setQuestion('');
     setSpread('three');
@@ -163,7 +216,18 @@ export default function TarotSection() {
     setSelectionStep(0);
     remainingDeckRef.current = [];
     setReshuffling(false);
+    setSavedResult(null);
+    sessionStorage.removeItem(SAVE_KEY);
   };
+
+  // — 保存结果到持久化 —
+  const effectiveResult = result || savedResult;
+  useEffect(() => {
+    if (result) {
+      setSavedResult(result);
+      try { sessionStorage.setItem('tarot_result', JSON.stringify(result)); } catch {}
+    }
+  }, [result]);
 
   /* ================================================================
      步骤过渡
@@ -834,7 +898,7 @@ export default function TarotSection() {
             </div>
 
             {/* 加载中 — 分阶段显示：RAG 检索 / DS 解读 */}
-            {loading && !result && (
+            {loading && !effectiveResult && (
               <div className="flex flex-col items-center gap-4 py-12 animate-rise">
                 <div className="relative h-16 w-16">
                   <div className="absolute inset-0 rounded-full border-2 border-bronze/35" />
@@ -861,7 +925,7 @@ export default function TarotSection() {
             )}
 
             {/* AI 解读出错提示 */}
-            {error && !loading && !result && (
+            {error && !loading && !effectiveResult && (
               <div className="rounded-lg border border-red-500/30 bg-red-950/30 p-4 text-center text-sm text-red-300">
                 <p>⚠️ {error}</p>
                 <p className="mt-2 text-xs text-red-400/70">可尝试重新占卜或在右上角设置中配置 DeepSeek API Key</p>
@@ -869,7 +933,7 @@ export default function TarotSection() {
             )}
 
             {/* 保存/分享 */}
-            {result && (
+            {effectiveResult && (
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <Button variant="outline" onClick={handleSave} className="border-bronze/50 text-inkstone hover:bg-bronze/10">
                   💾 存入记忆
@@ -881,10 +945,10 @@ export default function TarotSection() {
             )}
             {feedback && <p className="text-center text-sm text-inkstone-soft/90 animate-rise">{feedback}</p>}
 
-            {/* AI 解读 + RAG 内容来源（测试阶段免费展示） */}
-            {result && (
+            {/* AI 解读 + RAG 内容来源 */}
+            {effectiveResult && (
               <TarotResultView
-                result={result}
+                result={effectiveResult}
                 onReset={handleReset}
                 unlockKey=""
               />
