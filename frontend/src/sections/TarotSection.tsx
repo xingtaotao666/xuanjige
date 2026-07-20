@@ -596,7 +596,7 @@ export default function TarotSection() {
                     <button
                       onClick={() => selectGridCard(gridIdx)}
                       disabled={!isFresh}
-                      className={`card-perspective w-full aspect-[5/7] transition-all duration-300 ${
+                      className={`card-perspective h-44 w-32 sm:h-56 sm:w-40 transition-all duration-300 ${
                         isFresh
                           ? 'cursor-pointer hover:scale-105 hover:shadow-paper-lg'
                           : isFlipping
