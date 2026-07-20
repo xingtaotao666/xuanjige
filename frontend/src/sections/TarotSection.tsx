@@ -47,7 +47,7 @@ export default function TarotSection() {
   const { add } = useHistory();
 
   // — 基础状态 —
-  const [step, setStep] = useState<Step>('prepare');
+  const [step, setStep] = useState<Step>('question');
   const [question, setQuestion] = useState('');
   const [spread, setSpread] = useState<SpreadType>('three');
   const [feedback, setFeedback] = useState('');
@@ -116,8 +116,6 @@ export default function TarotSection() {
      步骤过渡
      ================================================================ */
 
-  const goSpread = () => setStep('spread');
-
   /** 进入洗牌步骤（手动点击"开始洗牌"才触发动画） */
   const enterShuffle = () => {
     setStep('shuffle');
@@ -144,6 +142,26 @@ export default function TarotSection() {
       setCutting(false);
       setCutDone(true);
     }, 2500);
+  };
+
+  /** 直接进入抽牌步骤：初始化 3×3 牌阵并跳转 */
+  const startDraw = () => {
+    const shuffled = shuffle(ALL_TAROT_CARDS);
+    const grid: TarotCardPlacement[] = shuffled.slice(0, 9).map((card) => ({
+      position: '',
+      card,
+      orientation: Math.random() < 0.5 ? 'upright' : 'reversed',
+    }));
+    remainingDeckRef.current = shuffle(shuffled.slice(9)).map((card) => ({
+      position: '',
+      card,
+      orientation: Math.random() < 0.5 ? ('upright' as const) : ('reversed' as const),
+    }));
+    setGridCards(grid);
+    setFlippingPositions(new Set());
+    setSelectedCards([]);
+    setSelectionStep(0);
+    setStep('draw');
   };
 
   /** 手动确认切牌完成 → 进入抽牌 */
@@ -415,7 +433,7 @@ export default function TarotSection() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={(e: FormEvent) => { e.preventDefault(); goSpread(); }} className="space-y-5">
+              <form onSubmit={(e: FormEvent) => { e.preventDefault(); startDraw(); }} className="space-y-5">
                 <Textarea
                   placeholder="例如：近期事业发展如何？我和他/她的关系走向？…"
                   value={question}
