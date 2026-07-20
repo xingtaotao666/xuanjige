@@ -213,6 +213,21 @@
   transform: rotateY(180deg);
 }
 
+/* 牌基础尺寸 — 5:7 标准塔罗比例 */
+.tarot-card {
+  width: 128px !important;
+  height: 176px !important;
+  position: relative;
+  perspective: 1200px;
+  flex-shrink: 0;
+}
+@media (min-width: 640px) {
+  .tarot-card {
+    width: 160px !important;
+    height: 224px !important;
+  }
+}
+
 /* 塔罗牌背图案（AI 生成精美花纹） */
 .tarot-back {
   background-image: url('./tarot-back.png');

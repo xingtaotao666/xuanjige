@@ -370,11 +370,7 @@ export default function TarotSection() {
      渲染
      ================================================================ */
   const steps: { key: Step; label: string }[] = [
-    { key: 'prepare', label: '准备' },
     { key: 'question', label: '定问题' },
-    { key: 'spread', label: '选牌阵' },
-    { key: 'shuffle', label: '洗牌' },
-    { key: 'cut', label: '切牌' },
     { key: 'draw', label: '抽牌' },
     { key: 'complete', label: '解读' },
   ];
@@ -724,8 +720,7 @@ export default function TarotSection() {
                     <button
                       onClick={() => selectGridCard(gridIdx)}
                       disabled={!isFresh}
-                      style={{ width: '128px', height: '176px' }}
-                      className={`card-perspective sm:!w-40 sm:!h-56 transition-all duration-300 ${
+                      className={`tarot-card transition-all duration-300 ${
                         isFresh
                           ? 'cursor-pointer hover:scale-105 hover:shadow-paper-lg'
                           : isFlipping
