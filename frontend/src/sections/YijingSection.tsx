@@ -235,8 +235,6 @@ export default function YijingSection() {
 
   return (
     <section className="relative min-h-screen py-24">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710] via-[#0d0814] to-[#0a0710]" />
-
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mb-10 text-center">
           <div className="mb-6 flex items-center justify-center gap-4">

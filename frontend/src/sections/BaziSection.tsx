@@ -134,11 +134,16 @@ export default function BaziSection() {
 
   return (
     <section className="relative min-h-screen py-24">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710] via-[#0d0814] to-[#0a0710]" />
-
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mb-10 text-center">
-          <h1 className="font-kai text-3xl font-bold text-bronze-dark text-inkstone sm:text-4xl">八字排盘</h1>
+          <div className="mb-6 flex items-center justify-center gap-4">
+            <img
+              src="./assets/medallion-tianpan.png?v=2"
+              alt="八字天盘"
+              className="h-24 w-24 rounded-full object-cover shadow-paper-sm sm:h-32 sm:w-32"
+            />
+          </div>
+          <h1 className="font-kai text-3xl font-bold text-inkstone sm:text-4xl">八字排盘</h1>
           <p className="mt-2 text-sm text-inkstone-soft">输入生辰信息，获取专业命理分析</p>
         </div>
 
