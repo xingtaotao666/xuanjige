@@ -1,0 +1,62 @@
+{
+  "type": "jieqi_24",
+  "description": "二十四节气 - 每个节气对应的月份、公历日期范围及属性",
+  "spring": [
+    { "name": "立春", "xuhao": 1, "yuefen": "正月", "jieqi_type": "节", "gongli": "2月3-5日", "jijie": "春季", "wuxing": "木", "description": "春季开始，万物复甦" },
+    { "name": "雨水", "xuhao": 2, "yuefen": "正月", "jieqi_type": "气", "gongli": "2月18-20日", "jijie": "春季", "wuxing": "木", "description": "降雨增多，冰雪融化" },
+    { "name": "惊蛰", "xuhao": 3, "yuefen": "二月", "jieqi_type": "节", "gongli": "3月5-7日", "jijie": "春季", "wuxing": "木", "description": "春雷乍动，惊醒蛰伏之虫" },
+    { "name": "春分", "xuhao": 4, "yuefen": "二月", "jieqi_type": "气", "gongli": "3月20-22日", "jijie": "春季", "wuxing": "木", "description": "昼夜平分，阴阳平衡" },
+    { "name": "清明", "xuhao": 5, "yuefen": "三月", "jieqi_type": "节", "gongli": "4月4-6日", "jijie": "春季", "wuxing": "木", "description": "天气晴明，扫墓祭祖" },
+    { "name": "谷雨", "xuhao": 6, "yuefen": "三月", "jieqi_type": "气", "gongli": "4月19-21日", "jijie": "春季", "wuxing": "木", "description": "雨生百谷，播种佳期" }
+  ],
+  "summer": [
+    { "name": "立夏", "xuhao": 7, "yuefen": "四月", "jieqi_type": "节", "gongli": "5月5-7日", "jijie": "夏季", "wuxing": "火", "description": "夏季开始，万物繁茂" },
+    { "name": "小满", "xuhao": 8, "yuefen": "四月", "jieqi_type": "气", "gongli": "5月20-22日", "jijie": "夏季", "wuxing": "火", "description": "麦类饱满，尚未成熟" },
+    { "name": "芒种", "xuhao": 9, "yuefen": "五月", "jieqi_type": "节", "gongli": "6月5-7日", "jijie": "夏季", "wuxing": "火", "description": "有芒作物成熟，农忙时节" },
+    { "name": "夏至", "xuhao": 10, "yuefen": "五月", "jieqi_type": "气", "gongli": "6月21-22日", "jijie": "夏季", "wuxing": "火", "description": "昼最长，夜最短，阳极之至" },
+    { "name": "小暑", "xuhao": 11, "yuefen": "六月", "jieqi_type": "节", "gongli": "7月6-8日", "jijie": "夏季", "wuxing": "火", "description": "天气渐热，尚未至极" },
+    { "name": "大暑", "xuhao": 12, "yuefen": "六月", "jieqi_type": "气", "gongli": "7月22-24日", "jijie": "夏季", "wuxing": "火", "description": "一年中最热的时期" }
+  ],
+  "autumn": [
+    { "name": "立秋", "xuhao": 13, "yuefen": "七月", "jieqi_type": "节", "gongli": "8月7-9日", "jijie": "秋季", "wuxing": "金", "description": "秋季开始，收获在即" },
+    { "name": "处暑", "xuhao": 14, "yuefen": "七月", "jieqi_type": "气", "gongli": "8月22-24日", "jijie": "秋季", "wuxing": "金", "description": "暑气渐消，秋凉初现" },
+    { "name": "白露", "xuhao": 15, "yuefen": "八月", "jieqi_type": "节", "gongli": "9月7-9日", "jijie": "秋季", "wuxing": "金", "description": "天转凉，露水凝结" },
+    { "name": "秋分", "xuhao": 16, "yuefen": "八月", "jieqi_type": "气", "gongli": "9月22-24日", "jijie": "秋季", "wuxing": "金", "description": "昼夜平分，秋色平分" },
+    { "name": "寒露", "xuhao": 17, "yuefen": "九月", "jieqi_type": "节", "gongli": "10月7-9日", "jijie": "秋季", "wuxing": "金", "description": "露水渐寒，气候转冷" },
+    { "name": "霜降", "xuhao": 18, "yuefen": "九月", "jieqi_type": "气", "gongli": "10月23-24日", "jijie": "秋季", "wuxing": "金", "description": "初霜出现，植物枯萎" }
+  ],
+  "winter": [
+    { "name": "立冬", "xuhao": 19, "yuefen": "十月", "jieqi_type": "节", "gongli": "11月7-8日", "jijie": "冬季", "wuxing": "水", "description": "冬季开始，万物收藏" },
+    { "name": "小雪", "xuhao": 20, "yuefen": "十月", "jieqi_type": "气", "gongli": "11月22-23日", "jijie": "冬季", "wuxing": "水", "description": "初雪飘落，量未至大" },
+    { "name": "大雪", "xuhao": 21, "yuefen": "十一月", "jieqi_type": "节", "gongli": "12月6-8日", "jijie": "冬季", "wuxing": "水", "description": "雪量增大，银装素裹" },
+    { "name": "冬至", "xuhao": 22, "yuefen": "十一月", "jieqi_type": "气", "gongli": "12月21-23日", "jijie": "冬季", "wuxing": "水", "description": "昼最短，夜最长，阴极之至" },
+    { "name": "小寒", "xuhao": 23, "yuefen": "十二月", "jieqi_type": "节", "gongli": "1月5-7日", "jijie": "冬季", "wuxing": "水", "description": "天气寒冷，尚未至极" },
+    { "name": "大寒", "xuhao": 24, "yuefen": "十二月", "jieqi_type": "气", "gongli": "1月20-21日", "jijie": "冬季", "wuxing": "水", "description": "一年中最寒冷的时期" }
+  ],
+  "all_jieqi": [
+    { "name": "立春", "xuhao": 1, "yinli_yue": "正月", "jieqi_type": "节", "gongli_start": "02-03", "gongli_end": "02-05", "jijie": "春季", "wuxing": "木", "dizhi": "寅" },
+    { "name": "雨水", "xuhao": 2, "yinli_yue": "正月", "jieqi_type": "气", "gongli_start": "02-18", "gongli_end": "02-20", "jijie": "春季", "wuxing": "木", "dizhi": "寅" },
+    { "name": "惊蛰", "xuhao": 3, "yinli_yue": "二月", "jieqi_type": "节", "gongli_start": "03-05", "gongli_end": "03-07", "jijie": "春季", "wuxing": "木", "dizhi": "卯" },
+    { "name": "春分", "xuhao": 4, "yinli_yue": "二月", "jieqi_type": "气", "gongli_start": "03-20", "gongli_end": "03-22", "jijie": "春季", "wuxing": "木", "dizhi": "卯" },
+    { "name": "清明", "xuhao": 5, "yinli_yue": "三月", "jieqi_type": "节", "gongli_start": "04-04", "gongli_end": "04-06", "jijie": "春季", "wuxing": "木", "dizhi": "辰" },
+    { "name": "谷雨", "xuhao": 6, "yinli_yue": "三月", "jieqi_type": "气", "gongli_start": "04-19", "gongli_end": "04-21", "jijie": "春季", "wuxing": "木", "dizhi": "辰" },
+    { "name": "立夏", "xuhao": 7, "yinli_yue": "四月", "jieqi_type": "节", "gongli_start": "05-05", "gongli_end": "05-07", "jijie": "夏季", "wuxing": "火", "dizhi": "巳" },
+    { "name": "小满", "xuhao": 8, "yinli_yue": "四月", "jieqi_type": "气", "gongli_start": "05-20", "gongli_end": "05-22", "jijie": "夏季", "wuxing": "火", "dizhi": "巳" },
+    { "name": "芒种", "xuhao": 9, "yinli_yue": "五月", "jieqi_type": "节", "gongli_start": "06-05", "gongli_end": "06-07", "jijie": "夏季", "wuxing": "火", "dizhi": "午" },
+    { "name": "夏至", "xuhao": 10, "yinli_yue": "五月", "jieqi_type": "气", "gongli_start": "06-21", "gongli_end": "06-22", "jijie": "夏季", "wuxing": "火", "dizhi": "午" },
+    { "name": "小暑", "xuhao": 11, "yinli_yue": "六月", "jieqi_type": "节", "gongli_start": "07-06", "gongli_end": "07-08", "jijie": "夏季", "wuxing": "火", "dizhi": "未" },
+    { "name": "大暑", "xuhao": 12, "yinli_yue": "六月", "jieqi_type": "气", "gongli_start": "07-22", "gongli_end": "07-24", "jijie": "夏季", "wuxing": "火", "dizhi": "未" },
+    { "name": "立秋", "xuhao": 13, "yinli_yue": "七月", "jieqi_type": "节", "gongli_start": "08-07", "gongli_end": "08-09", "jijie": "秋季", "wuxing": "金", "dizhi": "申" },
+    { "name": "处暑", "xuhao": 14, "yinli_yue": "七月", "jieqi_type": "气", "gongli_start": "08-22", "gongli_end": "08-24", "jijie": "秋季", "wuxing": "金", "dizhi": "申" },
+    { "name": "白露", "xuhao": 15, "yinli_yue": "八月", "jieqi_type": "节", "gongli_start": "09-07", "gongli_end": "09-09", "jijie": "秋季", "wuxing": "金", "dizhi": "酉" },
+    { "name": "秋分", "xuhao": 16, "yinli_yue": "八月", "jieqi_type": "气", "gongli_start": "09-22", "gongli_end": "09-24", "jijie": "秋季", "wuxing": "金", "dizhi": "酉" },
+    { "name": "寒露", "xuhao": 17, "yinli_yue": "九月", "jieqi_type": "节", "gongli_start": "10-07", "gongli_end": "10-09", "jijie": "秋季", "wuxing": "金", "dizhi": "戌" },
+    { "name": "霜降", "xuhao": 18, "yinli_yue": "九月", "jieqi_type": "气", "gongli_start": "10-23", "gongli_end": "10-24", "jijie": "秋季", "wuxing": "金", "dizhi": "戌" },
+    { "name": "立冬", "xuhao": 19, "yinli_yue": "十月", "jieqi_type": "节", "gongli_start": "11-07", "gongli_end": "11-08", "jijie": "冬季", "wuxing": "水", "dizhi": "亥" },
+    { "name": "小雪", "xuhao": 20, "yinli_yue": "十月", "jieqi_type": "气", "gongli_start": "11-22", "gongli_end": "11-23", "jijie": "冬季", "wuxing": "水", "dizhi": "亥" },
+    { "name": "大雪", "xuhao": 21, "yinli_yue": "十一月", "jieqi_type": "节", "gongli_start": "12-06", "gongli_end": "12-08", "jijie": "冬季", "wuxing": "水", "dizhi": "子" },
+    { "name": "冬至", "xuhao": 22, "yinli_yue": "十一月", "jieqi_type": "气", "gongli_start": "12-21", "gongli_end": "12-23", "jijie": "冬季", "wuxing": "水", "dizhi": "子" },
+    { "name": "小寒", "xuhao": 23, "yinli_yue": "十二月", "jieqi_type": "节", "gongli_start": "01-05", "gongli_end": "01-07", "jijie": "冬季", "wuxing": "水", "dizhi": "丑" },
+    { "name": "大寒", "xuhao": 24, "yinli_yue": "十二月", "jieqi_type": "气", "gongli_start": "01-20", "gongli_end": "01-21", "jijie": "冬季", "wuxing": "水", "dizhi": "丑" }
+  ]
+}

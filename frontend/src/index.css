@@ -3,51 +3,59 @@
 @tailwind utilities;
 
 /* ============================================================
-   玄机阁 · 古典主题变量（深紫 · 墨色 · 暗金）
+   玄机阁 · 新中式雅致主题（宣纸 + 古铜 + 墨色）
    ============================================================ */
 @layer base {
   :root {
-    --background: 270 32% 5%;
-    --foreground: 40 30% 90%;
-    --card: 270 30% 7%;
-    --card-foreground: 40 30% 90%;
-    --popover: 270 32% 6%;
-    --popover-foreground: 40 30% 90%;
-    --primary: 43 65% 50%;
-    --primary-foreground: 270 40% 5%;
-    --secondary: 270 25% 14%;
-    --secondary-foreground: 40 30% 90%;
-    --muted: 270 22% 11%;
-    --muted-foreground: 270 12% 68%;
-    --accent: 270 25% 15%;
-    --accent-foreground: 40 30% 90%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 270 20% 22%;
-    --input: 270 20% 22%;
-    --ring: 43 65% 50%;
+    /* 主背景：米色宣纸 */
+    --background: 38 45% 91%;          /* #f5ecdb */
+    /* 主文字：墨色 */
+    --foreground: 22 50% 12%;          /* #2a1810 */
+    /* 卡片：浅米 */
+    --card: 40 60% 94%;                /* #faf3e2 */
+    --card-foreground: 22 50% 12%;
+    --popover: 40 60% 94%;
+    --popover-foreground: 22 50% 12%;
+    /* 主题主色：古铜金 */
+    --primary: 35 55% 39%;             /* #8b6f47 */
+    --primary-foreground: 38 45% 96%;
+    /* 次色：苍绿 */
+    --secondary: 105 12% 47%;
+    --secondary-foreground: 22 50% 12%;
+    /* 弱化背景：浅米 */
+    --muted: 38 35% 85%;
+    --muted-foreground: 25 30% 40%;
+    /* 强调：古铜 */
+    --accent: 38 30% 70%;
+    --accent-foreground: 22 50% 12%;
+    --destructive: 12 60% 40%;
+    --destructive-foreground: 40 50% 96%;
+    /* 边框：浅褐 */
+    --border: 35 32% 65%;              /* #c4ad7c */
+    --input: 35 32% 65%;
+    --ring: 35 55% 39%;
     --radius: 0.625rem;
 
-    /* 动态五行强调色（RGB 三元组，供 Tailwind <alpha-value> 使用） */
-    --accent-rgb: 212 168 67;   /* 默认：金 */
-    --glow-rgb: 212 168 67;
+    /* 动态强调色（用于 hover/active 状态） */
+    --accent-rgb: 139 111 71;          /* 古铜 */
+    --glow-rgb: 196 163 82;             /* 暗金 */
 
-    --sidebar-background: 270 34% 5%;
-    --sidebar-foreground: 40 30% 90%;
-    --sidebar-primary: 43 65% 50%;
-    --sidebar-primary-foreground: 270 40% 5%;
-    --sidebar-accent: 270 22% 11%;
-    --sidebar-accent-foreground: 40 30% 90%;
-    --sidebar-border: 270 20% 22%;
-    --sidebar-ring: 43 65% 50%;
+    --sidebar-background: 40 60% 94%;
+    --sidebar-foreground: 22 50% 12%;
+    --sidebar-primary: 35 55% 39%;
+    --sidebar-primary-foreground: 38 45% 96%;
+    --sidebar-accent: 38 35% 85%;
+    --sidebar-accent-foreground: 22 50% 12%;
+    --sidebar-border: 35 32% 65%;
+    --sidebar-ring: 35 55% 39%;
   }
 
-  /* ===== 五行动态主题：改变全站强调色 ===== */
-  [data-element="wood"]  { --accent-rgb: 74 156 122;  --glow-rgb: 92 180 145; } /* 木 · 青碧 */
-  [data-element="fire"]  { --accent-rgb: 216 96 58;   --glow-rgb: 232 112 70; }  /* 火 · 朱 */
-  [data-element="earth"] { --accent-rgb: 198 150 78;  --glow-rgb: 212 168 100; } /* 土 · 赭 */
-  [data-element="metal"] { --accent-rgb: 206 196 150; --glow-rgb: 222 212 172; } /* 金 · 暗金 */
-  [data-element="water"] { --accent-rgb: 70 120 175;  --glow-rgb: 92 144 205; }  /* 水 · 玄青 */
+  /* ===== 五行动态强调色（古铜/青碧/朱/赭/暗金/玄青） ===== */
+  [data-element="wood"]  { --accent-rgb: 74 156 122;  --glow-rgb: 92 180 145; }
+  [data-element="fire"]  { --accent-rgb: 161 61 42;   --glow-rgb: 196 130 90;  }   /* 朱红 */
+  [data-element="earth"] { --accent-rgb: 162 116 58;  --glow-rgb: 196 150 90;  }
+  [data-element="metal"] { --accent-rgb: 184 146 58;  --glow-rgb: 196 163 82;  }   /* 暗金 */
+  [data-element="water"] { --accent-rgb: 74 107 91;   --glow-rgb: 110 140 110; }   /* 玄青/玉青 */
 
   * {
     @apply border-border;
@@ -58,60 +66,55 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-foreground font-serif;
+    @apply bg-cream text-inkstone font-serif;
     -webkit-tap-highlight-color: transparent;
     tap-highlight-color: transparent;
     touch-action: manipulation;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-image:
+      radial-gradient(900px 700px at 18% 12%, rgba(196, 163, 82, 0.10), transparent 60%),
+      radial-gradient(800px 600px at 88% 88%, rgba(110, 125, 99, 0.08), transparent 60%);
   }
   ::selection {
-    background: rgba(212, 168, 67, 0.3);
-    color: #f5ecd6;
+    background: rgba(196, 163, 82, 0.30);
+    color: #2a1810;
   }
 }
 
 /* ============================================================
-   背景层：宇宙星空 + 宣纸纹理 + 柔和光效
+   背景层：宣纸纹理 + 柔光晕
    ============================================================ */
 .app-bg {
   position: fixed;
   inset: 0;
   z-index: -10;
-  background-color: #0a0710;
+  background-color: #f5ecdb;
   background-image:
-    radial-gradient(1200px 820px at 50% -12%, rgba(82, 42, 124, 0.40), transparent 60%),
-    radial-gradient(900px 720px at 112% 18%, rgba(40, 72, 134, 0.24), transparent 55%),
-    radial-gradient(900px 720px at -12% 82%, rgba(126, 94, 30, 0.20), transparent 55%),
-    radial-gradient(ellipse at 50% 118%, rgba(22, 12, 44, 0.65), transparent 60%),
-    radial-gradient(circle at 18% 26%, rgba(212, 168, 67, 0.10), transparent 42%),
-    radial-gradient(circle at 84% 72%, rgba(70, 120, 175, 0.14), transparent 44%);
+    radial-gradient(1200px 800px at 50% -10%, rgba(196, 163, 82, 0.18), transparent 65%),
+    radial-gradient(900px 700px at 110% 22%, rgba(139, 111, 71, 0.10), transparent 60%),
+    radial-gradient(900px 700px at -10% 78%, rgba(110, 125, 99, 0.08), transparent 60%);
 }
-/* 星轨细点 */
+/* 宣纸颗粒（噪声纹理） */
 .app-bg::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(1.2px 1.2px at 20px 30px, rgba(255, 250, 235, 0.75), transparent),
-    radial-gradient(1px 1px at 90px 80px, rgba(212, 168, 67, 0.6), transparent),
-    radial-gradient(1.4px 1.4px at 150px 40px, rgba(220, 225, 255, 0.5), transparent),
-    radial-gradient(1px 1px at 60px 160px, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(1.1px 1.1px at 200px 120px, rgba(212, 168, 67, 0.5), transparent),
-    radial-gradient(1px 1px at 240px 200px, rgba(180, 200, 255, 0.45), transparent);
-  background-size: 260px 260px;
-  opacity: 0.5;
-  animation: twinkle 4.2s ease-in-out infinite;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+  pointer-events: none;
 }
-/* 宣纸/墨晕颗粒 */
+/* 远景山水 */
 .app-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.05;
-  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3CradialGradient id='sun' cx='50%25' cy='20%25' r='35%25'%3E%3Cstop offset='0%25' stop-color='%23faf3e2' stop-opacity='1'/%3E%3Cstop offset='100%25' stop-color='%23f5ecdb' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect fill='url(%23sun)' width='1440' height='900'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  opacity: 0.65;
+  pointer-events: none;
 }
 
 /* ============================================================
@@ -119,43 +122,43 @@
    ============================================================ */
 @layer utilities {
   .text-gold {
-    color: #d4a843;
+    color: #c4a352;
   }
-  /* 标题流光 */
+  /* 标题色：墨色（深棕）+ 暗金光晕 */
   .title-gold {
-    color: #d4a843;
-    text-shadow: 0 2px 26px rgba(212, 168, 67, 0.35), 0 0 60px rgba(180, 100, 20, 0.18);
+    color: #2a1810;
+    text-shadow: 0 1px 0 rgba(245, 236, 219, 0.6);
   }
-  /* 元素强调色文字 + 光晕 */
+  /* 元素强调色文字（古铜/朱/青等） */
   .text-glow-element {
     color: rgb(var(--accent-rgb));
-    text-shadow: 0 0 18px rgb(var(--glow-rgb) / 0.45), 0 0 40px rgb(var(--glow-rgb) / 0.25);
+    text-shadow: 0 1px 2px rgba(42, 24, 16, 0.10);
   }
   .bg-card-glow {
     background: linear-gradient(135deg, rgb(var(--glow-rgb) / 0.10), rgb(var(--glow-rgb) / 0.03));
   }
-  /* 印章边框（标题前的朱印小章） */
+  /* 印章边框 */
   .seal {
-    border: 1.5px solid rgba(212, 168, 67, 0.55);
-    box-shadow: inset 0 0 8px rgba(212, 168, 67, 0.18);
+    border: 1.5px solid rgba(139, 111, 71, 0.55);
+    box-shadow: inset 0 0 8px rgba(139, 111, 71, 0.18);
   }
 
   /* 五行元素固有色（与命盘一致，不随主题变化） */
   .wuxing-wood  { color: #4a9c7a; }
   .wuxing-fire  { color: #d8603a; }
   .wuxing-earth { color: #c6964e; }
-  .wuxing-metal { color: #cec496; }
-  .wuxing-water { color: #4678af; }
+  .wuxing-metal { color: #c4a352; }
+  .wuxing-water { color: #4a6b5b; }
   .bg-wuxing-wood  { background-color: #4a9c7a; }
   .bg-wuxing-fire  { background-color: #d8603a; }
   .bg-wuxing-earth { background-color: #c6964e; }
-  .bg-wuxing-metal { background-color: #cec496; }
-  .bg-wuxing-water { background-color: #4678af; }
+  .bg-wuxing-metal { background-color: #c4a352; }
+  .bg-wuxing-water { background-color: #4a6b5b; }
 
   .pillar-card {
     @apply border rounded-lg p-4;
     border-color: rgb(var(--accent-rgb) / 0.25);
-    background: linear-gradient(to bottom, rgb(var(--glow-rgb) / 0.08), transparent);
+    background: linear-gradient(to bottom, rgba(250, 243, 226, 0.8), rgba(237, 225, 200, 0.3));
   }
 
   .yao-line-yang {
@@ -210,19 +213,35 @@
   transform: rotateY(180deg);
 }
 
-/* 塔罗牌背图案 */
+/* 塔罗牌背图案（古铜色 + 暗金边框） */
 .tarot-back {
-  background: linear-gradient(135deg, #1a0f2e 0%, #2a1844 50%, #1a0f2e 100%);
-  border: 2px solid rgba(212, 168, 67, 0.4);
+  background: linear-gradient(135deg, #f5ecdb 0%, #ede1c8 50%, #d4c5a8 100%);
+  border: 1.5px solid rgba(139, 111, 71, 0.55);
   border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.tarot-back::before {
+  content: "✦";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: rgba(139, 111, 71, 0.45);
+  text-shadow: 0 0 8px rgba(196, 163, 82, 0.25);
 }
 .tarot-back::after {
-  content: '✦';
-  font-size: 2rem;
-  color: rgba(212, 168, 67, 0.3);
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(139, 111, 71, 0.30);
+  border-radius: 0.5rem;
+  pointer-events: none;
 }
 
 /* 选牌跳走动画：
@@ -243,6 +262,148 @@
   border-radius: 0.75rem;
 }
 
+/* ============================================================
+   新中式装饰组件
+   ============================================================ */
+
+/* 装饰横线（中间一个圆点 + 两边细线） */
+.deco-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  color: #8b6f47;
+  font-size: 0.5rem;
+}
+.deco-line::before,
+.deco-line::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(139, 111, 71, 0.5), transparent);
+}
+.deco-line > span {
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+  color: #8b6f47;
+}
+
+/* 印章方框（朱红边框） */
+.seal-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: #a13d2a;
+  color: #f5ecdb;
+  font-family: "Kaiti SC", "STKaiti", "KaiTi", "楷体", serif;
+  font-weight: bold;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(161, 61, 42, 0.30);
+  transform: rotate(-3deg);
+}
+
+/* 卡片浮起（仿宣纸贴金箔效果） */
+.elevated-card {
+  background: linear-gradient(180deg, #faf3e2 0%, #f5ecdb 100%);
+  border: 1px solid rgba(139, 111, 71, 0.18);
+  border-radius: 1rem;
+  box-shadow:
+    0 1px 2px rgba(122, 90, 50, 0.04),
+    0 4px 12px rgba(122, 90, 50, 0.06);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.elevated-card:hover {
+  border-color: rgba(139, 111, 71, 0.40);
+  box-shadow:
+    0 2px 4px rgba(122, 90, 50, 0.06),
+    0 12px 32px rgba(122, 90, 50, 0.10);
+  transform: translateY(-2px);
+}
+
+/* 按钮：朱印风格 */
+.btn-seal {
+  background: linear-gradient(180deg, #b8472f 0%, #a13d2a 100%);
+  color: #f5ecdb;
+  border: 1px solid #8b3221;
+  border-radius: 6px;
+  padding: 0.625rem 1.5rem;
+  font-family: "Kaiti SC", "STKaiti", "KaiTi", "楷体", serif;
+  font-size: 0.9375rem;
+  letter-spacing: 0.1em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 220, 200, 0.20),
+    0 2px 6px rgba(139, 50, 33, 0.30);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.btn-seal:hover {
+  background: linear-gradient(180deg, #c95a3d 0%, #b8472f 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 220, 200, 0.30),
+    0 4px 12px rgba(139, 50, 33, 0.40);
+}
+.btn-seal:active {
+  transform: translateY(1px);
+}
+
+/* 按钮：青铜描线（线性） */
+.btn-bronze {
+  background: transparent;
+  color: #5a3f23;
+  border: 1.5px solid #8b6f47;
+  border-radius: 6px;
+  padding: 0.5rem 1.5rem;
+  font-family: "Kaiti SC", "STKaiti", "KaiTi", "楷体", serif;
+  font-size: 0.9375rem;
+  letter-spacing: 0.1em;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  background-color: rgba(245, 236, 219, 0.5);
+}
+.btn-bronze:hover {
+  background: #8b6f47;
+  color: #f5ecdb;
+  border-color: #5a3f23;
+}
+
+/* 卷轴上下装饰边 */
+.scroll-frame {
+  position: relative;
+  padding: 2rem 1.5rem;
+}
+.scroll-frame::before,
+.scroll-frame::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 12px;
+  background-image: linear-gradient(to right,
+    transparent 0%,
+    #8b6f47 20%,
+    #c4a352 50%,
+    #8b6f47 80%,
+    transparent 100%);
+  border-radius: 4px;
+  opacity: 0.6;
+}
+.scroll-frame::before { top: 0; }
+.scroll-frame::after { bottom: 0; }
+
+/* 水墨晕开 */
+@keyframes ink-bloom {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { opacity: 0.30; }
+  100% { transform: scale(1); opacity: 0; }
+}
+.animate-ink-bloom {
+  animation: ink-bloom 3.2s ease-out infinite;
+}
+
 /* 无障碍：尊重系统的「减少动效」偏好 */
 @media (prefers-reduced-motion: reduce) {
   .animate-orbit,
@@ -261,6 +422,7 @@
   .animate-deck-float,
   .animate-card-flip,
   .animate-card-fly,
+  .animate-ink-bloom,
   .app-bg::before {
     animation: none !important;
   }

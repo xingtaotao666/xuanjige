@@ -68,8 +68,8 @@ export default function HistoryPage() {
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="font-kai text-3xl font-bold text-gold title-glow sm:text-4xl">我的记忆</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <h1 className="font-kai text-3xl font-bold text-bronze-dark title-glow sm:text-4xl">我的记忆</h1>
+            <p className="mt-2 text-sm text-inkstone-soft">
               您在本机算过的命盘与卦象，仅保存在此设备浏览器中
             </p>
           </div>
@@ -90,23 +90,23 @@ export default function HistoryPage() {
         </div>
 
         {records.length === 0 ? (
-          <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
+          <Card className="border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
             <CardContent className="py-16 text-center">
               <div className="mb-3 text-5xl">📜</div>
-              <p className="text-muted-foreground">还没有任何记忆</p>
-              <p className="mt-1 text-sm text-muted-foreground/70">
+              <p className="text-inkstone-soft">还没有任何记忆</p>
+              <p className="mt-1 text-sm text-inkstone-soft/70">
                 去排一卦或算一次八字，结果可一键存入这里
               </p>
               <div className="mt-6 flex justify-center gap-3">
                 <Link to="/bazi">
-                  <Button className="bg-element font-kai text-void shadow-glow-md hover:bg-element/80">
+                  <Button className="bg-bronze font-kai text-inkstone shadow-glow-md hover:bg-bronze/80">
                     八字排盘
                   </Button>
                 </Link>
                 <Link to="/yijing">
                   <Button
                     variant="outline"
-                    className="border-element/50 text-element hover:bg-element/10"
+                    className="border-bronze/50 text-bronze-dark hover:bg-bronze/10"
                   >
                     易经占卜
                   </Button>
@@ -117,27 +117,27 @@ export default function HistoryPage() {
         ) : (
           <div className="space-y-4">
             {shareFeedback && (
-              <p className="text-center text-sm text-gold/90 animate-rise">{shareFeedback}</p>
+              <p className="text-center text-sm text-bronze-dark/90 animate-rise">{shareFeedback}</p>
             )}
             {records.map((rec) => {
               const isOpen = expanded === rec.id;
               return (
                 <div key={rec.id} className="space-y-4">
-                  <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
+                  <Card className="border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
                     <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <Badge
                             variant="secondary"
-                            className="border border-element/30 bg-element/10 text-element"
+                            className="border border-bronze/30 bg-bronze/10 text-bronze-dark"
                           >
                             {rec.type === 'bazi' ? '八字' : rec.type === 'yijing' ? '易经' : '塔罗'}
                           </Badge>
-                          <CardTitle className="truncate font-kai text-base text-gold">
+                          <CardTitle className="truncate font-kai text-base text-bronze-dark">
                             {rec.title}
                           </CardTitle>
                         </div>
-                        <p className="mt-1 text-xs text-muted-foreground/70">
+                        <p className="mt-1 text-xs text-inkstone-soft/70">
                           {formatDate(rec.createdAt)}
                         </p>
                       </div>
@@ -146,7 +146,7 @@ export default function HistoryPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => setExpanded(isOpen ? null : rec.id)}
-                          className="text-element hover:bg-element/10"
+                          className="text-bronze-dark hover:bg-bronze/10"
                         >
                           {isOpen ? '收起' : '查看'}
                         </Button>
@@ -154,7 +154,7 @@ export default function HistoryPage() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleShareRecord(rec)}
-                          className="text-element hover:bg-element/10"
+                          className="text-bronze-dark hover:bg-bronze/10"
                         >
                           分享
                         </Button>

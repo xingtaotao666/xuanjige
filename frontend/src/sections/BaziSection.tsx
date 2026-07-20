@@ -138,22 +138,22 @@ export default function BaziSection() {
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mb-10 text-center">
-          <h1 className="font-kai text-3xl font-bold text-gold title-glow sm:text-4xl">八字排盘</h1>
-          <p className="mt-2 text-sm text-muted-foreground">输入生辰信息，获取专业命理分析</p>
+          <h1 className="font-kai text-3xl font-bold text-bronze-dark title-glow sm:text-4xl">八字排盘</h1>
+          <p className="mt-2 text-sm text-inkstone-soft">输入生辰信息，获取专业命理分析</p>
         </div>
 
         {/* Form section */}
         {!submitted && (
-          <Card className="mx-auto max-w-2xl border-element/25 bg-card/60 backdrop-blur-sm">
+          <Card className="mx-auto max-w-2xl border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="font-kai text-gold">输入生辰信息</CardTitle>
-              <CardDescription className="text-muted-foreground">请准确填写您的出生年月日时</CardDescription>
+              <CardTitle className="font-kai text-bronze-dark">输入生辰信息</CardTitle>
+              <CardDescription className="text-inkstone-soft">请准确填写您的出生年月日时</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="year" className="text-foreground/90">出生年</Label>
+                    <Label htmlFor="year" className="text-inkstone/90">出生年</Label>
                     <Input
                       id="year"
                       type="number"
@@ -162,12 +162,12 @@ export default function BaziSection() {
                       max={2030}
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
-                      className="border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
+                      className="border-bronze/30 bg-cream-light/95 text-inkstone placeholder:text-inkstone-soft/60 focus:border-bronze"
                       required
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="month" className="text-foreground/90">出生月</Label>
+                    <Label htmlFor="month" className="text-inkstone/90">出生月</Label>
                     <Input
                       id="month"
                       type="number"
@@ -176,12 +176,12 @@ export default function BaziSection() {
                       max={12}
                       value={month}
                       onChange={(e) => setMonth(e.target.value)}
-                      className="border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
+                      className="border-bronze/30 bg-cream-light/95 text-inkstone placeholder:text-inkstone-soft/60 focus:border-bronze"
                       required
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="day" className="text-foreground/90">出生日</Label>
+                    <Label htmlFor="day" className="text-inkstone/90">出生日</Label>
                     <Input
                       id="day"
                       type="number"
@@ -190,19 +190,19 @@ export default function BaziSection() {
                       max={31}
                       value={day}
                       onChange={(e) => setDay(e.target.value)}
-                      className="border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
+                      className="border-bronze/30 bg-cream-light/95 text-inkstone placeholder:text-inkstone-soft/60 focus:border-bronze"
                       required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="hour" className="text-foreground/90">出生时辰</Label>
+                  <Label htmlFor="hour" className="text-inkstone/90">出生时辰</Label>
                   <Select value={hour} onValueChange={setHour} required>
-                    <SelectTrigger className="border-element/30 bg-[#0a0710]/60 text-foreground focus:border-element">
+                    <SelectTrigger className="border-bronze/30 bg-cream-light/95 text-inkstone focus:border-bronze">
                       <SelectValue placeholder="选择时辰" />
                     </SelectTrigger>
-                    <SelectContent className="border-element/30 bg-[#0a0710]/95 text-foreground">
+                    <SelectContent className="border-bronze/30 bg-cream-light/95 text-inkstone">
                       {DIZHI_OPTIONS.map((opt) => (
                         <SelectItem key={opt.value} value={opt.value}>
                           {opt.label}
@@ -213,33 +213,33 @@ export default function BaziSection() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-foreground/90">性别</Label>
+                  <Label className="text-inkstone/90">性别</Label>
                   <RadioGroup
                     value={gender}
                     onValueChange={(v) => setGender(v as 'male' | 'female')}
                     className="flex gap-6"
                   >
                     <div className="flex items-center gap-2">
-                      <RadioGroupItem value="male" id="male" className="border-element text-element" />
-                      <Label htmlFor="male" className="cursor-pointer text-foreground/90">男</Label>
+                      <RadioGroupItem value="male" id="male" className="border-bronze text-bronze-dark" />
+                      <Label htmlFor="male" className="cursor-pointer text-inkstone/90">男</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                      <RadioGroupItem value="female" id="female" className="border-element text-element" />
-                      <Label htmlFor="female" className="cursor-pointer text-foreground/90">女</Label>
+                      <RadioGroupItem value="female" id="female" className="border-bronze text-bronze-dark" />
+                      <Label htmlFor="female" className="cursor-pointer text-inkstone/90">女</Label>
                     </div>
                   </RadioGroup>
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="question" className="text-foreground/90">
-                    想向大师请教什么？<span className="ml-1 text-xs text-muted-foreground/70">(选填)</span>
+                  <Label htmlFor="question" className="text-inkstone/90">
+                    想向大师请教什么？<span className="ml-1 text-xs text-inkstone-soft/70">(选填)</span>
                   </Label>
                   <Textarea
                     id="question"
                     placeholder="例如：近期事业运势如何？想了解感情方面的走向..."
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    className="min-h-[80px] border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
+                    className="min-h-[80px] border-bronze/30 bg-cream-light/95 text-inkstone placeholder:text-inkstone-soft/60 focus:border-bronze"
                     rows={3}
                   />
                 </div>
@@ -251,7 +251,7 @@ export default function BaziSection() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-element font-kai text-void shadow-glow-md transition hover:bg-element/80"
+                  className="w-full bg-bronze font-kai text-inkstone shadow-glow-md transition hover:bg-bronze/80"
                 >
                   {loading ? '排盘中…' : '开始排盘'}
                 </Button>
@@ -276,20 +276,20 @@ export default function BaziSection() {
               <Button
                 variant="outline"
                 onClick={handleSave}
-                className="border-element/50 text-element hover:bg-element/10"
+                className="border-bronze/50 text-bronze-dark hover:bg-bronze/10"
               >
                 💾 存入记忆
               </Button>
               <Button
                 variant="default"
                 onClick={handleShare}
-                className="bg-element text-void shadow-glow-md transition hover:bg-element/80"
+                className="bg-bronze text-inkstone shadow-glow-md transition hover:bg-bronze/80"
               >
                 🔗 复制分享链接
               </Button>
             </div>
             {feedback && (
-              <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>
+              <p className="text-center text-sm text-bronze-dark/90 animate-rise">{feedback}</p>
             )}
             <BaziResultView result={result} onReset={handleReset} unlockKey={makeRecordKey('bazi', buildInput())} />
           </div>

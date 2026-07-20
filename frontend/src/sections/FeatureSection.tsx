@@ -1,75 +1,114 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
+/** 核心功能特色 */
 const features = [
   {
-    icon: '🏯',
+    icon: '☯',
     title: '八字排盘',
-    description: '基于四柱八字的传统命理分析',
-    detail: '输入生辰信息，系统自动排定年、月、日、时四柱，推算天干地支、五行生克、十神关系。',
+    subtitle: 'BaZi · Natal Chart',
+    desc: '基于生辰年月的天干地支，推算十神关系、五行强弱、神煞格局。',
+    color: '#a13d2a',
   },
   {
-    icon: '🔮',
+    icon: '☰',
     title: '易经占卜',
-    description: '六十四卦起卦解卦，洞悉天机',
-    detail: '随机起卦或数字起卦，展示卦象爻辞，分析变卦、错卦、综卦，辅助决策参考。',
+    subtitle: 'I Ching · 64 Hexagrams',
+    desc: '随机起卦或数字起卦，铜钱摇卦定爻，解析卦象爻辞与变错综卦。',
+    color: '#8b6f47',
   },
   {
-    icon: '🃏',
+    icon: '✦',
     title: '塔罗占卜',
-    description: '78 张韦特塔罗，洞察过去未来',
-    detail: '支持单张、三张、六芒星、凯尔特十字等牌阵，AI 结合牌面象征与您的问题生成深度占卜解读。',
+    subtitle: 'Tarot · 78 Cards',
+    desc: '韦特塔罗四大牌阵，AI 结合牌面象征与您的问题生成深度解读。',
+    color: '#4a6b5b',
   },
   {
-    icon: '📚',
-    title: '古籍RAG',
-    description: '检索《渊海子平》《滴天髓》等典籍原文',
-    detail: '基于关键词检索命理经典文献原文，确保解读有据可依，传承正统命理文化。',
+    icon: '❋',
+    title: '古籍 RAG',
+    subtitle: 'RAG · Ancient Texts',
+    desc: '检索《渊海子平》《滴天髓》《周易》《塔罗》原著，确保解读有据可依。',
+    color: '#a3823a',
   },
   {
-    icon: '💡',
-    title: 'AI解读',
-    description: '大模型结合命理知识生成个性化解读',
-    detail: '融合大语言模型的语言能力与专业命理知识，生成深入浅出、贴合个人命局的解读报告。',
+    icon: '✧',
+    title: 'AI 解读',
+    subtitle: 'AI · Personalized',
+    desc: '融合大模型的语言能力与命理知识，生成贴合个人的深度解读。',
+    color: '#8b6f47',
+  },
+  {
+    icon: '◈',
+    title: '保存记忆',
+    subtitle: 'Memory · Local',
+    desc: '占卜记录本地保存，随时回看历史轨迹与人生阶段的连贯解读。',
+    color: '#4a9c7a',
   },
 ];
+
+function DecorativeLine() {
+  return (
+    <div className="my-3 flex w-full items-center justify-center text-bronze/50">
+      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-bronze/30 to-bronze/30" />
+      <span className="px-3 text-xs">❀</span>
+      <div className="h-px flex-1 bg-gradient-to-l from-transparent via-bronze/30 to-bronze/30" />
+    </div>
+  );
+}
 
 export default function FeatureSection() {
   return (
     <section className="relative py-24">
-      {/* Section background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710] via-[#0d0814] to-[#0a0710]" />
-
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+        {/* 标题 */}
         <div className="mb-14 text-center">
-          <h2 className="font-kai text-3xl font-bold text-gold title-glow sm:text-4xl">
-            核心功能
+          <p className="mb-2 font-kai text-sm tracking-[0.5em] text-bronze">— 核心功能 —</p>
+          <h2 className="font-kai text-3xl font-bold text-inkstone sm:text-4xl">
+            古法今用 · 一站式命理体验
           </h2>
-          <p className="mt-3 text-sm text-muted-foreground">
-            传统命理与现代 AI 的完美融合
+          <DecorativeLine />
+          <p className="mt-3 text-sm text-inkstone-soft">
+            传统命理智慧 × 现代 AI 技术
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2">
+        {/* 功能网格 */}
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, i) => (
-            <Card
+            <article
               key={i}
-              className="group border-element/25 bg-card/60 shadow-lg shadow-black/20 backdrop-blur-sm transition-all duration-300 hover:border-element/50 hover:shadow-glow-md"
+              className="elevated-card relative overflow-hidden p-6"
             >
-              <CardHeader>
-                <span className="mb-2 text-3xl drop-shadow-[0_0_10px_rgb(var(--glow-rgb)/0.4)]">{feature.icon}</span>
-                <CardTitle className="text-lg text-element transition-colors">
-                  {feature.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="mb-2 text-sm font-medium text-gold/90">
-                  {feature.description}
-                </p>
-                <p className="text-xs leading-relaxed text-muted-foreground">
-                  {feature.detail}
-                </p>
-              </CardContent>
-            </Card>
+              {/* 左侧色条 */}
+              <div
+                className="absolute left-0 top-6 bottom-6 w-1 rounded-r-full"
+                style={{ background: feature.color }}
+              />
+
+              {/* 图标 + 标题 */}
+              <div className="mb-3 flex items-start justify-between">
+                <div>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span
+                      className="font-kai text-2xl"
+                      style={{ color: feature.color }}
+                    >
+                      {feature.icon}
+                    </span>
+                    <h3 className="font-kai text-xl font-bold text-inkstone">
+                      {feature.title}
+                    </h3>
+                  </div>
+                  <p className="text-xs tracking-wider text-inkstone-mute">
+                    {feature.subtitle}
+                  </p>
+                </div>
+              </div>
+
+              <DecorativeLine />
+
+              <p className="text-sm leading-relaxed text-inkstone-soft">
+                {feature.desc}
+              </p>
+            </article>
           ))}
         </div>
       </div>

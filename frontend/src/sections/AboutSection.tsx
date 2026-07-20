@@ -32,18 +32,18 @@ export default function AboutSection() {
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6">
         {/* Title */}
         <div className="mb-14 text-center">
-          <h1 className="font-kai text-3xl font-bold text-gold title-glow sm:text-4xl">
+          <h1 className="font-kai text-3xl font-bold text-bronze-dark title-glow sm:text-4xl">
             关于玄机阁
           </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
+          <p className="mt-3 text-sm text-inkstone-soft">
             千年智慧，AI 赋能
           </p>
         </div>
 
         {/* Description */}
-        <Card className="mb-10 border-element/25 bg-card/60 backdrop-blur-sm">
+        <Card className="mb-10 border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
           <CardContent className="pt-6">
-            <p className="leading-relaxed text-foreground/90">
+            <p className="leading-relaxed text-inkstone/90">
               玄机阁是一款融合传统命理文化与人工智能技术的智能算命平台。
               我们致力于将中华千年典籍中的命理智慧，通过现代 AI 技术进行传承和创新，
               为用户提供专业、有趣的命理解读体验。
@@ -52,22 +52,22 @@ export default function AboutSection() {
         </Card>
 
         {/* How it works */}
-        <h2 className="mb-6 font-kai text-xl font-bold text-gold/90">运作原理</h2>
+        <h2 className="mb-6 font-kai text-xl font-bold text-bronze-dark/90">运作原理</h2>
         <div className="mb-10 space-y-4">
           {pipeline.map((item) => (
             <Card
               key={item.step}
-              className="border-element/20 bg-card/50 backdrop-blur-sm"
+              className="border-bronze/20 bg-card/50 backdrop-blur-sm"
             >
               <CardContent className="flex gap-4 pt-6">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-element/15 text-sm font-bold text-element">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-bronze/15 text-sm font-bold text-bronze-dark">
                   {item.step}
                 </div>
                 <div>
-                  <h3 className="mb-1 text-sm font-semibold text-element">
+                  <h3 className="mb-1 text-sm font-semibold text-bronze-dark">
                     {item.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-sm leading-relaxed text-inkstone-soft">
                     {item.description}
                   </p>
                 </div>
@@ -77,29 +77,29 @@ export default function AboutSection() {
         </div>
 
         {/* Tech stack */}
-        <h2 className="mb-6 font-kai text-xl font-bold text-gold/90">技术栈</h2>
-        <Card className="mb-10 border-element/25 bg-card/60 backdrop-blur-sm">
+        <h2 className="mb-6 font-kai text-xl font-bold text-bronze-dark/90">技术栈</h2>
+        <Card className="mb-10 border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
           <CardContent className="pt-6">
             <div className="flex flex-wrap gap-2">
-              <Badge variant="outline" className="border-element/40 text-element">
+              <Badge variant="outline" className="border-bronze/40 text-bronze-dark">
                 React + TypeScript
               </Badge>
-              <Badge variant="outline" className="border-element/40 text-element">
+              <Badge variant="outline" className="border-bronze/40 text-bronze-dark">
                 Tailwind CSS
               </Badge>
-              <Badge variant="outline" className="border-element/40 text-element">
+              <Badge variant="outline" className="border-bronze/40 text-bronze-dark">
                 shadcn/ui
               </Badge>
-              <Badge variant="outline" className="border-element/40 text-element">
+              <Badge variant="outline" className="border-bronze/40 text-bronze-dark">
                 FastAPI
               </Badge>
-              <Badge variant="outline" className="border-element/40 text-element">
+              <Badge variant="outline" className="border-bronze/40 text-bronze-dark">
                 LangChain
               </Badge>
-              <Badge variant="outline" className="border-element/40 text-element">
+              <Badge variant="outline" className="border-bronze/40 text-bronze-dark">
                 向量数据库
               </Badge>
-              <Badge variant="outline" className="border-element/40 text-element">
+              <Badge variant="outline" className="border-bronze/40 text-bronze-dark">
                 大语言模型
               </Badge>
             </div>
@@ -109,13 +109,13 @@ export default function AboutSection() {
         {/* Disclaimer */}
         <Card className="border-gold/40 bg-gold/5 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="font-kai text-base text-gold">免责声明</CardTitle>
-            <CardDescription className="text-gold/60">
+            <CardTitle className="font-kai text-base text-bronze-dark">免责声明</CardTitle>
+            <CardDescription className="text-bronze-dark/60">
               请理性看待
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm leading-relaxed text-gold/60">
+            <p className="text-sm leading-relaxed text-bronze-dark/60">
               本网站所有命理分析结果仅供娱乐参考，不构成任何专业建议。
               命理学是中华传统文化的一部分，其分析结果不应作为人生重大决策的唯一依据。
               请保持理性思考，切勿沉迷。愿您以开放的心态体验传统文化之美。

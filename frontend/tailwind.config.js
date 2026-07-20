@@ -52,12 +52,37 @@ module.exports = {
         // 动态五行强调色：由 documentElement[data-element] 控制，贯穿全站
         element: "rgb(var(--accent-rgb) / <alpha-value>)",
         glow: "rgb(var(--glow-rgb) / <alpha-value>)",
-        gold: "#d4a843",
+        gold: "#c4a352",
         "gold-soft": "#b8923a",
         void: "#0a0710",
         ink: "#120a1c",
         amethyst: "#2a1a44",
         paper: "#e8dfd0",
+        // ===== 新中式雅致配色（宣纸 + 古铜 + 墨色）=====
+        // 背景：宣纸米白
+        cream: "#f5ecdb",
+        parchment: "#ede1c8",
+        "cream-light": "#faf3e2",
+        "cream-dark": "#e8d8b8",
+        // 文字：墨色
+        inkstone: "#2a1810",     // 主文字
+        "inkstone-soft": "#5a3f23",  // 次文字
+        "inkstone-mute": "#8b6f47",  // 弱化文字
+        // 强调：古铜
+        bronze: "#8b6f47",
+        "bronze-dark": "#5a3f23",
+        "bronze-light": "#b8923a",
+        // 高亮：暗金
+        "gold-deep": "#a3823a",
+        // 辅助：苍绿 + 印泥红
+        sage: "#6e7d63",
+        "sage-light": "#9aaa8e",
+        "jade": "#4a6b5b",
+        "seal-red": "#a13d2a",
+        "seal-red-light": "#c95a3d",
+        // 边框 / 分割
+        mist: "#d4c5a8",
+        "mist-light": "#e8dcc0",
       },
       fontFamily: {
         // 宋体/仿宋 类衬线（正文）
@@ -89,6 +114,14 @@ module.exports = {
         "glow-md": "0 0 28px rgb(var(--glow-rgb) / 0.30)",
         "glow-lg": "0 0 60px rgb(var(--glow-rgb) / 0.35)",
         "gold-glow": "0 0 24px rgba(212,168,67,0.35)",
+        // 新中式柔和阴影
+        "paper-sm": "0 1px 2px rgba(122, 90, 50, 0.06), 0 1px 3px rgba(122, 90, 50, 0.05)",
+        "paper-md": "0 2px 8px rgba(122, 90, 50, 0.08), 0 8px 24px rgba(122, 90, 50, 0.06)",
+        "paper-lg": "0 4px 12px rgba(122, 90, 50, 0.10), 0 16px 40px rgba(122, 90, 50, 0.08)",
+        "inkstone-soft": "0 1px 2px rgba(42, 24, 16, 0.05)",
+        "inkstone-md": "0 4px 12px rgba(42, 24, 16, 0.08)",
+        "bronze-glow": "0 4px 16px rgba(139, 111, 71, 0.20)",
+        "gold-soft-glow": "0 0 24px rgba(196, 163, 82, 0.30)",
       },
       keyframes: {
         "accordion-down": {
@@ -189,6 +222,20 @@ module.exports = {
           "50%": { opacity: "1" },
           "100%": { transform: "translate(var(--fly-x, 0), var(--fly-y, 0)) scale(1)", opacity: "1" },
         },
+        // 新中式动画：墨晕 / 卷轴展开
+        "ink-bloom": {
+          "0%": { transform: "scale(0.3)", opacity: "0" },
+          "60%": { opacity: "0.30" },
+          "100%": { transform: "scale(1)", opacity: "0" },
+        },
+        "scroll-unroll": {
+          "0%": { transform: "scaleY(0)", transformOrigin: "top" },
+          "100%": { transform: "scaleY(1)", transformOrigin: "top" },
+        },
+        "brush": {
+          "0%": { strokeDashoffset: "200" },
+          "100%": { strokeDashoffset: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -210,6 +257,9 @@ module.exports = {
         "deck-float": "deck-float 2s ease-in-out infinite",
         "card-flip": "card-flip 0.8s ease-in-out forwards",
         "card-fly": "card-fly 0.5s ease-out forwards",
+        "ink-bloom": "ink-bloom 3.2s ease-out infinite",
+        "scroll-unroll": "scroll-unroll 0.8s ease-out both",
+        "brush": "brush 1.5s ease-out forwards",
       },
     },
   },

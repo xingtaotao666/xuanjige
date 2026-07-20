@@ -319,10 +319,10 @@ export default function TarotSection() {
 
         {/* 标题 */}
         <div className="mb-6 text-center">
-          <h1 className="font-kai text-3xl font-bold text-gold title-glow sm:text-4xl">
+          <h1 className="font-kai text-3xl font-bold text-bronze-dark title-glow sm:text-4xl">
             {step === 'complete' ? '塔罗解读' : '玄机阁 · 塔罗占卜'}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">78 张韦特塔罗 · 洞见过去现在未来</p>
+          <p className="mt-2 text-sm text-inkstone-soft">78 张韦特塔罗 · 洞见过去现在未来</p>
         </div>
 
         {/* ———— 步骤指示器 ———— */}
@@ -332,23 +332,23 @@ export default function TarotSection() {
               <div
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-bold transition sm:h-8 sm:w-8 sm:text-xs ${
                   i === stepIdx
-                    ? 'bg-element text-void shadow-glow-sm'
+                    ? 'bg-bronze text-inkstone shadow-glow-sm'
                     : i < stepIdx
-                      ? 'bg-element/20 text-element/60'
-                      : 'bg-card/60 text-muted-foreground/40'
+                      ? 'bg-bronze/20 text-bronze-dark/60'
+                      : 'bg-cream-light/85 text-inkstone-soft/40'
                 }`}
               >
                 {i < stepIdx ? '✓' : i + 1}
               </div>
               <span
                 className={`hidden text-[10px] sm:inline ${
-                  i === stepIdx ? 'text-element' : i < stepIdx ? 'text-element/60' : 'text-muted-foreground/40'
+                  i === stepIdx ? 'text-bronze-dark' : i < stepIdx ? 'text-bronze-dark/60' : 'text-inkstone-soft/40'
                 }`}
               >
                 {s.label}
               </span>
               {i < steps.length - 1 && (
-                <div className={`mx-1 h-px w-3 sm:w-5 ${i < stepIdx ? 'bg-element/30' : 'bg-element/10'}`} />
+                <div className={`mx-1 h-px w-3 sm:w-5 ${i < stepIdx ? 'bg-bronze/30' : 'bg-bronze/10'}`} />
               )}
             </div>
           ))}
@@ -358,11 +358,11 @@ export default function TarotSection() {
             STEP 1: 事前准备
             ================================================================ */}
         {step === 'prepare' && (
-          <Card className="mx-auto max-w-lg border-element/25 bg-card/60 backdrop-blur-sm">
+          <Card className="mx-auto max-w-lg border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
             <CardContent className="py-12 text-center">
               <div className="mb-6 text-6xl animate-float">🔮</div>
-              <h2 className="mb-3 font-kai text-2xl text-gold">塔罗占卜 · 事前准备</h2>
-              <div className="mx-auto max-w-sm space-y-3 text-left text-sm text-muted-foreground/90">
+              <h2 className="mb-3 font-kai text-2xl text-bronze-dark">塔罗占卜 · 事前准备</h2>
+              <div className="mx-auto max-w-sm space-y-3 text-left text-sm text-inkstone-soft/90">
                 <p>❶ &nbsp; 找一个安静的环境，放下杂念</p>
                 <p>❷ &nbsp; 全程保持内心专注，你的意念会通过选择传达给塔罗</p>
                 <p>❸ &nbsp; 问题越具体，解读越有深度</p>
@@ -370,7 +370,7 @@ export default function TarotSection() {
               </div>
               <div className="mt-8 flex justify-center gap-2">
                 <Button variant="ghost" onClick={() => { reset(); setStep('question'); }}
-                  className="text-element hover:bg-element/10">
+                  className="text-bronze-dark hover:bg-bronze/10">
                   我准备好了，开始占卜
                 </Button>
               </div>
@@ -382,10 +382,10 @@ export default function TarotSection() {
             STEP 2: 定问题
             ================================================================ */}
         {step === 'question' && (
-          <Card className="mx-auto max-w-2xl border-element/25 bg-card/60 backdrop-blur-sm">
+          <Card className="mx-auto max-w-2xl border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="font-kai text-gold">请说出您的问题</CardTitle>
-              <CardDescription className="text-muted-foreground">
+              <CardTitle className="font-kai text-bronze-dark">请说出您的问题</CardTitle>
+              <CardDescription className="text-inkstone-soft">
                 将您心中所念凝练为一句话，塔罗将据此回应
               </CardDescription>
             </CardHeader>
@@ -395,12 +395,12 @@ export default function TarotSection() {
                   placeholder="例如：近期事业发展如何？我和他/她的关系走向？…"
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  className="min-h-[100px] border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
+                  className="min-h-[100px] border-bronze/30 bg-cream-light/95 text-inkstone placeholder:text-inkstone-soft/60 focus:border-bronze"
                   rows={4}
                   required
                   autoFocus
                 />
-                <Button type="submit" className="w-full bg-element font-kai text-void shadow-glow-md hover:bg-element/80">
+                <Button type="submit" className="w-full bg-bronze font-kai text-inkstone shadow-glow-md hover:bg-bronze/80">
                   下一步
                 </Button>
               </form>
@@ -412,10 +412,10 @@ export default function TarotSection() {
             STEP 3: 选牌阵
             ================================================================ */}
         {step === 'spread' && (
-          <Card className="mx-auto max-w-2xl border-element/25 bg-card/60 backdrop-blur-sm">
+          <Card className="mx-auto max-w-2xl border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="font-kai text-gold">选择牌阵</CardTitle>
-              <CardDescription className="text-muted-foreground">
+              <CardTitle className="font-kai text-bronze-dark">选择牌阵</CardTitle>
+              <CardDescription className="text-inkstone-soft">
                 不同牌阵揭示不同深度的信息，请根据你的问题选择
               </CardDescription>
             </CardHeader>
@@ -427,24 +427,24 @@ export default function TarotSection() {
                     onClick={() => setSpread(opt.type)}
                     className={`rounded-xl border p-4 text-left transition ${
                       spread === opt.type
-                        ? 'border-element bg-element/10 shadow-glow-sm'
-                        : 'border-element/30 bg-card/40 hover:border-element/60'
+                        ? 'border-bronze bg-bronze/10 shadow-glow-sm'
+                        : 'border-bronze/30 bg-card/40 hover:border-bronze/60'
                     }`}
                   >
                     <div className="flex items-baseline justify-between">
-                      <span className="font-kai text-base text-gold">{opt.label}</span>
-                      <span className="text-[10px] text-muted-foreground">{opt.count}张</span>
+                      <span className="font-kai text-base text-bronze-dark">{opt.label}</span>
+                      <span className="text-[10px] text-inkstone-soft">{opt.count}张</span>
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground/80">{opt.desc}</p>
+                    <p className="mt-1 text-xs text-inkstone-soft/80">{opt.desc}</p>
                   </button>
                 ))}
               </div>
-              <p className="text-center text-xs text-muted-foreground/70 animate-rise">
+              <p className="text-center text-xs text-inkstone-soft/70 animate-rise">
                 已选：{spreadInfo?.label || spread} · {needTotal}张
               </p>
               <Button
                 onClick={enterShuffle}
-                className="w-full bg-element font-kai text-void shadow-glow-md hover:bg-element/80"
+                className="w-full bg-bronze font-kai text-inkstone shadow-glow-md hover:bg-bronze/80"
               >
                 开始仪式 · 洗牌
               </Button>
@@ -458,8 +458,8 @@ export default function TarotSection() {
         {step === 'shuffle' && (
           <div className="flex flex-col items-center gap-8">
             <div className="text-center">
-              <p className="font-kai text-lg text-gold/90">集中精神 · 洗牌</p>
-              <p className="mt-1 text-xs text-muted-foreground/70">点击按钮给予牌能量，感受牌在您手中流动</p>
+              <p className="font-kai text-lg text-bronze-dark/90">集中精神 · 洗牌</p>
+              <p className="mt-1 text-xs text-inkstone-soft/70">点击按钮给予牌能量，感受牌在您手中流动</p>
             </div>
 
             {/* 牌叠 */}
@@ -474,15 +474,15 @@ export default function TarotSection() {
             </div>
 
             {!shuffling && !shuffleDone && (
-              <Button onClick={triggerShuffle} className="bg-element px-10 font-kai text-void shadow-glow-md hover:bg-element/80">
+              <Button onClick={triggerShuffle} className="bg-bronze px-10 font-kai text-inkstone shadow-glow-md hover:bg-bronze/80">
                 🔀 点击开始洗牌
               </Button>
             )}
             {shuffling && (
-              <p className="animate-breathe text-sm text-element/70">牌正在流转…</p>
+              <p className="animate-breathe text-sm text-bronze-dark/70">牌正在流转…</p>
             )}
             {shuffleDone && !shuffling && (
-              <Button onClick={confirmShuffle} className="bg-element px-10 font-kai text-void shadow-glow-md hover:bg-element/80">
+              <Button onClick={confirmShuffle} className="bg-bronze px-10 font-kai text-inkstone shadow-glow-md hover:bg-bronze/80">
                 ✓ 洗好了，切牌
               </Button>
             )}
@@ -495,32 +495,32 @@ export default function TarotSection() {
         {step === 'cut' && (
           <div className="flex flex-col items-center gap-8">
             <div className="text-center">
-              <p className="font-kai text-lg text-gold/90">切牌 · 分三叠</p>
-              <p className="mt-1 text-xs text-muted-foreground/70">将牌分为三叠，再由直觉合并</p>
+              <p className="font-kai text-lg text-bronze-dark/90">切牌 · 分三叠</p>
+              <p className="mt-1 text-xs text-inkstone-soft/70">将牌分为三叠，再由直觉合并</p>
             </div>
 
             <div className="flex items-end gap-6">
               <div className="flex flex-col items-center gap-2">
                 <div className={`tarot-back h-32 w-20 ${cutting ? 'animate-float' : ''}`} />
-                <span className="text-xs text-muted-foreground/50">左</span>
+                <span className="text-xs text-inkstone-soft/50">左</span>
               </div>
               <div className="flex flex-col items-center gap-2">
                 <div className={`tarot-back h-40 w-24 ${cutting ? 'animate-deck-float' : ''}`}
                   style={{ animationDelay: '0.3s' }} />
-                <span className="text-xs text-muted-foreground/50">中</span>
+                <span className="text-xs text-inkstone-soft/50">中</span>
               </div>
               <div className="flex flex-col items-center gap-2">
                 <div className={`tarot-back h-28 w-20 ${cutting ? 'animate-float' : ''}`}
                   style={{ animationDelay: '0.6s' }} />
-                <span className="text-xs text-muted-foreground/50">右</span>
+                <span className="text-xs text-inkstone-soft/50">右</span>
               </div>
             </div>
 
             {cutting && (
-              <p className="animate-breathe text-sm text-element/70">牌的能量正在融合…</p>
+              <p className="animate-breathe text-sm text-bronze-dark/70">牌的能量正在融合…</p>
             )}
             {cutDone && !cutting && (
-              <Button onClick={confirmCut} className="bg-element px-10 font-kai text-void shadow-glow-md hover:bg-element/80">
+              <Button onClick={confirmCut} className="bg-bronze px-10 font-kai text-inkstone shadow-glow-md hover:bg-bronze/80">
                 ✓ 切好了，开始抽牌
               </Button>
             )}
@@ -533,8 +533,8 @@ export default function TarotSection() {
         {step === 'draw' && gridCards.length > 0 && (
           <div className="flex flex-col items-center gap-5">
             <div className="text-center">
-              <p className="font-kai text-lg text-gold/90">凭直觉选牌</p>
-              <p className="text-xs text-muted-foreground/70">
+              <p className="font-kai text-lg text-bronze-dark/90">凭直觉选牌</p>
+              <p className="text-xs text-inkstone-soft/70">
                 从 9 张牌中选出 {needTotal} 张 · 已选 {selectionStep}/{needTotal}
               </p>
             </div>
@@ -565,16 +565,16 @@ export default function TarotSection() {
                     >
                       <div className={`card-inner h-full w-full ${isFlipping ? 'card-flipped' : ''}`}>
                         {/* 背面 */}
-                        <div className="card-back tarot-back flex items-center justify-center rounded-xl border border-element/20 text-[clamp(0.6rem,4vw,1rem)]">
-                          <span className="font-kai text-gold/50">?</span>
+                        <div className="card-back tarot-back flex items-center justify-center rounded-xl border border-bronze/20 text-[clamp(0.6rem,4vw,1rem)]">
+                          <span className="font-kai text-bronze-dark/50">?</span>
                         </div>
                         {/* 正面（翻转时显示） */}
-                        <div className="card-front flex items-center justify-center rounded-xl border border-element/40 bg-card p-1 shadow-glow-md">
+                        <div className="card-front flex items-center justify-center rounded-xl border border-bronze/40 bg-card p-1 shadow-glow-md">
                           <div className="text-center px-0.5">
-                            <div className="font-kai font-bold text-gold leading-tight text-[clamp(0.55rem,3.5vw,0.9rem)]">
+                            <div className="font-kai font-bold text-bronze-dark leading-tight text-[clamp(0.55rem,3.5vw,0.9rem)]">
                               {card.card.nameCn}
                             </div>
-                            <div className="mt-0.5 text-[clamp(0.45rem,2.5vw,0.7rem)] text-muted-foreground/70">
+                            <div className="mt-0.5 text-[clamp(0.45rem,2.5vw,0.7rem)] text-inkstone-soft/70">
                               {card.orientation === 'upright' ? '正位' : '逆位'}
                             </div>
                           </div>
@@ -592,7 +592,7 @@ export default function TarotSection() {
                 variant="outline"
                 onClick={reshuffleGrid}
                 disabled={reshuffling}
-                className="border-element/50 text-element hover:bg-element/10 font-kai"
+                className="border-bronze/50 text-bronze-dark hover:bg-bronze/10 font-kai"
               >
                 {reshuffling ? '🔄 正在重新洗牌…' : '🔄 换一批'}
               </Button>
@@ -600,18 +600,18 @@ export default function TarotSection() {
 
             {/* 已选区 — 选中的牌跳转到这里 */}
             {selectedCards.length > 0 && (
-              <div className="w-full rounded-xl border border-element/20 bg-card/30 p-4 backdrop-blur-sm">
-                <p className="mb-2 text-center text-[11px] text-element/70 font-kai">✦ 已选 {selectedCards.length}/{needTotal} 张 ✦</p>
+              <div className="w-full rounded-xl border border-bronze/20 bg-parchment/40 p-4 backdrop-blur-sm">
+                <p className="mb-2 text-center text-[11px] text-bronze-dark/70 font-kai">✦ 已选 {selectedCards.length}/{needTotal} 张 ✦</p>
                 <div className="flex flex-wrap justify-center gap-2">
                   {selectedCards.map((c, i) => (
                     <div key={`${c.card.number}-${i}`} className="flex flex-col items-center gap-0.5 animate-rise">
-                      <div className="flex w-12 sm:w-16 aspect-[5/7] items-center justify-center rounded-lg border border-element/30 bg-card/80 p-0.5 text-center shadow-glow-sm">
+                      <div className="flex w-12 sm:w-16 aspect-[5/7] items-center justify-center rounded-lg border border-bronze/30 bg-card/80 p-0.5 text-center shadow-glow-sm">
                         <div>
-                          <p className="text-[clamp(0.45rem,2.5vw,0.65rem)] font-bold text-gold leading-tight">{c.card.nameCn}</p>
-                          <p className="text-[clamp(0.35rem,2vw,0.5rem)] text-muted-foreground">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
+                          <p className="text-[clamp(0.45rem,2.5vw,0.65rem)] font-bold text-bronze-dark leading-tight">{c.card.nameCn}</p>
+                          <p className="text-[clamp(0.35rem,2vw,0.5rem)] text-inkstone-soft">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
                         </div>
                       </div>
-                      <span className="text-[clamp(0.35rem,2vw,0.55rem)] text-element">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
+                      <span className="text-[clamp(0.35rem,2vw,0.55rem)] text-bronze-dark">{SPREAD_POSITIONS[spread]?.[i] || `#${i + 1}`}</span>
                     </div>
                   ))}
                 </div>
@@ -620,13 +620,13 @@ export default function TarotSection() {
 
             {/* 进度条 */}
             <div className="flex w-full max-w-xs items-center gap-2">
-              <div className="h-1 flex-1 overflow-hidden rounded-full bg-card/60">
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-cream-light/85">
                 <div
-                  className="h-full rounded-full bg-element transition-all duration-500"
+                  className="h-full rounded-full bg-bronze transition-all duration-500"
                   style={{ width: `${(selectionStep / needTotal) * 100}%` }}
                 />
               </div>
-              <span className="text-xs text-muted-foreground/70">{selectionStep}/{needTotal}</span>
+              <span className="text-xs text-inkstone-soft/70">{selectionStep}/{needTotal}</span>
             </div>
           </div>
         )}
@@ -636,9 +636,9 @@ export default function TarotSection() {
             ================================================================ */}
         {step === 'complete' && (
           <div className="space-y-6">
-            <div className="animate-rise rounded-xl border border-element/25 bg-element/5 px-6 py-5 text-center backdrop-blur-sm">
-              <p className="font-kai text-lg text-gold">🌟 塔罗已揭示 · 答案在你心中</p>
-              <p className="mt-1 text-xs text-muted-foreground/80">
+            <div className="animate-rise rounded-xl border border-bronze/25 bg-bronze/5 px-6 py-5 text-center backdrop-blur-sm">
+              <p className="font-kai text-lg text-bronze-dark">🌟 塔罗已揭示 · 答案在你心中</p>
+              <p className="mt-1 text-xs text-inkstone-soft/80">
                 牌阵已展开，塔罗的智慧已传达。结合 AI 深度解读获取更多洞见。
               </p>
             </div>
@@ -647,11 +647,11 @@ export default function TarotSection() {
             <div className="flex flex-wrap justify-center gap-2">
               {drawnCards.map((c, i) => (
                 <div key={i} className="flex w-20 flex-col items-center gap-0.5">
-                  <div className="flex h-28 w-20 items-center justify-center rounded-lg border border-element/25 bg-card/70 p-1 text-center">
+                  <div className="flex h-28 w-20 items-center justify-center rounded-lg border border-bronze/25 bg-card/70 p-1 text-center">
                     <div>
-                      <p className="text-[10px] font-bold text-gold leading-tight">{c.card.nameCn}</p>
-                      <p className="text-[8px] text-muted-foreground">{c.position}</p>
-                      <p className="text-[8px] text-element">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
+                      <p className="text-[10px] font-bold text-bronze-dark leading-tight">{c.card.nameCn}</p>
+                      <p className="text-[8px] text-inkstone-soft">{c.position}</p>
+                      <p className="text-[8px] text-bronze-dark">{c.orientation === 'upright' ? '正位' : '逆位'}</p>
                     </div>
                   </div>
                 </div>
@@ -662,23 +662,23 @@ export default function TarotSection() {
             {loading && !result && (
               <div className="flex flex-col items-center gap-4 py-12 animate-rise">
                 <div className="relative h-16 w-16">
-                  <div className="absolute inset-0 rounded-full border-2 border-element/30" />
+                  <div className="absolute inset-0 rounded-full border-2 border-bronze/30" />
                   <div className="absolute inset-0 animate-spin rounded-full border-2 border-transparent border-t-element" />
                   <div className="absolute inset-0 flex items-center justify-center text-2xl">🔮</div>
                 </div>
-                <p className="font-kai text-base text-element animate-breathe">
+                <p className="font-kai text-base text-bronze-dark animate-breathe">
                   {stage?.message || '塔罗师正在解读牌面…'}
                 </p>
-                <div className="flex items-center gap-1 text-[10px] text-muted-foreground/60">
-                  <span className={stage?.stage === 'rag' ? 'text-element font-bold' : ''}>
+                <div className="flex items-center gap-1 text-[10px] text-inkstone-soft/60">
+                  <span className={stage?.stage === 'rag' ? 'text-bronze-dark font-bold' : ''}>
                     ① 检索知识库
                   </span>
                   <span>→</span>
-                  <span className={stage?.stage === 'llm' ? 'text-element font-bold' : ''}>
+                  <span className={stage?.stage === 'llm' ? 'text-bronze-dark font-bold' : ''}>
                     ② AI 解读
                   </span>
                   <span>→</span>
-                  <span className={stage?.stage === 'done' ? 'text-element font-bold' : ''}>
+                  <span className={stage?.stage === 'done' ? 'text-bronze-dark font-bold' : ''}>
                     ③ 完成
                   </span>
                 </div>
@@ -696,15 +696,15 @@ export default function TarotSection() {
             {/* 保存/分享 */}
             {result && (
               <div className="flex flex-wrap items-center justify-center gap-3">
-                <Button variant="outline" onClick={handleSave} className="border-element/50 text-element hover:bg-element/10">
+                <Button variant="outline" onClick={handleSave} className="border-bronze/50 text-bronze-dark hover:bg-bronze/10">
                   💾 存入记忆
                 </Button>
-                <Button variant="default" onClick={handleShare} className="bg-element text-void shadow-glow-md hover:bg-element/80">
+                <Button variant="default" onClick={handleShare} className="bg-bronze text-inkstone shadow-glow-md hover:bg-bronze/80">
                   🔗 复制分享链接
                 </Button>
               </div>
             )}
-            {feedback && <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>}
+            {feedback && <p className="text-center text-sm text-bronze-dark/90 animate-rise">{feedback}</p>}
 
             {/* AI 解读 + RAG 内容来源（测试阶段免费展示） */}
             {result && (

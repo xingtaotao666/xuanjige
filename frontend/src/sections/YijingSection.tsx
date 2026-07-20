@@ -27,21 +27,21 @@ function randFace(): CoinFace {
 function YaoPreview({ yaoValues }: { yaoValues: number[] }) {
   if (yaoValues.length === 0) {
     return (
-      <div className="rounded-lg border border-element/40 bg-[#0a0710]/60 px-6 py-4 text-center text-xs text-muted-foreground/70">
+      <div className="rounded-lg border border-bronze/40 bg-cream-light/95 px-6 py-4 text-center text-xs text-inkstone-soft/70">
         尚未投掷，静心默念您的问题
       </div>
     );
   }
   const ordered = [...yaoValues].reverse();
   return (
-    <div className="space-y-1.5 rounded-lg border border-element/40 bg-[#0a0710]/60 px-6 py-4">
+    <div className="space-y-1.5 rounded-lg border border-bronze/40 bg-cream-light/95 px-6 py-4">
       {ordered.map((v, idx) => {
         const posIndex = yaoValues.length - 1 - idx;
         const isYang = v === 7 || v === 9;
         const isChanging = v === 6 || v === 9;
         return (
           <div key={idx} className="flex items-center gap-2">
-            <span className="w-6 text-right text-[10px] text-muted-foreground">{YAO_NAMES[posIndex]}</span>
+            <span className="w-6 text-right text-[10px] text-inkstone-soft">{YAO_NAMES[posIndex]}</span>
             <div
               className={`flex gap-1.5 ${
                 isChanging ? 'drop-shadow-[0_0_6px_rgb(var(--glow-rgb)/0.7)]' : ''
@@ -57,7 +57,7 @@ function YaoPreview({ yaoValues }: { yaoValues: number[] }) {
               )}
             </div>
             {isChanging && (
-              <span className="text-[10px] text-element">{v === 6 ? '×' : '○'}</span>
+              <span className="text-[10px] text-bronze-dark">{v === 6 ? '×' : '○'}</span>
             )}
           </div>
         );
@@ -239,42 +239,42 @@ export default function YijingSection() {
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mb-10 text-center">
-          <h1 className="font-kai text-3xl font-bold text-gold title-glow sm:text-4xl">玄机阁 · 易经占卜</h1>
-          <p className="mt-2 text-sm text-muted-foreground">金钱课起卦 · 龟壳摇卦定乾坤</p>
+          <h1 className="font-kai text-3xl font-bold text-bronze-dark title-glow sm:text-4xl">玄机阁 · 易经占卜</h1>
+          <p className="mt-2 text-sm text-inkstone-soft">金钱课起卦 · 龟壳摇卦定乾坤</p>
         </div>
 
         {/* ===== 起卦表单 ===== */}
         {!submitted && (
-          <Card className="mx-auto max-w-2xl border-element/25 bg-card/60 backdrop-blur-sm">
+          <Card className="mx-auto max-w-2xl border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="font-kai text-gold">起卦</CardTitle>
-              <CardDescription className="text-muted-foreground">心中默念您想问的事情，再掷铜钱起卦</CardDescription>
+              <CardTitle className="font-kai text-bronze-dark">起卦</CardTitle>
+              <CardDescription className="text-inkstone-soft">心中默念您想问的事情，再掷铜钱起卦</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-1.5">
-                  <Label htmlFor="question" className="text-foreground/90">请说出您想问的事情</Label>
+                  <Label htmlFor="question" className="text-inkstone/90">请说出您想问的事情</Label>
                   <Textarea
                     id="question"
                     placeholder="例如：近期事业发展如何？..."
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
-                    className="min-h-[80px] border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
+                    className="min-h-[80px] border-bronze/30 bg-cream-light/95 text-inkstone placeholder:text-inkstone-soft/60 focus:border-bronze"
                     rows={3}
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-foreground/90">起卦方式</Label>
+                  <Label className="text-inkstone/90">起卦方式</Label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => setMethod('coins')}
                       className={`w-full rounded-md border px-3 py-2 text-sm transition ${
                         method === 'coins'
-                          ? 'border-element bg-element font-kai text-void'
-                          : 'border-element/40 bg-[#0a0710]/40 text-muted-foreground hover:border-element/60'
+                          ? 'border-bronze bg-bronze font-kai text-inkstone'
+                          : 'border-bronze/40 bg-cream-light/40 text-inkstone-soft hover:border-bronze/60'
                       }`}
                     >
                       铜钱投掷
@@ -284,8 +284,8 @@ export default function YijingSection() {
                       onClick={() => setMethod('numbers')}
                       className={`w-full rounded-md border px-3 py-2 text-sm transition ${
                         method === 'numbers'
-                          ? 'border-element bg-element font-kai text-void'
-                          : 'border-element/40 bg-[#0a0710]/40 text-muted-foreground hover:border-element/60'
+                          ? 'border-bronze bg-bronze font-kai text-inkstone'
+                          : 'border-bronze/40 bg-cream-light/40 text-inkstone-soft hover:border-bronze/60'
                       }`}
                     >
                       数字起卦
@@ -301,7 +301,7 @@ export default function YijingSection() {
                       { id: 'num3', label: '数字三 (1-100)', val: num3, set: setNum3 },
                     ].map((f) => (
                       <div key={f.id} className="space-y-1.5">
-                        <Label htmlFor={f.id} className="text-foreground/90">{f.label}</Label>
+                        <Label htmlFor={f.id} className="text-inkstone/90">{f.label}</Label>
                         <Input
                           id={f.id}
                           type="number"
@@ -310,7 +310,7 @@ export default function YijingSection() {
                           max={100}
                           value={f.val}
                           onChange={(e) => f.set(e.target.value)}
-                          className="border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
+                          className="border-bronze/30 bg-cream-light/95 text-inkstone placeholder:text-inkstone-soft/60 focus:border-bronze"
                           required={method === 'numbers'}
                         />
                       </div>
@@ -325,7 +325,7 @@ export default function YijingSection() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-element font-kai text-void shadow-glow-md transition hover:bg-element/80"
+                  className="w-full bg-bronze font-kai text-inkstone shadow-glow-md transition hover:bg-bronze/80"
                 >
                   {method === 'coins' ? '开始摇卦' : '开始占卜'}
                 </Button>
@@ -337,10 +337,10 @@ export default function YijingSection() {
         {/* ===== 铜钱投掷阶段 ===== */}
         {submitted && method === 'coins' && !result && (
           <div className="space-y-6">
-            <p className="text-center text-sm text-muted-foreground">所问：{question}</p>
+            <p className="text-center text-sm text-inkstone-soft">所问：{question}</p>
 
             <div className="grid gap-6 md:grid-cols-2">
-              <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
+              <Card className="border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
                 <CardContent className="pt-6">
                   <CoinToss
                     coins={coins}
@@ -353,17 +353,17 @@ export default function YijingSection() {
               </Card>
 
               <div className="space-y-3">
-                <h4 className="text-sm font-semibold text-muted-foreground">已卜之爻（自下而上）</h4>
+                <h4 className="text-sm font-semibold text-inkstone-soft">已卜之爻（自下而上）</h4>
                 <YaoPreview yaoValues={yaoValues} />
                 <Button
                   type="button"
                   onClick={handleTossAll}
                   disabled={shaking || yaoValues.length >= 6}
-                  className="w-full border border-element/50 bg-[#0a0710]/40 text-element hover:bg-element/10"
+                  className="w-full border border-bronze/50 bg-cream-light/40 text-bronze-dark hover:bg-bronze/10"
                 >
                   一键连摇六爻
                 </Button>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-xs text-inkstone-soft/70">
                   每爻摇龟壳一次，三枚铜钱自壳中而出；字面为阴、背面为阳
                 </p>
               </div>
@@ -387,20 +387,20 @@ export default function YijingSection() {
               <Button
                 variant="outline"
                 onClick={handleSave}
-                className="border-element/50 text-element hover:bg-element/10"
+                className="border-bronze/50 text-bronze-dark hover:bg-bronze/10"
               >
                 💾 存入记忆
               </Button>
               <Button
                 variant="default"
                 onClick={handleShare}
-                className="bg-element text-void shadow-glow-md transition hover:bg-element/80"
+                className="bg-bronze text-inkstone shadow-glow-md transition hover:bg-bronze/80"
               >
                 🔗 复制分享链接
               </Button>
             </div>
             {feedback && (
-              <p className="text-center text-sm text-gold/90 animate-rise">{feedback}</p>
+              <p className="text-center text-sm text-bronze-dark/90 animate-rise">{feedback}</p>
             )}
             <YijingResultView result={result} onReset={handleReset} unlockKey={makeRecordKey('yijing', buildInput())} />
           </div>
