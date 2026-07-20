@@ -16,6 +16,7 @@ const CORPUS_FILES: Array<{ path: string; book: string }> = [
   { path: 'corpus/yijing/guaci.txt', book: '周易' },
   { path: 'corpus/yuanhai_ziping/jueci.txt', book: '渊海子平' },
   { path: 'corpus/tarot/tarot_intro.txt', book: '塔罗入门' },
+  { path: 'corpus/xiangshou/xiangshou.txt', book: '手相入门' },
 ];
 
 const CHUNK_MIN_CHARS = 50;
