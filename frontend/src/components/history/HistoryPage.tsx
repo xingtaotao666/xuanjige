@@ -63,8 +63,6 @@ export default function HistoryPage() {
 
   return (
     <section className="relative min-h-screen py-24">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710] via-[#0d0814] to-[#0a0710]" />
-
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
           <div>

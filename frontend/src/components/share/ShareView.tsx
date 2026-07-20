@@ -28,12 +28,11 @@ export default function ShareView() {
   if (!payload) {
     return (
       <section className="relative flex min-h-screen items-center justify-center py-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710] via-[#0d0814] to-[#0a0710]" />
         <div className="relative mx-auto max-w-lg px-4">
           <Card className="border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
             <CardContent className="pt-8 text-center">
               <div className="mb-3 text-5xl">🔮</div>
-              <h1 className="font-kai text-2xl font-bold text-bronze-dark text-inkstone">链接已失效</h1>
+              <h1 className="font-kai text-2xl font-bold text-inkstone">链接已失效</h1>
               <p className="mt-3 text-sm text-inkstone-soft">
                 分享链接格式有误或已损坏，无法还原命理结果。
               </p>
@@ -54,7 +53,6 @@ export default function ShareView() {
 
   return (
     <section className="relative min-h-screen py-24">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0710] via-[#0d0814] to-[#0a0710]" />
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
         {/* 分享横幅 */}
