@@ -239,6 +239,13 @@ export default function YijingSection() {
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mb-10 text-center">
+          <div className="mb-6 flex items-center justify-center gap-4">
+            <img
+              src="/assets/yijing-luopan.png"
+              alt="易经罗盘"
+              className="h-24 w-24 rounded-full object-cover shadow-[0_4px_16px_rgba(0,0,0,0.15)] sm:h-32 sm:w-32"
+            />
+          </div>
           <h1 className="font-kai text-3xl font-bold text-bronze-dark text-inkstone sm:text-4xl">玄机阁 · 易经占卜</h1>
           <p className="mt-2 text-sm text-inkstone-soft">金钱课起卦 · 龟壳摇卦定乾坤</p>
         </div>
