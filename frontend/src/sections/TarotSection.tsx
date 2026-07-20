@@ -316,7 +316,7 @@ export default function TarotSection() {
       {/* 深色夜空背景 */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: 'url(/assets/tarot-stars-bg.png)' }}
+        style={{ backgroundImage: 'url(/assets/tarot-stars-bg.png?v=2)' }}
         aria-hidden="true"
       />
       {/* 深色遮罩增加可读性 */}
@@ -370,13 +370,13 @@ export default function TarotSection() {
               {/* 2 张示例塔罗牌展示 */}
               <div className="mb-6 flex items-end justify-center gap-3">
                 <img
-                  src="/assets/tarot-magician.png"
+                  src="/assets/tarot-magician.png?v=2"
                   alt="The Magician"
                   className="h-32 w-auto rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
                   style={{ transform: 'rotate(-6deg)' }}
                 />
                 <img
-                  src="/assets/tarot-empress.png"
+                  src="/assets/tarot-empress.png?v=2"
                   alt="The Empress"
                   className="h-32 w-auto rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.5)]"
                   style={{ transform: 'rotate(6deg)' }}
