@@ -19,16 +19,24 @@ function corpusUrl(rel: string): string {
   return `${import.meta.env.BASE_URL}${rel}`;
 }
 
-/** 从 `### 标题` 中提取书名（去掉《》符号） */
+/** 从 `### 标题` 中提取中文书名 */
 function extractBookName(header: string): string {
-  // 匹配 ### 《书名》 或 ### 《书名》（《别名》）— 作者
   let name = header.replace(/^#+\s*/, '').trim();
-  // 提取《》内的内容
-  const match = name.match(/《(.+?)》/);
-  if (match) return match[1];
-  // 没有《》就取冒号/句号前的部分
-  const cut = name.split(/[：:。]/)[0];
-  return cut || '塔罗入门';
+  // 提取所有《》内的内容
+  const matches = [...name.matchAll(/《(.+?)》/g)];
+  
+  if (matches.length === 0) {
+    // 没有《》就取括号或逗号前的部分
+    const cut = name.split(/[（(,，]/)[0].trim();
+    return cut || '塔罗入门';
+  }
+  
+  if (matches.length === 1) {
+    return matches[0][1];
+  }
+  
+  // 多个《》时，取最后一个（通常是中文名）
+  return matches[matches.length - 1][1];
 }
 
 async function loadChunks(): Promise<Chunk[]> {
