@@ -52,6 +52,10 @@ export default function TarotSection() {
   const [spread, setSpread] = useState<SpreadType>('three');
   const [feedback, setFeedback] = useState('');
 
+  // — 手动输牌模式 —
+  const [manualMode, setManualMode] = useState(false);
+  const [manualCards, setManualCards] = useState('');
+
   // — 洗牌 —
   const [shuffling, setShuffling] = useState(false);
   const [shuffleDone, setShuffleDone] = useState(false); // 洗牌动画已完成
@@ -91,6 +95,55 @@ export default function TarotSection() {
       });
     }
   }, [question, spread, divinate, drawnCards]);
+
+  // — 手动输牌 AI 分析 —
+  const manualDivinate = useCallback(() => {
+    if (!question.trim() || !manualCards.trim()) return;
+    setStep('complete');
+    
+    // 解析用户输入的牌名，匹配卡牌库
+    const text = manualCards.trim();
+    const matched: TarotCardPlacement[] = [];
+    const lines = text.split(/[,，、\n]/).map((s) => s.trim()).filter(Boolean);
+    for (const line of lines) {
+      const isRev = /逆位|reversed/i.test(line);
+      const cleanName = line.replace(/正位|逆位|upright|reversed/gi, '').trim();
+      // 在 ALL_TAROT_CARDS 中查找
+      const found = ALL_TAROT_CARDS.find(
+        (c) =>
+          c.nameCn.includes(cleanName) ||
+          cleanName.includes(c.nameCn) ||
+          c.nameEn.toLowerCase().includes(cleanName.toLowerCase()) ||
+          cleanName.toLowerCase().includes(c.nameEn.toLowerCase()),
+      );
+      if (found) {
+        matched.push({
+          position: `用户输入 #${matched.length + 1}`,
+          card: found,
+          orientation: isRev ? 'reversed' : 'upright',
+        });
+      }
+    }
+    if (matched.length === 0) {
+      // 一张都没匹配到 → 直接把文字作为 question 发送
+      setStep('complete');
+      divinate({
+        question: `牌面：${manualCards.trim()}\n\n问题：${question.trim()}`,
+        spread: 'single',
+        with_llm: true,
+        with_rag: true,
+      });
+      return;
+    }
+    setStep('complete');
+    divinate({
+      question: question.trim(),
+      spread: matched.length <= 1 ? 'single' : matched.length <= 3 ? 'three' : 'cross',
+      with_llm: true,
+      with_rag: true,
+      cards: matched,
+    });
+  }, [question, manualCards, divinate, setStep]);
 
   // — 重置 —
   const handleReset = () => {
@@ -382,6 +435,81 @@ export default function TarotSection() {
             </div>
           ))}
         </div>
+
+        {/* ———— 模式切换：抽牌 / 手动输牌 ———— */}
+        {step !== 'complete' && (
+          <div className="mb-6 flex items-center justify-center gap-3">
+            <button
+              onClick={() => { if (!manualMode) return; setManualMode(false); reset(); setStep('question');  }}
+              className={`rounded-full px-4 py-1.5 font-kai text-sm transition-all ${
+                !manualMode
+                  ? 'bg-bronze text-cream shadow-paper-md'
+                  : 'border border-bronze/30 text-inkstone-soft hover:bg-bronze/10'
+              }`}
+            >
+              🃏 抽牌模式
+            </button>
+            <button
+              onClick={() => { if (manualMode) return; setManualMode(true); reset(); setStep('question');  }}
+              className={`rounded-full px-4 py-1.5 font-kai text-sm transition-all ${
+                manualMode
+                  ? 'bg-bronze text-cream shadow-paper-md'
+                  : 'border border-bronze/30 text-inkstone-soft hover:bg-bronze/10'
+              }`}
+            >
+              ✏️ 手动输牌
+            </button>
+          </div>
+        )}
+
+        {/* ———— 手动输牌界面 ———— */}
+        {manualMode && step === 'question' && (
+          <Card className="mx-auto max-w-2xl border-bronze/30 bg-cream-light/90 backdrop-blur-md">
+            <CardHeader>
+              <CardTitle className="font-kai text-xl text-inkstone">✏️ 手动输牌 · AI 分析</CardTitle>
+              <CardDescription className="text-inkstone-soft">
+                输入你抽到的牌名和正逆位，AI 会结合塔罗知识为您深度解读
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* 提问 */}
+              <div>
+                <label className="mb-1 block text-xs font-medium text-inkstone-soft">你的问题</label>
+                <Textarea
+                  placeholder="例如：近期事业发展如何？"
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  className="min-h-[60px] border-bronze/35 bg-cream-light/95 text-inkstone placeholder:text-inkstone-mute/60 focus:border-bronze"
+                  rows={2}
+                />
+              </div>
+              {/* 输牌 */}
+              <div>
+                <label className="mb-1 block text-xs font-medium text-inkstone-soft">
+                  你抽到的牌（用逗号或换行分隔）
+                </label>
+                <div className="rounded-lg border border-bronze/20 bg-cream-dark/30 p-3 text-[11px] leading-relaxed text-inkstone-soft">
+                  支持输入牌的中文名或英文名，例如：<br />
+                  <code className="text-bronze-dark">女皇 正位，魔术师 逆位，星星 正位</code>
+                </div>
+                <Textarea
+                  placeholder="女皇 正位，魔术师 逆位，星星 正位，命运之轮 正位"
+                  value={manualCards}
+                  onChange={(e) => setManualCards(e.target.value)}
+                  className="mt-2 min-h-[80px] border-bronze/35 bg-cream-light/95 text-inkstone placeholder:text-inkstone-mute/60 focus:border-bronze"
+                  rows={3}
+                />
+              </div>
+              <Button
+                onClick={manualDivinate}
+                disabled={loading || !question.trim() || !manualCards.trim()}
+                className="w-full bg-bronze font-kai text-lg text-cream shadow-paper-md hover:bg-bronze/80 disabled:opacity-40"
+              >
+                {loading ? '🔮 AI 解读中…' : '🔮 AI 分析'}
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* ================================================================
             STEP 1: 事前准备
