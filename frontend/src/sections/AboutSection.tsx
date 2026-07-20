@@ -32,7 +32,7 @@ export default function AboutSection() {
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6">
         {/* Title */}
         <div className="mb-14 text-center">
-          <h1 className="font-kai text-3xl font-bold text-bronze-dark title-glow sm:text-4xl">
+          <h1 className="font-kai text-3xl font-bold text-bronze-dark text-inkstone sm:text-4xl">
             关于玄机阁
           </h1>
           <p className="mt-3 text-sm text-inkstone-soft">

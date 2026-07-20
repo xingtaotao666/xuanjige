@@ -33,12 +33,12 @@ export default function ShareView() {
           <Card className="border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
             <CardContent className="pt-8 text-center">
               <div className="mb-3 text-5xl">🔮</div>
-              <h1 className="font-kai text-2xl font-bold text-bronze-dark title-glow">链接已失效</h1>
+              <h1 className="font-kai text-2xl font-bold text-bronze-dark text-inkstone">链接已失效</h1>
               <p className="mt-3 text-sm text-inkstone-soft">
                 分享链接格式有误或已损坏，无法还原命理结果。
               </p>
               <Link to="/" className="mt-6 inline-block">
-                <Button className="bg-bronze font-kai text-inkstone shadow-glow-md hover:bg-bronze/80">
+                <Button className="bg-bronze font-kai text-inkstone shadow-paper-md hover:bg-bronze/80">
                   回到玄机阁
                 </Button>
               </Link>
@@ -59,7 +59,7 @@ export default function ShareView() {
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
         {/* 分享横幅 */}
         <div className="mb-8 animate-rise rounded-xl border border-bronze/30 bg-cream-light/85 px-6 py-5 text-center backdrop-blur-sm">
-          <p className="font-kai text-lg text-bronze-dark title-glow">
+          <p className="font-kai text-lg text-bronze-dark text-inkstone">
             🌟 这是朋友通过「玄机阁」分享给你的{isBazi ? '命理' : isYijing ? '占卜' : '塔罗'}结果
           </p>
           <p className="mt-2 text-xs text-inkstone-soft/80">
@@ -78,7 +78,7 @@ export default function ShareView() {
         {/* 行动召唤 */}
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link to="/bazi">
-            <Button className="bg-bronze font-kai text-inkstone shadow-glow-md hover:bg-bronze/80">
+            <Button className="bg-bronze font-kai text-inkstone shadow-paper-md hover:bg-bronze/80">
               我也来排八字
             </Button>
           </Link>

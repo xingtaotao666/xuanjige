@@ -138,7 +138,7 @@ export default function BaziSection() {
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
         <div className="mb-10 text-center">
-          <h1 className="font-kai text-3xl font-bold text-bronze-dark title-glow sm:text-4xl">八字排盘</h1>
+          <h1 className="font-kai text-3xl font-bold text-bronze-dark text-inkstone sm:text-4xl">八字排盘</h1>
           <p className="mt-2 text-sm text-inkstone-soft">输入生辰信息，获取专业命理分析</p>
         </div>
 
@@ -251,7 +251,7 @@ export default function BaziSection() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-bronze font-kai text-inkstone shadow-glow-md transition hover:bg-bronze/80"
+                  className="w-full bg-bronze font-kai text-inkstone shadow-paper-md transition hover:bg-bronze/80"
                 >
                   {loading ? '排盘中…' : '开始排盘'}
                 </Button>
@@ -283,7 +283,7 @@ export default function BaziSection() {
               <Button
                 variant="default"
                 onClick={handleShare}
-                className="bg-bronze text-inkstone shadow-glow-md transition hover:bg-bronze/80"
+                className="bg-bronze text-inkstone shadow-paper-md transition hover:bg-bronze/80"
               >
                 🔗 复制分享链接
               </Button>

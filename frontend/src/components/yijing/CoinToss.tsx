@@ -35,7 +35,7 @@ function FallenCoin({ face, index }: { face: CoinFace; index: number }) {
         className="relative h-14 w-14 rounded-full border-[3px] shadow-lg"
         style={{
           background: isYang
-            ? 'linear-gradient(145deg, #d4a843 0%, #a07828 50%, #c9962e 100%)'
+            ? 'linear-gradient(145deg, #c4a352 0%, #a07828 50%, #c9962e 100%)'
             : 'linear-gradient(145deg, #b8860b 0%, #8b6914 50%, #a67c00 100%)',
           borderColor: isYang ? '#ffd70080' : '#8b6914',
           transform: 'rotateX(var(--coin-face))',
@@ -157,7 +157,7 @@ export default function CoinToss({
   return (
     <div className="relative flex flex-col items-center gap-5">
       {/* 状态文字 */}
-      <p className="text-sm text-gold/90">
+      <p className="text-sm text-bronze-dark/90">
         {done
           ? '六爻已成，正在解卦…'
           : `正在卜第「${currentLineName}」爻`
@@ -202,7 +202,7 @@ export default function CoinToss({
       </div>
 
       {/* 法则说明 */}
-      <p className="text-center text-xs text-muted-foreground/80">
+      <p className="text-center text-xs text-inkstone-soft/80">
         古法金钱课 · 三枚铜钱一爻 · 字阴背阳
       </p>
 

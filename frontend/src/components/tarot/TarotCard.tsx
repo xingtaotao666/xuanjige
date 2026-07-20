@@ -22,7 +22,7 @@ const ORIENTATION_LABEL: Record<string, string> = {
 };
 
 const ORIENTATION_CLASS: Record<string, string> = {
-  upright: 'text-element',
+  upright: 'text-bronze-dark',
   reversed: 'text-amber-400',
 };
 
@@ -34,12 +34,12 @@ export default function TarotCard({ placement, index }: { placement: TarotCardPl
 
   return (
     <div
-      className={`group relative rounded-xl border-2 ${colors} bg-card/60 p-4 backdrop-blur-sm transition hover:shadow-glow-md animate-rise`}
+      className={`group relative rounded-xl border-2 ${colors} bg-cream-light/85 p-4 backdrop-blur-sm transition hover:shadow-paper-md animate-rise`}
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* 位置标签 */}
       <div className="mb-2 flex items-center justify-between">
-        <span className="rounded bg-element/10 px-2 py-0.5 text-[10px] text-element font-medium">
+        <span className="rounded bg-bronze/10 px-2 py-0.5 text-[10px] text-bronze-dark font-medium">
           {position}
         </span>
         <span className={`text-xs font-medium ${ORIENTATION_CLASS[orientation]}`}>
@@ -53,10 +53,10 @@ export default function TarotCard({ placement, index }: { placement: TarotCardPl
         <div className="text-2xl opacity-70">{glyph}</div>
 
         {/* 牌名 */}
-        <h4 className="text-center font-kai text-base font-bold text-gold">
+        <h4 className="text-center font-kai text-base font-bold text-bronze-dark">
           {card.nameCn}
         </h4>
-        <p className="text-center text-[10px] text-muted-foreground/70">
+        <p className="text-center text-[10px] text-inkstone-soft/70">
           {card.nameEn}
         </p>
 
@@ -64,24 +64,24 @@ export default function TarotCard({ placement, index }: { placement: TarotCardPl
         <div className="h-px w-12 bg-gradient-to-r from-transparent via-element/40 to-transparent" />
 
         {/* 元素 */}
-        <span className="rounded-full border border-element/20 bg-element/5 px-2 py-0.5 text-[10px] text-element/80">
+        <span className="rounded-full border border-bronze/20 bg-bronze/5 px-2 py-0.5 text-[10px] text-bronze-dark/80">
           {card.element}
         </span>
 
         {/* 关键词 */}
-        <p className="text-center text-[10px] leading-relaxed text-foreground/70 line-clamp-2">
+        <p className="text-center text-[10px] leading-relaxed text-inkstone/70 line-clamp-2">
           {card.keywords}
         </p>
       </div>
 
       {/* 悬停时显示详细含义 */}
-      <div className="absolute inset-0 z-10 hidden items-center justify-center rounded-xl bg-[#0a0710]/95 p-3 group-hover:flex">
+      <div className="absolute inset-0 z-10 hidden items-center justify-center rounded-xl bg-cream-light/95 p-3 group-hover:flex">
         <div className="max-h-full overflow-y-auto text-center">
-          <p className="mb-1 font-kai text-xs font-bold text-gold">{card.nameCn}</p>
-          <p className="text-[10px] leading-relaxed text-foreground/80">
+          <p className="mb-1 font-kai text-xs font-bold text-bronze-dark">{card.nameCn}</p>
+          <p className="text-[10px] leading-relaxed text-inkstone/80">
             {orientation === 'upright' ? card.meaningUpright : card.meaningReversed}
           </p>
-          <p className="mt-1 text-[10px] text-muted-foreground/60">{card.imageDesc}</p>
+          <p className="mt-1 text-[10px] text-inkstone-soft/60">{card.imageDesc}</p>
         </div>
       </div>
     </div>

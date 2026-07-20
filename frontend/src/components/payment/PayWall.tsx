@@ -137,21 +137,21 @@ export default function PayWall({
       </div>
 
       {/* 遮挡层 */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-xl bg-[#0a0710]/70 p-6 backdrop-blur-[2px]">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-element/40 bg-element/10">
-          <LockIcon className="h-7 w-7 text-element" />
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 rounded-xl bg-bronze/70 p-6 backdrop-blur-[2px]">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-bronze/40 bg-bronze/10">
+          <LockIcon className="h-7 w-7 text-bronze-dark" />
         </div>
 
-        <h3 className="font-kai text-xl text-gold">{label}</h3>
-        <p className="max-w-xs text-center text-sm text-muted-foreground">
-          支付 <span className="font-bold text-gold">¥{price}</span> 即可解锁完整 AI 解读，
+        <h3 className="font-kai text-xl text-bronze-dark">{label}</h3>
+        <p className="max-w-xs text-center text-sm text-inkstone-soft">
+          支付 <span className="font-bold text-bronze-dark">¥{price}</span> 即可解锁完整 AI 解读，
           一次支付永久可看
         </p>
 
         {onlineMode && phase === 'idle' && (
           <Button
             onClick={startPayment}
-            className="bg-element px-8 font-kai text-void shadow-glow-md transition hover:bg-element/80"
+            className="bg-bronze px-8 font-kai text-inkstone shadow-paper-md transition hover:bg-bronze/80"
           >
             获取支付二维码
           </Button>
@@ -159,29 +159,29 @@ export default function PayWall({
 
         {onlineMode && phase === 'creating' && (
           <div className="flex flex-col items-center gap-3">
-            <RefreshCwIcon className="h-8 w-8 animate-spin text-element" />
-            <p className="text-sm text-muted-foreground">正在创建支付订单…</p>
+            <RefreshCwIcon className="h-8 w-8 animate-spin text-bronze-dark" />
+            <p className="text-sm text-inkstone-soft">正在创建支付订单…</p>
           </div>
         )}
 
         {onlineMode && phase === 'waiting' && order && (
           <>
             {/* 微信支付动态二维码 */}
-            <div className="rounded-xl border-2 border-element/30 bg-white p-2 shadow-lg shadow-element/10">
+            <div className="rounded-xl border-2 border-bronze/30 bg-white p-2 shadow-lg shadow-bronze/10">
               <img
                 src={getQrCodeImageUrl(order.codeUrl)}
                 alt="微信支付二维码"
                 className="h-44 w-44 object-contain"
               />
             </div>
-            <p className="text-xs text-muted-foreground/70">
-              请使用微信扫码支付 <span className="text-gold">¥{price}</span>
+            <p className="text-xs text-inkstone-soft/70">
+              请使用微信扫码支付 <span className="text-bronze-dark">¥{price}</span>
             </p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground/60">
+            <div className="flex items-center gap-2 text-xs text-inkstone-soft/60">
               <RefreshCwIcon className={`h-3 w-3 ${pollCount > 0 ? 'animate-spin' : ''}`} />
               等待支付中{'.'.repeat((pollCount % 3) + 1)}
             </div>
-            <p className="text-[10px] text-muted-foreground/50">
+            <p className="text-[10px] text-inkstone-soft/50">
               订单号：{order.outTradeNo.slice(-8)}
             </p>
           </>
@@ -194,7 +194,7 @@ export default function PayWall({
             <Button
               onClick={startPayment}
               variant="outline"
-              className="border-element/50 text-element hover:bg-element/10"
+              className="border-bronze/50 text-bronze-dark hover:bg-bronze/10"
             >
               重新获取二维码
             </Button>
@@ -204,7 +204,7 @@ export default function PayWall({
         {/* 离线降级模式：固定收款码 + 手动确认 */}
         {!onlineMode && (
           <>
-            <div className="rounded-xl border-2 border-element/30 bg-white p-2 shadow-lg shadow-element/10">
+            <div className="rounded-xl border-2 border-bronze/30 bg-white p-2 shadow-lg shadow-bronze/10">
               <img
                 src={qrCodeUrl}
                 alt="收款码"
@@ -214,24 +214,24 @@ export default function PayWall({
                   const parent = (e.target as HTMLImageElement).parentElement;
                   if (parent) {
                     parent.innerHTML =
-                      '<div class="flex h-44 w-44 items-center justify-center rounded-lg bg-[#0a0710] text-xs text-muted-foreground">请上传收款码到 public/qrcode-pay.png</div>';
+                      '<div class="flex h-44 w-44 items-center justify-center rounded-lg bg-[#0a0710] text-xs text-inkstone-soft">请上传收款码到 public/qrcode-pay.png</div>';
                   }
                 }}
               />
             </div>
-            <p className="text-xs text-muted-foreground/70">
-              请使用微信/支付宝扫码支付 <span className="text-gold">¥{price}</span>
+            <p className="text-xs text-inkstone-soft/70">
+              请使用微信/支付宝扫码支付 <span className="text-bronze-dark">¥{price}</span>
             </p>
             <div className="rounded-lg border border-amber-500/30 bg-amber-950/20 px-3 py-1.5 text-[10px] text-amber-400/80">
               ⚠️ 离线模式：支付后点击下方按钮手动解锁
             </div>
             <Button
               onClick={handleOfflinePay}
-              className="bg-element px-8 font-kai text-void shadow-glow-md transition hover:bg-element/80"
+              className="bg-bronze px-8 font-kai text-inkstone shadow-paper-md transition hover:bg-bronze/80"
             >
               我已支付，立即解锁
             </Button>
-            <p className="text-[10px] text-muted-foreground/50">
+            <p className="text-[10px] text-inkstone-soft/50">
               支付后点击上方按钮，永久可查看此条结果
             </p>
           </>

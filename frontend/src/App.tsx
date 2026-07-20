@@ -22,7 +22,7 @@ function HomePage() {
 
 function App() {
   return (
-    <div className="relative flex min-h-screen flex-col text-foreground">
+    <div className="relative flex min-h-screen flex-col text-inkstone">
       {/* 宇宙星空 + 宣纸纹理 + 柔和光效背景层 */}
       <div className="app-bg" aria-hidden="true" />
       <div className="relative z-0 flex min-h-screen flex-col">

@@ -16,10 +16,10 @@ export default function YijingResultView({
 }) {
   return (
     <div className="space-y-8 animate-rise">
-      <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
+      <Card className="border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="font-kai text-lg text-gold">卦象</CardTitle>
-          <CardDescription className="text-muted-foreground">问题: {result.gua.question}</CardDescription>
+          <CardTitle className="font-kai text-lg text-bronze-dark">卦象</CardTitle>
+          <CardDescription className="text-inkstone-soft">问题: {result.gua.question}</CardDescription>
         </CardHeader>
         <CardContent>
           <GuaDisplay gua={result.gua} />
@@ -28,49 +28,49 @@ export default function YijingResultView({
 
       {result.llm_interpretation && (
         <PayWall unlockKey={unlockKey}>
-          <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
+          <Card className="border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-kai text-lg text-gold">
+            <CardTitle className="flex items-center gap-2 font-kai text-lg text-bronze-dark">
               <span>🤖</span> AI 解卦
             </CardTitle>
-            <CardDescription className="text-muted-foreground">
+            <CardDescription className="text-inkstone-soft">
               结合卦象爻辞与您的问题生成的个性化解读
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="prose prose-invert prose-sm max-w-none prose-headings:text-gold prose-p:text-foreground/90 prose-strong:text-element prose-li:text-foreground/90">
+            <div className="prose prose-invert prose-sm max-w-none prose-headings:text-bronze-dark prose-p:text-inkstone/90 prose-strong:text-bronze-dark prose-li:text-inkstone/90">
               {result.llm_interpretation.split('\n').map((line, i) => {
                 if (line.startsWith('## ')) {
                   return (
-                    <h2 key={i} className="mt-4 mb-2 text-base font-bold text-gold">
+                    <h2 key={i} className="mt-4 mb-2 text-base font-bold text-bronze-dark">
                       {line.replace('## ', '')}
                     </h2>
                   );
                 }
                 if (line.startsWith('# ')) {
                   return (
-                    <h1 key={i} className="mt-5 mb-3 text-lg font-bold text-element">
+                    <h1 key={i} className="mt-5 mb-3 text-lg font-bold text-bronze-dark">
                       {line.replace('# ', '')}
                     </h1>
                   );
                 }
                 if (line.startsWith('### ')) {
                   return (
-                    <h3 key={i} className="mt-3 mb-1 text-sm font-semibold text-gold/80">
+                    <h3 key={i} className="mt-3 mb-1 text-sm font-semibold text-bronze-dark/80">
                       {line.replace('### ', '')}
                     </h3>
                   );
                 }
                 if (line.startsWith('- ')) {
                   return (
-                    <li key={i} className="ml-4 text-sm text-foreground/90 list-disc">
+                    <li key={i} className="ml-4 text-sm text-inkstone/90 list-disc">
                       {line.replace('- ', '')}
                     </li>
                   );
                 }
                 if (line.trim() === '') return <br key={i} />;
                 return (
-                  <p key={i} className="text-sm leading-relaxed text-foreground/90">
+                  <p key={i} className="text-sm leading-relaxed text-inkstone/90">
                     {line}
                   </p>
                 );
@@ -82,7 +82,7 @@ export default function YijingResultView({
       )}
 
       {result.rag_sources && result.rag_sources.length > 0 && (
-        <Card className="border-element/25 bg-card/60 backdrop-blur-sm">
+        <Card className="border-bronze/25 bg-cream-light/85 backdrop-blur-sm">
           <CardContent className="pt-6">
             <SourceCitations sources={result.rag_sources} />
           </CardContent>
@@ -94,7 +94,7 @@ export default function YijingResultView({
           <Button
             variant="outline"
             onClick={onReset}
-            className="border-element/50 text-element hover:bg-element/10"
+            className="border-bronze/50 text-bronze-dark hover:bg-bronze/10"
           >
             重新占卜
           </Button>

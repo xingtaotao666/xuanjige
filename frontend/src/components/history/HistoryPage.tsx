@@ -68,7 +68,7 @@ export default function HistoryPage() {
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="font-kai text-3xl font-bold text-bronze-dark title-glow sm:text-4xl">我的记忆</h1>
+            <h1 className="font-kai text-3xl font-bold text-bronze-dark text-inkstone sm:text-4xl">我的记忆</h1>
             <p className="mt-2 text-sm text-inkstone-soft">
               您在本机算过的命盘与卦象，仅保存在此设备浏览器中
             </p>
@@ -99,7 +99,7 @@ export default function HistoryPage() {
               </p>
               <div className="mt-6 flex justify-center gap-3">
                 <Link to="/bazi">
-                  <Button className="bg-bronze font-kai text-inkstone shadow-glow-md hover:bg-bronze/80">
+                  <Button className="bg-bronze font-kai text-inkstone shadow-paper-md hover:bg-bronze/80">
                     八字排盘
                   </Button>
                 </Link>

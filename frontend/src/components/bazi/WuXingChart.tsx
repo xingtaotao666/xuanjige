@@ -27,29 +27,29 @@ export default function WuXingChart({ wuxing }: WuXingChartProps) {
               {el.label}
             </span>
             <div className="flex-1">
-              <div className="h-5 w-full overflow-hidden rounded-full bg-card/60">
+              <div className="h-5 w-full overflow-hidden rounded-full bg-cream-light/85">
               <div
-                className={`h-full rounded-full shadow-glow-sm transition-all duration-700 ${el.color}`}
+                className={`h-full rounded-full shadow-paper-sm transition-all duration-700 ${el.color}`}
                 style={{ width: `${widthPct}%` }}
               />
               </div>
             </div>
-            <span className="w-8 text-right text-sm text-muted-foreground">{val}</span>
+            <span className="w-8 text-right text-sm text-inkstone-soft">{val}</span>
           </div>
         );
       })}
 
       {wuxing.summary && (
-        <p className="mt-3 text-xs italic text-muted-foreground">
+        <p className="mt-3 text-xs italic text-inkstone-soft">
           {typeof wuxing.summary === 'string' ? wuxing.summary : JSON.stringify(wuxing.summary)}
         </p>
       )}
 
       {wuxing.health_advice && wuxing.health_advice.length > 0 && (
         <div className="mt-4 space-y-2">
-          <h5 className="text-xs font-semibold text-muted-foreground">健康建议</h5>
+          <h5 className="text-xs font-semibold text-inkstone-soft">健康建议</h5>
           {wuxing.health_advice.map((advice, i) => (
-            <div key={i} className="rounded bg-card/50 p-2 text-xs text-muted-foreground">
+            <div key={i} className="rounded bg-card/50 p-2 text-xs text-inkstone-soft">
               {advice.description && (
                 <p className="mb-1">{advice.description}</p>
               )}

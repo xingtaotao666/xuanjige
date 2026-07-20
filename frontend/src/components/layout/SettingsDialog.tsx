@@ -61,16 +61,16 @@ export default function SettingsDialog() {
         <Button
           variant="ghost"
           size="icon"
-          className="text-muted-foreground hover:text-foreground"
+          className="text-inkstone-soft hover:text-inkstone"
           title="设置"
         >
           <SettingsIcon className="h-5 w-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-element/30 bg-[#0a0710] text-foreground max-h-[90vh] overflow-y-auto">
+      <DialogContent className="border-bronze/30 bg-[#0a0710] text-inkstone max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-kai text-lg text-gold">设置</DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogTitle className="font-kai text-lg text-bronze-dark">设置</DialogTitle>
+          <DialogDescription className="text-inkstone-soft">
             AI 解读需要 DeepSeek API Key；支付可选配置 Worker 实现微信支付验证。
           </DialogDescription>
         </DialogHeader>
@@ -79,7 +79,7 @@ export default function SettingsDialog() {
           {/* === DeepSeek API Key === */}
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-semibold text-foreground/80">AI 配置</span>
+              <span className="font-semibold text-inkstone/80">AI 配置</span>
               {configured ? (
                 <span className="rounded bg-green-900/30 px-2 py-0.5 text-xs text-green-400">
                   已配置
@@ -92,7 +92,7 @@ export default function SettingsDialog() {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="apikey" className="text-foreground/90">
+              <Label htmlFor="apikey" className="text-inkstone/90">
                 DeepSeek API Key
               </Label>
               <Input
@@ -102,21 +102,21 @@ export default function SettingsDialog() {
                 placeholder="sk-..."
                 value={key}
                 onChange={(e) => setKey(e.target.value)}
-                className="border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
+                className="border-bronze/30 bg-cream-light/95 text-inkstone placeholder:text-inkstone-soft/60 focus:border-bronze"
               />
             </div>
 
-            <p className="text-xs leading-relaxed text-muted-foreground/70">
+            <p className="text-xs leading-relaxed text-inkstone-soft/70">
               Key 仅保存在本机浏览器（localStorage），不会上传到任何服务器。也可在部署时通过
-              <code className="mx-1 text-gold">VITE_DEEPSEEK_API_KEY</code>
+              <code className="mx-1 text-bronze-dark">VITE_DEEPSEEK_API_KEY</code>
               注入默认值。
             </p>
           </div>
 
           {/* === 支付配置 === */}
-          <div className="border-t border-element/20 pt-4">
+          <div className="border-t border-bronze/20 pt-4">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-semibold text-foreground/80">支付配置（可选）</span>
+              <span className="font-semibold text-inkstone/80">支付配置（可选）</span>
               {workerConfigured ? (
                 <span className="rounded bg-green-900/30 px-2 py-0.5 text-xs text-green-400">
                   已配置
@@ -129,7 +129,7 @@ export default function SettingsDialog() {
             </div>
 
             <div className="mt-2 space-y-1.5">
-              <Label htmlFor="workerUrl" className="text-foreground/90">
+              <Label htmlFor="workerUrl" className="text-inkstone/90">
                 支付 Worker 地址
               </Label>
               <Input
@@ -139,14 +139,14 @@ export default function SettingsDialog() {
                 placeholder="https://xuanjige-payment.xxxx.workers.dev"
                 value={workerUrl}
                 onChange={(e) => setWorkerUrlLocal(e.target.value)}
-                className="border-element/30 bg-[#0a0710]/60 text-foreground placeholder:text-muted-foreground/60 focus:border-element"
+                className="border-bronze/30 bg-cream-light/95 text-inkstone placeholder:text-inkstone-soft/60 focus:border-bronze"
               />
             </div>
 
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground/70">
+            <p className="mt-2 text-xs leading-relaxed text-inkstone-soft/70">
               配置后启用真实微信支付验证。未配置时使用离线降级模式（固定收款码 + 手动确认）。
               如何部署 Worker 请参考项目中的{' '}
-              <code className="text-gold">workers/README.md</code>。
+              <code className="text-bronze-dark">workers/README.md</code>。
             </p>
           </div>
         </div>
@@ -155,13 +155,13 @@ export default function SettingsDialog() {
           <Button
             variant="ghost"
             onClick={handleClear}
-            className="text-muted-foreground hover:text-element"
+            className="text-inkstone-soft hover:text-bronze-dark"
           >
             清除
           </Button>
           <Button
             onClick={handleSave}
-            className="bg-element font-kai text-void hover:bg-element/80"
+            className="bg-bronze font-kai text-inkstone hover:bg-bronze/80"
           >
             保存
           </Button>
