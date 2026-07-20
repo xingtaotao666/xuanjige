@@ -213,18 +213,21 @@
   transform: rotateY(180deg);
 }
 
-/* 塔罗牌背图案（古铜色 + 暗金边框） */
+/* 塔罗牌背图案（AI 生成精美花纹） */
 .tarot-back {
-  background: linear-gradient(135deg, #f5ecdb 0%, #ede1c8 50%, #d4c5a8 100%);
-  border: 1.5px solid rgba(139, 111, 71, 0.55);
+  background-image: url('./tarot-back.png');
+  background-size: cover;
+  background-position: center;
+  border: 1.5px solid rgba(139, 111, 71, 0.45);
   border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(10, 15, 42, 0.15);
 }
-.tarot-back::before {
+.tarot-back::after {
   content: "✦";
   position: absolute;
   inset: 0;
@@ -232,15 +235,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
-  color: rgba(139, 111, 71, 0.45);
-  text-shadow: 0 0 8px rgba(196, 163, 82, 0.25);
-}
-.tarot-back::after {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  border: 1px solid rgba(139, 111, 71, 0.30);
-  border-radius: 0.5rem;
+  opacity: 0;
   pointer-events: none;
 }
 

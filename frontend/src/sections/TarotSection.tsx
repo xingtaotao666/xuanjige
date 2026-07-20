@@ -374,13 +374,13 @@ export default function TarotSection() {
               {/* 2 张示例塔罗牌展示 */}
               <div className="mb-6 flex items-end justify-center gap-3">
                 <img
-                  src="/assets/tarot-magician.png?v=2"
+                  src="./assets/tarot-magician.png?v=2"
                   alt="The Magician"
                   className="h-32 w-auto rounded-lg shadow-paper-sm"
                   style={{ transform: 'rotate(-6deg)' }}
                 />
                 <img
-                  src="/assets/tarot-empress.png?v=2"
+                  src="./assets/tarot-empress.png?v=2"
                   alt="The Empress"
                   className="h-32 w-auto rounded-lg shadow-paper-sm"
                   style={{ transform: 'rotate(6deg)' }}
@@ -593,13 +593,23 @@ export default function TarotSection() {
                         <div className="card-back tarot-back flex items-center justify-center rounded-xl border border-bronze/25 text-[clamp(0.6rem,4vw,1rem)]">
                           <span className="font-kai text-inkstone/50">?</span>
                         </div>
-                        {/* 正面（翻转时显示） */}
-                        <div className="card-front flex items-center justify-center rounded-xl border border-bronze/40 bg-card p-1 shadow-paper-md">
-                          <div className="text-center px-0.5">
-                            <div className="font-kai font-bold text-inkstone leading-tight text-[clamp(0.55rem,3.5vw,0.9rem)]">
+                        {/* 正面（翻转时显示）— AI 生成塔罗图 + 文字覆盖 */}
+                        <div
+                          className="card-front flex items-end justify-center rounded-xl border border-gold-deep/50 p-1 shadow-lg"
+                          style={{
+                            backgroundImage: 'url(./assets/tarot-front-star.png?v=2)',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                          }}
+                        >
+                          {/* 半透明遮罩 */}
+                          <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-inkstone/80 via-inkstone/20 to-transparent" />
+                          {/* 文字内容 */}
+                          <div className="relative z-10 mb-1 text-center">
+                            <div className="font-kai font-bold text-cream leading-tight text-[clamp(0.6rem,3.5vw,0.9rem)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                               {card.card.nameCn}
                             </div>
-                            <div className="mt-0.5 text-[clamp(0.45rem,2.5vw,0.7rem)] text-inkstone-soft/70">
+                            <div className="text-[clamp(0.45rem,2.5vw,0.65rem)] text-[#c4a352] font-kai">
                               {card.orientation === 'upright' ? '正位' : '逆位'}
                             </div>
                           </div>
