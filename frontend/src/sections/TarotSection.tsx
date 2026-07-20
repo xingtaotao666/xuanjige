@@ -337,7 +337,7 @@ export default function TarotSection() {
         aria-hidden="true"
       >
         <img
-          src="./assets/tarot-stars-bg.png?v=2"
+          src="./assets/tarot-stars-bg.png"
           alt=""
           className="h-full w-full object-cover"
         />
@@ -392,13 +392,13 @@ export default function TarotSection() {
               {/* 2 张示例塔罗牌展示 */}
               <div className="mb-6 flex items-end justify-center gap-3">
                 <img
-                  src="./assets/tarot-magician.png?v=2"
+                  src="./assets/tarot-magician.png"
                   alt="The Magician"
                   className="h-32 w-auto rounded-lg shadow-paper-sm"
                   style={{ transform: 'rotate(-6deg)' }}
                 />
                 <img
-                  src="./assets/tarot-empress.png?v=2"
+                  src="./assets/tarot-empress.png"
                   alt="The Empress"
                   className="h-32 w-auto rounded-lg shadow-paper-sm"
                   style={{ transform: 'rotate(6deg)' }}
@@ -576,14 +576,12 @@ export default function TarotSection() {
         {step === 'draw' && gridCards.length > 0 && (
           <div className="flex flex-col items-center gap-5">
             <div className="text-center">
-              <p className="font-kai text-lg text-inkstone-soft/90">凭直觉选牌</p>
-              <p className="text-xs text-inkstone-soft/70">
-                从 9 张牌中选出 {needTotal} 张 · 已选 {selectionStep}/{needTotal}
-              </p>
+              <p className="font-kai text-2xl font-bold text-inkstone sm:text-3xl">🃏 抽 牌</p>
+              <p className="mt-2 text-sm text-inkstone-soft">凭直觉点选下方牌背 · 已选 {selectionStep}/{needTotal}</p>
             </div>
 
             {/* 3×3 矩阵 — 自适应手机/平板/桌面 */}
-            <div className="grid w-full max-w-md grid-cols-3 gap-2 sm:gap-4">
+            <div className="grid w-full max-w-lg grid-cols-3 gap-3 sm:gap-5">
               {gridCards.map((card, gridIdx) => {
                 const isFlipping = flippingPositions.has(gridIdx);
                 const isFresh = !isFlipping && selectionStep < needTotal;
@@ -615,7 +613,7 @@ export default function TarotSection() {
                         <div
                           className="card-front flex items-end justify-center rounded-xl border border-gold-deep/50 p-1 shadow-lg"
                           style={{
-                            backgroundImage: 'url(./assets/tarot-front-star.png?v=2)',
+                            backgroundImage: 'url(./assets/tarot-front-star.png)',
                             backgroundSize: 'cover',
                             backgroundPosition: 'center',
                           }}

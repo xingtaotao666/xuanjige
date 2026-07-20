@@ -18,7 +18,7 @@ const PLATES = [
     title: '天盘',
     subtitle: 'Tiānpán',
     desc: '正曜地围，地添出时。更素有粘幽，涂理泊鸿封同同。',
-    img: './assets/medallion-tianpan.png?v=2',
+    img: './assets/medallion-tianpan.png',
     accent: '#8b6f47',
   },
   {
@@ -26,7 +26,7 @@ const PLATES = [
     title: '人盘',
     subtitle: 'Rénpán',
     desc: '正洛诌泛内颛地的地，定皮进佸全的生间横遭。',
-    img: './assets/medallion-renpan.png?v=2',
+    img: './assets/medallion-renpan.png',
     accent: '#a13d2a',
   },
   {
@@ -34,7 +34,7 @@ const PLATES = [
     title: '地盘',
     subtitle: 'Dìpán',
     desc: '装调昏水图，止盘域未要正素地阐水白的支地观服。',
-    img: './assets/medallion-dipan.png?v=2',
+    img: './assets/medallion-dipan.png',
     accent: '#4a6b5b',
   },
 ];

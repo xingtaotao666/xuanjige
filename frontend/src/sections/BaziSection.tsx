@@ -138,7 +138,7 @@ export default function BaziSection() {
         <div className="mb-10 text-center">
           <div className="mb-6 flex items-center justify-center gap-4">
             <img
-              src="./assets/medallion-tianpan.png?v=2"
+              src="./assets/medallion-tianpan.png"
               alt="八字天盘"
               className="h-24 w-24 rounded-full object-cover shadow-paper-sm sm:h-32 sm:w-32"
             />

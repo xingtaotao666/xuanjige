@@ -239,7 +239,7 @@ export default function YijingSection() {
         <div className="mb-10 text-center">
           <div className="mb-6 flex items-center justify-center gap-4">
             <img
-              src="./assets/yijing-luopan.png?v=2"
+              src="./assets/yijing-luopan.png"
               alt="易经罗盘"
               className="h-24 w-24 rounded-full object-cover shadow-[0_4px_16px_rgba(0,0,0,0.15)] sm:h-32 sm:w-32"
             />
