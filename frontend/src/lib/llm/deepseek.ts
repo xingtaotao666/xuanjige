@@ -5,12 +5,16 @@
 // 的 VITE_DEEPSEEK_API_KEY（部署时通过环境变量设置，避免硬编码进仓库）。
 // 无 Key 或请求失败时自动降级为规则式回应。
 
-export type LlmKind = 'bazi' | 'yijing' | 'tarot' | 'consult';
+export type LlmKind = 'bazi' | 'yijing' | 'tarot' | 'consult' | 'palm';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
-  content: string;
+  content: string | ContentPart[];
 }
+
+export type ContentPart =
+  | { type: 'text'; text: string }
+  | { type: 'image_url'; image_url: { url: string } };
 
 const API_URL = 'https://api.deepseek.com/v1/chat/completions';
 const MODEL = 'deepseek-chat';
@@ -96,7 +100,14 @@ export function cleanOutput(text: string): string {
 
 function extractUserContent(messages: ChatMessage[]): string {
   for (let i = messages.length - 1; i >= 0; i--) {
-    if (messages[i].role === 'user') return messages[i].content;
+    const m = messages[i];
+    if (m.role !== 'user') continue;
+    if (typeof m.content === 'string') return m.content;
+    // content 是数组时，提取所有 text 块
+    return (m.content as ContentPart[])
+      .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+      .map((p) => p.text)
+      .join(' ');
   }
   return '';
 }
