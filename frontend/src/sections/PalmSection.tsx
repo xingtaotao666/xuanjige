@@ -7,6 +7,46 @@ import { searchPalmKnowledge } from '@/lib/rag/palmKnowledge';
 import SourceCitations from '@/components/rag/SourceCitations';
 import type { RagSource } from '@/types/consult';
 
+const REF_IMAGES = [
+  { src: './assets/palm-lines.png', label: '五大主线 · 位置示意', w: 591, h: 1216 },
+  { src: './assets/palm-mounts.png', label: '九星掌丘 · 名称与位置', w: 591, h: 1216 },
+  { src: './assets/palm-shapes.png', label: '四种手型 · 土火水木', w: 840, h: 973 },
+];
+
+function ReferenceGallery() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl border border-bronze/30 bg-cream-light/70 overflow-hidden">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between px-4 py-3 text-sm font-kai text-inkstone hover:bg-bronze/5 transition-colors"
+      >
+        <span>📖 专业手相参考图</span>
+        <span className={`transition-transform ${open ? 'rotate-180' : ''}`}>▼</span>
+      </button>
+      {open && (
+        <div className="px-4 pb-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {REF_IMAGES.map((img, i) => (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <div className="w-full overflow-hidden rounded-lg border border-bronze/20 bg-cream-dark/20">
+                  <img
+                    src={img.src}
+                    alt={img.label}
+                    className="h-auto w-full object-contain"
+                    loading="lazy"
+                  />
+                </div>
+                <span className="text-[10px] text-inkstone-mute text-center">{img.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function PalmSection() {
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
@@ -168,6 +208,9 @@ ${knowledge || '（暂无匹配的知识库内容，请根据你对手相学的�
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* 专业手相参考图 */}
+              <ReferenceGallery />
+
               {/* 摄像头区域 */}
               {!photoData ? (
                 <div className="flex flex-col items-center gap-3">
@@ -311,6 +354,9 @@ ${knowledge || '（暂无匹配的知识库内容，请根据你对手相学的�
 
             {/* 知识来源 */}
             {sources.length > 0 && <SourceCitations sources={sources} />}
+
+            {/* 专业参考图 */}
+            <ReferenceGallery />
           </div>
         )}
       </div>
