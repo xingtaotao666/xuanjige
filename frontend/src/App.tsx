@@ -7,6 +7,7 @@ import BaziSection from '@/sections/BaziSection'
 import YijingSection from '@/sections/YijingSection'
 import TarotSection from '@/sections/TarotSection'
 import PalmSection from '@/sections/PalmSection'
+import FaceSection from '@/sections/FaceSection'
 import AboutSection from '@/sections/AboutSection'
 import ShareView from '@/components/share/ShareView'
 import HistoryPage from '@/components/history/HistoryPage'
@@ -35,6 +36,7 @@ function App() {
             <Route path="/yijing" element={<YijingSection />} />
             <Route path="/tarot" element={<TarotSection />} />
             <Route path="/palm" element={<PalmSection />} />
+            <Route path="/face" element={<FaceSection />} />
             <Route path="/share" element={<ShareView />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/about" element={<AboutSection />} />

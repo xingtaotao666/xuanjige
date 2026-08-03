@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, type FormEvent } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { callDeepSeek } from '@/lib/llm/deepseek';
+import { analyzeImage } from '@/lib/llm/vision';
 import { searchPalmKnowledge } from '@/lib/rag/palmKnowledge';
 import SourceCitations from '@/components/rag/SourceCitations';
 import type { RagSource } from '@/types/consult';
@@ -161,16 +161,16 @@ ${knowledge || '（暂无匹配的知识库内容，请根据你对手相学的�
 
 注意：照片可能存在光线角度问题，请说明你看到的内容并备注观察条件局限性。声明仅供娱乐参考，不作为专业医学或心理学诊断。`;
 
-      // 2. LLM 调用（带图片）
-      const llmResult = await callDeepSeek(
-        [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: `[图片分析请求] 用户上传了一张手掌照片。文本描述：${userText}。请分析照片中可见的手掌纹理特征。由于当前模型为文本模式，请根据用户的问题和手相知识库内容，提供基于描述的手相解读。如果后续支持图片输入，将能更精确分析实际掌纹。` },
-        ],
-        { temperature: 0.7, maxTokens: 4096 },
-      );
+      // 2. LLM 调用（通过视觉模型占位）
+      const response = await analyzeImage({
+        imageBase64: photoData,
+        mimeType: 'image/jpeg',
+        systemPrompt,
+        userText,
+        knowledge: knowledge || undefined,
+      });
 
-      setResult(llmResult);
+      setResult(response.text);
     } catch (err) {
       const msg = err instanceof Error ? err.message : '分析失败，请稍后重试';
       setResult(`⚠️ ${msg}`);
