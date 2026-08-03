@@ -4,14 +4,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - 'frontend/src/**'
-      - 'frontend/public/**'
-      - 'frontend/package.json'
-      - 'frontend/vite.config.ts'
-      - 'frontend/capacitor.config.ts'
-      - 'frontend/android/**'
-      - '.github/workflows/build-apk.yml'
 
 jobs:
   build-apk:
@@ -33,21 +25,34 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: |
-            platforms;android-35
-            build-tools;35.0.0
-            platform-tools
-
-      - name: Show env
+      - name: Check pre-installed Android SDK
         run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
-          ls -la "$ANDROID_HOME" 2>/dev/null || echo "No ANDROID_HOME"
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          ls -la $ANDROID_HOME/platforms/ 2>/dev/null || echo "no platforms"
+          ls -la $ANDROID_HOME/build-tools/ 2>/dev/null || echo "no build-tools"
 
-      - name: Install frontend dependencies
+      - name: Install needed SDK packages
+        run: |
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          if [ ! -d "$ANDROID_HOME/cmdline-tools" ]; then
+            mkdir -p "$ANDROID_HOME/cmdline-tools"
+            cd /tmp
+            curl -L -o cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+            unzip -q cmdline-tools.zip -d "$ANDROID_HOME/cmdline-tools"
+            mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
+          fi
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-34" "build-tools;34.0.0" 2>&1 | tail -5
+
+      - name: Downgrade compileSdk to 34
+        working-directory: frontend/android
+        run: |
+          sed -i 's/compileSdkVersion = 36/compileSdkVersion = 34/' variables.gradle
+          sed -i 's/targetSdkVersion = 36/targetSdkVersion = 34/' variables.gradle
+          cat variables.gradle
+
+      - name: Install frontend deps
         working-directory: frontend
         run: npm ci
 
@@ -59,39 +64,21 @@ jobs:
         working-directory: frontend
         run: npx cap sync android
 
-      - name: Prepare gradle
+      - name: Build APK
         working-directory: frontend/android
         run: |
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          echo "Current dir: $(pwd)"
-          cat local.properties
-          ls -la
-
-      - name: Make gradlew executable
-        working-directory: frontend/android
-        run: chmod +x gradlew
-
-      - name: Build APK
-        working-directory: frontend/android
-        env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx2g
-        run: |
-          ./gradlew --version
+          chmod +x gradlew
           ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
-          echo "=== exit=$? ==="
 
-      - name: List APK output
-        if: always()
+      - name: Show build log tail on failure
+        if: failure()
         working-directory: frontend/android
-        run: |
-          echo "=== APK files ==="
-          find . -name "*.apk" 2>/dev/null
-          echo "=== build.log tail ==="
-          tail -50 build.log 2>/dev/null || echo "no log"
+        run: tail -80 build.log
 
       - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: 玄机阁-APK
+          name: xuanjige-apk
           path: frontend/android/app/build/outputs/apk/debug/app-debug.apk
