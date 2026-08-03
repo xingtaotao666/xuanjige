@@ -11,6 +11,7 @@ on:
       - 'frontend/vite.config.ts'
       - 'frontend/capacitor.config.ts'
       - 'frontend/android/**'
+      - '.github/workflows/build-apk.yml'
 
 jobs:
   build-apk:
