@@ -16,6 +16,8 @@ on:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,12 +34,18 @@ jobs:
           java-version: '17'
 
       - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: |
+            platforms;android-35
+            build-tools;35.0.0
+            platform-tools
+
+      - name: Show env
         run: |
-          export ANDROID_HOME=/usr/local/lib/android/sdk
-          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0" --no_https 2>&1 || \
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;35.0.0" 2>&1
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          ls -la "$ANDROID_HOME" 2>/dev/null || echo "No ANDROID_HOME"
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -51,17 +59,38 @@ jobs:
         working-directory: frontend
         run: npx cap sync android
 
+      - name: Prepare gradle
+        working-directory: frontend/android
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "Current dir: $(pwd)"
+          cat local.properties
+          ls -la
+
+      - name: Make gradlew executable
+        working-directory: frontend/android
+        run: chmod +x gradlew
+
       - name: Build APK
         working-directory: frontend/android
         env:
-          GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx2048m
+          GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx2g
         run: |
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace 2>&1 | tail -80
+          ./gradlew --version
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
+          echo "=== exit=$? ==="
+
+      - name: List APK output
+        if: always()
+        working-directory: frontend/android
+        run: |
+          echo "=== APK files ==="
+          find . -name "*.apk" 2>/dev/null
+          echo "=== build.log tail ==="
+          tail -50 build.log 2>/dev/null || echo "no log"
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: 玄机阁-APK
