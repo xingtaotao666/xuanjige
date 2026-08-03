@@ -19,6 +19,7 @@ const navLinks = [
   { path: '/tarot', label: '塔罗' },
   { path: '/palm', label: '手相' },
   { path: '/face', label: '面相' },
+  { path: '/fengshui', label: '风水' },
   { path: '/history', label: '记忆' },
   { path: '/about', label: '关于' },
 ];

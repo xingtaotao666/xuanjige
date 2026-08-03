@@ -18,6 +18,7 @@ const CORPUS_FILES: Array<{ path: string; book: string }> = [
   { path: 'corpus/tarot/tarot_intro.txt', book: '塔罗入门' },
   { path: 'corpus/xiangshou/xiangshou.txt', book: '手相入门' },
   { path: 'corpus/mianxiang/mianxiang.txt', book: '面相入门' },
+  { path: 'corpus/fengshui/fengshui.txt', book: '风水入门' },
 ];
 
 const CHUNK_MIN_CHARS = 50;
