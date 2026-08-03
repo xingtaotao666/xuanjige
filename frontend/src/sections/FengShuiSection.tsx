@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { callDeepSeek } from '@/lib/llm/deepseek';
 import { searchFengShuiKnowledge } from '@/lib/rag/fengshuiKnowledge';
+import FengShuiCompass from '@/components/fengshui/FengShuiCompass';
 import SourceCitations from '@/components/rag/SourceCitations';
 import type { RagSource } from '@/types/consult';
 
@@ -45,17 +46,15 @@ function ZhaiTiView({ onResult }: { onResult: (r: string, s: RagSource[]) => voi
   const [question, setQ] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const dirs: string[] = '子癸丑艮寅甲卯乙辰巽巳丙午丁未坤申庚酉辛戌乾亥壬'.match(/.{1,2}/g) ?? [];
-  const shanXiangs = dirs.map((d) => {
-    const idx = dirs.indexOf(d);
-    const opp = dirs[(idx + 12) % 24];
-    return `${d}山${opp}向`;
-  });
+  const handleCompassChange = (d: string, opp: string) => {
+    setZuo(d);
+    setXiang(opp);
+  };
 
   const handleAnalyze = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const kw = ['风水', '阳宅', '八宅', '玄空', zuo, xiang, `坐${zuo}`, `向${xiang}`, `${shanXiangs.find((s: string) => s.startsWith(zuo)) || ''}`];
+    const kw = ['风水', '阳宅', '八宅', '玄空', zuo, xiang, `坐${zuo}`, `向${xiang}`];
     let sources: RagSource[] = [];
     try {
       sources = await searchFengShuiKnowledge([question, zuo + '山' + xiang + '向', shengNian], kw);
@@ -94,25 +93,16 @@ ${knowledge || '暂无匹配的古籍内容'}
     <form onSubmit={handleAnalyze} className="space-y-4">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <div><Label>建成/装修年份</Label><input value={zhuangXiu} onChange={(e) => setZX(e.target.value)} className="w-full rounded-lg border border-bronze/30 bg-cream-light/80 px-3 py-1.5 text-sm text-inkstone outline-none focus:border-bronze" /></div>
-        <div><Label>坐方</Label><select value={zuo} onChange={(e) => setZuo(e.target.value)} className="w-full rounded-lg border border-bronze/30 bg-cream-light/80 px-3 py-1.5 text-sm text-inkstone outline-none focus:border-bronze">{dirs.map((d) => <option key={d} value={d}>{d}</option>)}</select></div>
-        <div><Label>向方</Label><select value={xiang} onChange={(e) => setXiang(e.target.value)} className="w-full rounded-lg border border-bronze/30 bg-cream-light/80 px-3 py-1.5 text-sm text-inkstone outline-none focus:border-bronze">{dirs.map((d) => <option key={d} value={d}>{d}</option>)}</select></div>
         <div><Label>楼层</Label><input value={louCeng} onChange={(e) => setLC(e.target.value)} className="w-full rounded-lg border border-bronze/30 bg-cream-light/80 px-3 py-1.5 text-sm text-inkstone outline-none focus:border-bronze" /></div>
         <div><Label>宅主性别</Label><select value={xingBie} onChange={(e) => setXB(e.target.value)} className="w-full rounded-lg border border-bronze/30 bg-cream-light/80 px-3 py-1.5 text-sm text-inkstone outline-none focus:border-bronze"><option>男</option><option>女</option></select></div>
         <div><Label>出生年</Label><input value={shengNian} onChange={(e) => setSN(e.target.value)} className="w-full rounded-lg border border-bronze/30 bg-cream-light/80 px-3 py-1.5 text-sm text-inkstone outline-none focus:border-bronze" /></div>
       </div>
-      <div><Label>坐向快速选择</Label>
-        <div className="flex flex-wrap gap-1">
-          {shanXiangs.slice(0, 12).map((sx) => {
-            const s = dirs[shanXiangs.indexOf(sx)];
-            const isActive = zuo === s;
-            return (
-              <button type="button" key={sx} onClick={() => { setZuo(s); setXiang(dirs[(dirs.indexOf(s) + 12) % 24]); }}
-                className={`rounded px-2 py-0.5 text-[11px] border transition-colors ${isActive ? 'bg-bronze text-cream border-bronze' : 'bg-cream-light/60 text-inkstone-soft border-bronze/20 hover:border-bronze/40'}`}>
-                {sx}
-              </button>
-            );
-          })}
-        </div>
+      <div>
+        <Label>坐向选择 · 拖拽旋转罗盘</Label>
+        <FengShuiCompass value={zuo} onChange={handleCompassChange} />
+      </div>
+      <div className="text-center text-[11px] text-inkstone-mute">
+        当前：坐 <strong>{zuo}</strong> 向 <strong>{xiang}</strong>（{zuo}山{xiang}向）
       </div>
       <div><Label>你的问题（可选，留空则综合解读）</Label>
         <Textarea placeholder="如：我想了解住宅的财运和健康运势" value={question} onChange={(e) => setQ(e.target.value)}
