@@ -6,10 +6,11 @@ import { callDeepSeek } from '@/lib/llm/deepseek';
 import { searchFengShuiKnowledge } from '@/lib/rag/fengshuiKnowledge';
 import FengShuiCompass from '@/components/fengshui/FengShuiCompass';
 import QimenView from '@/sections/fengshui/QimenView';
+import FengShuiPipeline from '@/sections/fengshui/FengShuiPipeline';
 import SourceCitations from '@/components/rag/SourceCitations';
 import type { RagSource } from '@/types/consult';
 
-const TABS = ['宅体分析', '奇门遁甲', '玄空九宫', '布煞', '择日参考', '水法'] as const;
+const TABS = ['智能分析', '宅体分析', '奇门遁甲', '玄空九宫', '布煞', '择日参考', '水法'] as const;
 type Tab = typeof TABS[number];
 
 function TabBar({ active, onChange }: { active: Tab; onChange: (t: Tab) => void }) {
@@ -307,6 +308,7 @@ export default function FengShuiSection() {
             </CardHeader>
             <CardContent className="space-y-4">
               <TabBar active={tab} onChange={setTab} />
+              {tab === '智能分析' && <FengShuiPipeline />}
               {tab === '宅体分析' && <ZhaiTiView onResult={handleResult} />}
               {tab === '奇门遁甲' && <QimenView onResult={handleResult} />}
               {tab === '玄空九宫' && <XuanKongView onResult={handleResult} />}
