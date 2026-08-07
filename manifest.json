@@ -1,0 +1,30 @@
+{
+  "name": "玄机阁",
+  "short_name": "玄机阁",
+  "description": "新中式命理 · 八字 / 易经 / 塔罗 / 手相 AI 分析",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5ecdb",
+  "theme_color": "#8b4513",
+  "orientation": "portrait-primary",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
